@@ -7,10 +7,10 @@
 #include "Kismet/GameplayStaticsTypes.h"/*FPredictProjectilePathParams & FPredictProjectilePathResult*/
 #include "BossCharacter.generated.h"
 
-
 class USpringArmComponent;
 class UCameraComponent;
 class AMonsterSpawnProjectile;
+class UBossWidgetBase;
 UCLASS()
 class TEAMPORTFOLIO_API ABossCharacter : public ACharacter
 {
@@ -54,11 +54,17 @@ public:
 	//Fire & Spawn Monsters
 	void FireToSpawn();
 
+	//List that You Can.
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Monster")
+	TArray<TSubclassOf<AMonsterSpawnProjectile>> SpawnClasses;
+
 	//What Monster You Want to Spawn?
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Monster")
-		TSubclassOf<AMonsterSpawnProjectile> MonsterSpawnProjectileClass;
+	TSubclassOf<AMonsterSpawnProjectile> MonsterSpawnProjectileClass;
 
 	//Change Projectile Class --> Will Use In Boss UI Button.
 	void SetProjectileClass(TSubclassOf<AMonsterSpawnProjectile> NewProjectileClass);
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UMG")
+		TSubclassOf<UBossWidgetBase> BossWidgetClass;
 };

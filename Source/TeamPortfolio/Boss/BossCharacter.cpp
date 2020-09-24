@@ -9,6 +9,9 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "MonsterSpawnProjectile.h"
+
+#include "BossWidgetBase.h" //Beginplay
+
 // Sets default values
 ABossCharacter::ABossCharacter()
 {
@@ -34,8 +37,8 @@ ABossCharacter::ABossCharacter()
 	objectTypes.Add(EObjectTypeQuery::ObjectTypeQuery1);
 	TrajectoryParams.ObjectTypes = objectTypes;
 	TrajectoryParams.DrawDebugType = EDrawDebugTrace::ForOneFrame;
-	TrajectoryParams.SimFrequency = 5.0f;
-	TrajectoryParams.MaxSimTime = 1.0f;
+	TrajectoryParams.SimFrequency = 15.0f;
+	TrajectoryParams.MaxSimTime = 2.0f;
 }
 
 // Called when the game starts or when spawned
@@ -43,6 +46,16 @@ void ABossCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	/*Boss UMG*/
+	if (BossWidgetClass)
+	{
+		UBossWidgetBase* bossWidget =CreateWidget<UBossWidgetBase>(Cast<APlayerController>(GetController()), BossWidgetClass);
+		if (bossWidget)
+		{
+			bossWidget->AddToViewport();
+		}
+	}
+	
 }
 
 // Called every frame
@@ -78,6 +91,7 @@ void ABossCharacter::DrawProjectileTrajectory()
 
 void ABossCharacter::FireToSpawn()
 {
+	//Fire Monster Spawn Projectile if Valid.
 	if (MonsterSpawnProjectileClass)
 	{
 		FTransform transform;

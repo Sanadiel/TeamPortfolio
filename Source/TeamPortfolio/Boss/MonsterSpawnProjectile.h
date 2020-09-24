@@ -9,6 +9,7 @@
 class USphereComponent;
 class UProjectileMovementComponent;
 class USkeletalMeshComponent;
+
 UCLASS()
 class TEAMPORTFOLIO_API AMonsterSpawnProjectile : public AActor
 {
