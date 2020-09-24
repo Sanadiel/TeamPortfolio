@@ -9,7 +9,7 @@ public class TeamPortfolio : ModuleRules
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HeadMountedDisplay",
-                                                            "AIModule", "GamePlayTasks", "UMG" });
+                                                            "AIModule", "GamePlayTasks", "UMG","NavigationSystem" });
 
         PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
     }
