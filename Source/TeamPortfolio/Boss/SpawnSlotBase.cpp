@@ -7,6 +7,7 @@
 #include "Components/Border.h"
 #include "BossCharacter.h"
 #include "MonsterSpawnProjectile.h"
+#include "BossObject.h"
 void USpawnSlotBase::NativeConstruct()
 {
 	ImageBorder = Cast<UBorder>(GetWidgetFromName(TEXT("ImageBorder")));
@@ -19,6 +20,31 @@ void USpawnSlotBase::NativeConstruct()
 	{
 		SelectButton->OnClicked.AddDynamic(this, &USpawnSlotBase::OnButtonClicked);
 	}
+
+
+	APlayerController* pc = GetOwningPlayer();
+	if (pc)
+	{
+		//Get BossPlayer so Can Access to SpawnClass.
+		ABossCharacter* boss = Cast<ABossCharacter>(pc->GetPawn());
+		if (boss)
+		{
+			int32 index = GetSlotNumber();
+			if (index < boss->SpawnClasses.Num())
+			{
+				//Access To CDO and get the Info.
+				FMonsterSpawnInfo monsterSpawnInfo = boss->SpawnClasses[index]->GetDefaultObject<AMonsterSpawnProjectile>()->MonsterSpawnInfo;
+
+				//set UMG Icon.
+				if (monsterSpawnInfo.Thumbnail)
+				{
+					ImageBorder->SetBrushFromTexture(monsterSpawnInfo.Thumbnail);
+				}
+			}
+		}
+	}
+
+
 }
 
 void USpawnSlotBase::OnButtonClicked()
@@ -32,10 +58,8 @@ void USpawnSlotBase::OnButtonClicked()
 		ABossCharacter* boss = Cast<ABossCharacter>(pc->GetPawn());
 		if (boss)
 		{
-			FString widgetName = GetName();
-			widgetName.RemoveFromStart(TEXT("SpawnSlot"));
-			FString number = widgetName;
-			int32 index = FCString::Atoi(*number);
+
+			int32 index = GetSlotNumber();
 			//UE_LOG(LogClass, Warning, TEXT("%s"),*number);
 			if (index < boss->SpawnClasses.Num() && boss->SpawnClasses[index])
 			{
@@ -49,4 +73,12 @@ void USpawnSlotBase::OnButtonClicked()
 		}
 	}
 
+}
+
+int32 USpawnSlotBase::GetSlotNumber() const
+{
+	FString widgetName = GetName();
+	widgetName.RemoveFromStart(TEXT("SpawnSlot"));
+	FString number = widgetName;
+	return FCString::Atoi(*number);
 }

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "BossObject.h"
 #include "MonsterSpawnProjectile.generated.h"
 
 class USphereComponent;
@@ -33,6 +34,10 @@ public:
 	//Monster Class To Spawn.
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Monster")
 		TSubclassOf<AActor> MonsterActorClass;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Monster")
+		FMonsterSpawnInfo MonsterSpawnInfo;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

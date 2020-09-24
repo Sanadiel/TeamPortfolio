@@ -35,4 +35,6 @@ public:
 
 	UFUNCTION()
 	void OnButtonClicked();
+
+	int32 GetSlotNumber() const;
 };

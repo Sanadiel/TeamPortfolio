@@ -4,9 +4,12 @@
 #include "BossWidgetBase.h"
 #include "SpawnSlotBase.h"
 #include "Components/HorizontalBox.h"
+#include "BossCharacter.h"
+#include "MonsterSpawnProjectile.h"
+#include "BossObject.h"
+#include "Components/Border.h"
 void UBossWidgetBase::NativeConstruct()
 {
-
 	/*Spawn Slots will be add to SpawnSlots. currently default slot number is 8*/
 	SlotBox = Cast<UHorizontalBox>(GetWidgetFromName(TEXT("SlotBox")));
 	if (SlotBox)
@@ -24,5 +27,7 @@ void UBossWidgetBase::NativeConstruct()
 			}
 		}
 	}
+
+	
 
 }
