@@ -3,3 +3,10 @@
 
 #include "MainUIBase.h"
 
+
+void UMainUIBase::NativeConstruct()
+{
+	Super::NativeConstruct();
+
+
+}

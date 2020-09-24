@@ -13,5 +13,19 @@ UCLASS()
 class TEAMPORTFOLIO_API ALobby_GM : public AGameModeBase
 {
 	GENERATED_BODY()
+
+#pragma region Public Function
+public:
+	FTimerHandle LobbyTimer;
+
+	UFUNCTION()
+	void StartGame();
+
+	virtual void BeginPlay() override;
+
+	UFUNCTION()
+	void DecreaseTime();
+
+#pragma endregion
 	
 };

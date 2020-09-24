@@ -13,5 +13,11 @@ UCLASS()
 class TEAMPORTFOLIO_API UMainUIBase : public UUserWidget
 {
 	GENERATED_BODY()
+
+#pragma region Public Function
+public:
+	virtual void NativeConstruct() override;
+
+#pragma endregion 
 	
 };
