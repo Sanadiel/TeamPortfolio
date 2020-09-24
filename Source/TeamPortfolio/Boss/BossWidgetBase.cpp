@@ -10,6 +10,8 @@
 #include "Components/Border.h"
 void UBossWidgetBase::NativeConstruct()
 {
+	Super::NativeConstruct();
+
 	/*Spawn Slots will be add to SpawnSlots. currently default slot number is 8*/
 	SlotBox = Cast<UHorizontalBox>(GetWidgetFromName(TEXT("SlotBox")));
 	if (SlotBox)

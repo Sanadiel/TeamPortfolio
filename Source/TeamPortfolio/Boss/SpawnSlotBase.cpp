@@ -10,6 +10,8 @@
 #include "BossObject.h"
 void USpawnSlotBase::NativeConstruct()
 {
+	Super::NativeConstruct();
+
 	ImageBorder = Cast<UBorder>(GetWidgetFromName(TEXT("ImageBorder")));
 
 	CooldownBar = Cast<UProgressBar>(GetWidgetFromName(TEXT("CooldownBar")));
@@ -45,6 +47,28 @@ void USpawnSlotBase::NativeConstruct()
 	}
 
 
+}
+
+void USpawnSlotBase::NativeTick(const FGeometry & MyGeometry, float InDeltaTime)
+{
+	Super::NativeTick(MyGeometry,InDeltaTime);
+
+	UE_LOG(LogClass, Warning, TEXT("UserWidgetTick"));
+
+	APlayerController* pc = GetOwningPlayer();
+	if (pc)
+	{
+		ABossCharacter* boss = Cast<ABossCharacter>(pc->GetPawn());
+		if (boss)
+		{
+			int32 index = GetSlotNumber();
+			if (index < boss->SpawnCooldown.Num() && CooldownBar)
+			{
+				float cooldown = boss->SpawnCooldown[index];
+				CooldownBar->SetPercent(cooldown / 10.0f);
+			}
+		}
+	}
 }
 
 void USpawnSlotBase::OnButtonClicked()

@@ -58,7 +58,10 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Monster")
 	TArray<TSubclassOf<AMonsterSpawnProjectile>> SpawnClasses;
 
-	//What Monster You Want to Spawn?
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Monster")
+	TArray<float> SpawnCooldown;
+
+	//Currently Selected Projectile Class.
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Monster")
 	TSubclassOf<AMonsterSpawnProjectile> MonsterSpawnProjectileClass;
 

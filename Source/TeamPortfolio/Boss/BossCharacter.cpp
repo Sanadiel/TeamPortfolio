@@ -23,7 +23,7 @@ ABossCharacter::ABossCharacter()
 	SpringArm->SetupAttachment(RootComponent);
 	SpringArm->bUsePawnControlRotation = true;
 	SpringArm->TargetArmLength = 500.0f;
-	SpringArm->SocketOffset = FVector(0.0f, 40.0f, 88.0f);
+	SpringArm->SocketOffset = FVector(0.0f, 40.0f*2.0f, 88.0f*2.0f);
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(SpringArm);
@@ -39,6 +39,7 @@ ABossCharacter::ABossCharacter()
 	TrajectoryParams.DrawDebugType = EDrawDebugTrace::ForOneFrame;
 	TrajectoryParams.SimFrequency = 15.0f;
 	TrajectoryParams.MaxSimTime = 2.0f;
+	TrajectoryParams.ProjectileRadius = 10.0f;
 }
 
 // Called when the game starts or when spawned
@@ -49,13 +50,25 @@ void ABossCharacter::BeginPlay()
 	/*Boss UMG*/
 	if (BossWidgetClass)
 	{
-		UBossWidgetBase* bossWidget =CreateWidget<UBossWidgetBase>(Cast<APlayerController>(GetController()), BossWidgetClass);
+		UBossWidgetBase* bossWidget = CreateWidget<UBossWidgetBase>(Cast<APlayerController>(GetController()), BossWidgetClass);
 		if (bossWidget)
 		{
 			bossWidget->AddToViewport();
 		}
 	}
+
+	APlayerController* pc = Cast<APlayerController>(GetController());
+	if (pc)
+	{
+		pc->bShowMouseCursor = true;
+		pc->SetInputMode(FInputModeGameAndUI());
+	}
 	
+	for (int i = 0; i < SpawnClasses.Num(); i++)
+	{
+		SpawnCooldown.Add(0.0f);
+	}
+
 }
 
 // Called every frame
@@ -63,6 +76,12 @@ void ABossCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	DrawProjectileTrajectory();
+
+	for (int i = 0; i < SpawnCooldown.Num(); i++)
+	{
+		SpawnCooldown[i] += DeltaTime;
+	}
+
 }
 
 // Called to bind functionality to input
