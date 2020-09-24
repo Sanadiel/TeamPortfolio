@@ -26,7 +26,7 @@ AMonsterSpawnProjectile::AMonsterSpawnProjectile()
 	//MeshSetting
 	Mesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh"));
 	Mesh->SetupAttachment(RootComponent);
-	Mesh->SetRelativeScale3D(FVector(0.25f, 0.25f, 0.25f));
+	Mesh->SetRelativeScale3D(FVector(0.5f, 0.5f, 0.25f));
 	Mesh->SetRelativeLocation(FVector(0.0f, 0.0f, -15.0f));
 
 
