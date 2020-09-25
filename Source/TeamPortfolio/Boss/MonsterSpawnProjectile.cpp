@@ -31,7 +31,7 @@ AMonsterSpawnProjectile::AMonsterSpawnProjectile()
 	//MeshSetting
 	Mesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh"));
 	Mesh->SetupAttachment(RootComponent);
-	Mesh->SetRelativeScale3D(FVector(0.5f, 0.5f, 0.25f));
+	Mesh->SetRelativeScale3D(FVector(0.25f, 0.25f, 0.25f));
 	Mesh->SetRelativeLocation(FVector(0.0f, 0.0f, -15.0f));
 
 	/*
@@ -76,7 +76,7 @@ void AMonsterSpawnProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherA
 	}
 
 	//Spawn Monster when Hit Ground -> Not SimulatingPhysics.
-	else if (MonsterActorClass && OtherActor != NULL && OtherActor != this && OtherComp != NULL)
+	else if (MonsterSpawnInfo.SpawnActorClass && OtherActor != NULL && OtherActor != this && OtherComp != NULL)
 	{
 		SpawnMonster(Hit);
 		Destroy();
@@ -90,13 +90,13 @@ void AMonsterSpawnProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherA
 void AMonsterSpawnProjectile::SpawnMonster(const FHitResult& Hit)
 {
 	//Spawn Monster 
-	if (MonsterActorClass)
+	if (MonsterSpawnInfo.SpawnActorClass)
 	{
 		FTransform transform;
 		transform.SetLocation(Hit.Location);
 		FActorSpawnParameters params;
 		params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
-		AActor* monster = GetWorld()->SpawnActor<AActor>(MonsterActorClass, transform, params);
+		AActor* monster = GetWorld()->SpawnActor<AActor>(MonsterSpawnInfo.SpawnActorClass, transform, params);
 
 		if (!monster)		//Check Monster Spawn Success so you can Confirm that the Cooldown will Do.
 		{

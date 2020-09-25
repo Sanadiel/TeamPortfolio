@@ -15,7 +15,10 @@ struct FMonsterSpawnInfo : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
 		TSubclassOf<AActor> SpawnActorClass;
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
 		UTexture2D* Thumbnail;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+		float Cooldown;
 };

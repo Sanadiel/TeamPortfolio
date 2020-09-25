@@ -31,9 +31,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
 		USkeletalMeshComponent* Mesh;
 
-	//Monster Class To Spawn.
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Monster")
-		TSubclassOf<AActor> MonsterActorClass;
+	////Monster Class To Spawn.
+	//UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Monster")
+	//	TSubclassOf<AActor> MonsterActorClass;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Monster")
 		FMonsterSpawnInfo MonsterSpawnInfo;

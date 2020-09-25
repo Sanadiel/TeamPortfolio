@@ -78,6 +78,7 @@ void ABossCharacter::BeginPlay()
 	for (int i = 0; i < SpawnClasses.Num(); i++)
 	{
 		SpawnCooldown.Add(0.0f);
+		MaxSpawnCooldown.Add(SpawnClasses[i].GetDefaultObject()->MonsterSpawnInfo.Cooldown);
 	}
 
 }
@@ -92,6 +93,7 @@ void ABossCharacter::Tick(float DeltaTime)
 	for (int i = 0; i < SpawnCooldown.Num(); i++)
 	{
 		SpawnCooldown[i] += DeltaTime;
+		SpawnCooldown[i] = FMath::Clamp<float>(SpawnCooldown[i], 0.0f, MaxSpawnCooldown[i]);
 	}
 
 	if (PhysicsHandle)

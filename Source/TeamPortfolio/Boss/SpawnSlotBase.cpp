@@ -64,8 +64,8 @@ void USpawnSlotBase::NativeTick(const FGeometry & MyGeometry, float InDeltaTime)
 			int32 index = GetSlotNumber();
 			if (index < boss->SpawnCooldown.Num() && CooldownBar)
 			{
-				float cooldown = boss->SpawnCooldown[index];
-				CooldownBar->SetPercent(cooldown / 10.0f);
+				float currentCooldown = boss->SpawnCooldown[index];
+				CooldownBar->SetPercent(currentCooldown / boss->MaxSpawnCooldown[index]);
 			}
 		}
 	}
@@ -85,7 +85,7 @@ void USpawnSlotBase::OnButtonClicked()
 
 			int32 index = GetSlotNumber();
 			//UE_LOG(LogClass, Warning, TEXT("%s"),*number);
-			if (index < boss->SpawnClasses.Num() && boss->SpawnClasses[index])
+			if (index < boss->SpawnClasses.Num() && boss->SpawnClasses[index] && boss->SpawnCooldown[index] >=boss->MaxSpawnCooldown[index])
 			{
 				//boss->SetProjectileClass(boss->SpawnClasses[index]);
 				FTransform transform;
@@ -94,6 +94,7 @@ void USpawnSlotBase::OnButtonClicked()
 				if (projectile)
 				{
 					boss->HoldSpawnProjectile(projectile);
+					boss->SpawnCooldown[index] = 0.0f;
 				}
 				else
 				{

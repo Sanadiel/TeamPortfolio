@@ -70,6 +70,10 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Monster")
 	TArray<float> SpawnCooldown;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Monster")
+		TArray<float> MaxSpawnCooldown;
+
+
 	//Currently Selected Projectile Class.
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Monster")
 	TSubclassOf<AMonsterSpawnProjectile> MonsterSpawnProjectileClass;
