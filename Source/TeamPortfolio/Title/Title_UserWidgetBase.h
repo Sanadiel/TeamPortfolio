@@ -29,17 +29,28 @@ public:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Control")
 	class UButton* SinglePlayButton;
 
+	//Multi
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Control")
 	class UButton* MultiPlayButton;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Control")
-	class UButton* OptionButton;
-
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Control")
-	class UButton* ExitButton;
+	class UButton* MultiReturnButton;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Control")
 	class UCanvasPanel* MultiWindow;
+
+	//Option
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Control")
+	class UButton* OptionButton;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Control")
+	class UButton* OptionReturnButton;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Control")
+	class UCanvasPanel* OptionWindow;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Control")
+	class UButton* ExitButton;
 	
 #pragma endregion
 
@@ -61,6 +72,9 @@ public:
 
 	UFUNCTION()
 	void OnOptionButton();
+
+	UFUNCTION()
+	void OnReturnButton();
 
 	UFUNCTION()
 	void OnExitButton();

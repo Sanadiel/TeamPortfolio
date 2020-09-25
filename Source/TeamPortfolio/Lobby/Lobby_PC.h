@@ -13,8 +13,15 @@ UCLASS()
 class TEAMPORTFOLIO_API ALobby_PC : public APlayerController
 {
 	GENERATED_BODY()
-	
+#pragma region Public Member
+public:
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "UI")
+	TSubclassOf<class ULobby_WidgetBase> LobbyWidgetClass;
 
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "UI")
+	class ULobby_WidgetBase* LobbyWidgetObject;
+
+#pragma endregion
 
 #pragma region Public Function
 public:

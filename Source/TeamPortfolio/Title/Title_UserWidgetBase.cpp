@@ -18,9 +18,12 @@ void UTitle_UserWidgetBase::NativeConstruct()
 	StartButton = Cast<UButton>(GetWidgetFromName(TEXT("StartButton")));
 	SinglePlayButton = Cast<UButton>(GetWidgetFromName(TEXT("SinglePlayButton")));
 	MultiPlayButton = Cast<UButton>(GetWidgetFromName(TEXT("MultiPlayButton")));
+	MultiReturnButton = Cast<UButton>(GetWidgetFromName(TEXT("MultiReturn")));	
 	OptionButton = Cast<UButton>(GetWidgetFromName(TEXT("OptionButton")));
+	OptionReturnButton = Cast<UButton>(GetWidgetFromName(TEXT("OptionReturn")));
 	ExitButton = Cast<UButton>(GetWidgetFromName(TEXT("ExitButton")));
 	MultiWindow = Cast<UCanvasPanel>(GetWidgetFromName(TEXT("MultiWindow")));
+	OptionWindow = Cast<UCanvasPanel>(GetWidgetFromName(TEXT("OptionWindow")));
 
 	if (ConnectButton)
 	{
@@ -42,9 +45,19 @@ void UTitle_UserWidgetBase::NativeConstruct()
 		MultiPlayButton->OnClicked.AddDynamic(this, &UTitle_UserWidgetBase::OnMultiPlayButton);
 	}
 
+	if (MultiReturnButton)
+	{
+		MultiReturnButton->OnClicked.AddDynamic(this, &UTitle_UserWidgetBase::OnReturnButton);
+	}
+
 	if (OptionButton)
 	{
 		OptionButton->OnClicked.AddDynamic(this, &UTitle_UserWidgetBase::OnOptionButton);
+	}
+
+	if (OptionReturnButton)
+	{
+		OptionReturnButton->OnClicked.AddDynamic(this, &UTitle_UserWidgetBase::OnReturnButton);
 	}
 
 	if (ExitButton)
@@ -53,6 +66,7 @@ void UTitle_UserWidgetBase::NativeConstruct()
 	}
 
 	MultiWindow->SetVisibility(ESlateVisibility::Collapsed);
+	OptionWindow->SetVisibility(ESlateVisibility::Collapsed);
 }
 
 void UTitle_UserWidgetBase::OnConnectButton()
@@ -90,7 +104,13 @@ void UTitle_UserWidgetBase::OnMultiPlayButton()
 
 void UTitle_UserWidgetBase::OnOptionButton()
 {
+	OptionWindow->SetVisibility(ESlateVisibility::Visible);
+}
 
+void UTitle_UserWidgetBase::OnReturnButton()
+{
+	OptionWindow->SetVisibility(ESlateVisibility::Collapsed);
+	MultiWindow->SetVisibility(ESlateVisibility::Collapsed);
 }
 
 void UTitle_UserWidgetBase::OnExitButton()

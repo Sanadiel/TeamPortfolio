@@ -34,26 +34,26 @@ struct TEAMPORTFOLIO_API FItemDataTable : public FTableRowBase
 public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-		int ItemIndex;
+	int ItemIndex;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-		FString ItemName;
+	FString ItemName;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-		EItemType ItemType;
+	EItemType ItemType;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-		ESlotType ItemEquipSlot;
+	ESlotType ItemEquipSlot;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-		float ItemFloat01;
+	float ItemFloat01;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-		int ItemCount;
+	int ItemCount;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-		TAssetPtr<class UTexture2D> ItemThumnail;
+	TAssetPtr<class UTexture2D> ItemThumnail;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-		TAssetPtr<class UStaticMesh>ItemMesh;
+	TAssetPtr<class UStaticMesh>ItemMesh;
 };

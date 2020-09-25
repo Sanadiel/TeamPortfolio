@@ -14,19 +14,4 @@ class TEAMPORTFOLIO_API ATestUI_GS : public AGameStateBase
 {
 	GENERATED_BODY()
 	
-#pragma region Public Member
-public:
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	TArray<FString> MonsterNameArray;
-
-#pragma endregion
-
-#pragma region Public Function
-public:
-	ATestUI_GS();
-
-	virtual void BeginPlay() override;
-	FString GetName(int Value);
-
-#pragma endregion
 };

@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
+#include "../Data/MonsterDataTable.h"
+#include "../Item/ItemDataTable.h"
 #include "TotalLog_GameInstance.generated.h"
 
 /**
@@ -14,8 +16,34 @@ class TEAMPORTFOLIO_API UTotalLog_GameInstance : public UGameInstance
 {
 	GENERATED_BODY()
 	
+#pragma region Public Member
 public:
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Kill_Log")
-	TArray<int> KillLog;
-	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Data")
+	class UDataTable* ItemDataTable;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Data")
+	class UDataTable* MonsterDataTable;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Data")
+	TArray<FMonsterDataTable> MonsterDataArray;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Kill_Record")
+	TArray<int> Kill_Record;
+
+#pragma endregion
+
+#pragma region Public Function
+public:
+	UFUNCTION(BlueprintCallable)
+	FItemDataTable GetItemData(int Index) const;
+
+	UFUNCTION(BlueprintCallable)
+	FMonsterDataTable GetMonsterData(int Index) const;
+
+	void SettingMonsterData();
+	void SettingItemData();
+
+	virtual void Init() override;
+
+#pragma endregion
 };
