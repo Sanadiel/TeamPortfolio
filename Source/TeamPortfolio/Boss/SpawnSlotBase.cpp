@@ -53,7 +53,7 @@ void USpawnSlotBase::NativeTick(const FGeometry & MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry,InDeltaTime);
 
-	UE_LOG(LogClass, Warning, TEXT("UserWidgetTick"));
+	//UE_LOG(LogClass, Warning, TEXT("UserWidgetTick"));
 
 	APlayerController* pc = GetOwningPlayer();
 	if (pc)
@@ -87,7 +87,18 @@ void USpawnSlotBase::OnButtonClicked()
 			//UE_LOG(LogClass, Warning, TEXT("%s"),*number);
 			if (index < boss->SpawnClasses.Num() && boss->SpawnClasses[index])
 			{
-				boss->SetProjectileClass(boss->SpawnClasses[index]);
+				//boss->SetProjectileClass(boss->SpawnClasses[index]);
+				FTransform transform;
+				transform.SetLocation(boss->HoldPosition->GetComponentLocation());
+				AMonsterSpawnProjectile* projectile = GetWorld()->SpawnActor<AMonsterSpawnProjectile>(boss->SpawnClasses[index],transform);
+				if (projectile)
+				{
+					boss->HoldSpawnProjectile(projectile);
+				}
+				else
+				{
+					UE_LOG(LogClass, Warning, TEXT("Projectile Spawn Failed"));
+				}
 			}
 			else
 			{

@@ -24,9 +24,9 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, Category = "Projectile")
 		USphereComponent* Sphere;
 
-	// ojectile movement component
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
-		UProjectileMovementComponent* ProjectileMovement;
+	//// Projectile movement component. Not Used when holding.
+	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
+	//	UProjectileMovementComponent* ProjectileMovement;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
 		USkeletalMeshComponent* Mesh;

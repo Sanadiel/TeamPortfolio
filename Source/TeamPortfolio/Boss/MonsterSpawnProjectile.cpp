@@ -15,7 +15,6 @@ AMonsterSpawnProjectile::AMonsterSpawnProjectile()
 	Sphere = CreateDefaultSubobject<USphereComponent>(TEXT("Sphere"));
 	Sphere->InitSphereRadius(10.0f);
 	Sphere->BodyInstance.SetCollisionProfileName("Projectile");
-	Sphere->OnComponentHit.AddDynamic(this, &AMonsterSpawnProjectile::OnHit);		// set up a notification for when this component hits something blocking
 
 	// Players can't walk on it
 	Sphere->SetWalkableSlopeOverride(FWalkableSlopeOverride(WalkableSlope_Unwalkable, 0.f));
@@ -23,13 +22,19 @@ AMonsterSpawnProjectile::AMonsterSpawnProjectile()
 
 	SetRootComponent(Sphere);
 
+	Sphere->SetSimulatePhysics(true);
+	Sphere->SetEnableGravity(true);
+	Sphere->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	Sphere->SetNotifyRigidBodyCollision(true);
+
+
 	//MeshSetting
 	Mesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh"));
 	Mesh->SetupAttachment(RootComponent);
 	Mesh->SetRelativeScale3D(FVector(0.5f, 0.5f, 0.25f));
 	Mesh->SetRelativeLocation(FVector(0.0f, 0.0f, -15.0f));
 
-
+	/*
 	// Use a ProjectileMovementComponent to govern this projectile's movement
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileComp"));
 	ProjectileMovement->UpdatedComponent = Sphere;
@@ -37,9 +42,10 @@ AMonsterSpawnProjectile::AMonsterSpawnProjectile()
 	ProjectileMovement->MaxSpeed = 3000.f;
 	ProjectileMovement->bRotationFollowsVelocity = true;
 	ProjectileMovement->bShouldBounce = true;
+	*/
 
 	// Die after 3 seconds by default
-	InitialLifeSpan = 3.0f;
+	//InitialLifeSpan = 3.0f;
 
 }
 
@@ -47,6 +53,8 @@ AMonsterSpawnProjectile::AMonsterSpawnProjectile()
 void AMonsterSpawnProjectile::BeginPlay()
 {
 	Super::BeginPlay();
+
+	Sphere->OnComponentHit.AddDynamic(this, &AMonsterSpawnProjectile::OnHit);		// set up a notification for when this component hits something blocking
 
 }
 

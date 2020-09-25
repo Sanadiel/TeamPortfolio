@@ -11,7 +11,8 @@
 #include "MonsterSpawnProjectile.h"
 
 #include "BossWidgetBase.h" //Beginplay
-
+#include "PhysicsEngine/PhysicsHandleComponent.h" // Physics Handle.
+#include "Components/SphereComponent.h"
 // Sets default values
 ABossCharacter::ABossCharacter()
 {
@@ -22,14 +23,24 @@ ABossCharacter::ABossCharacter()
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArm->SetupAttachment(RootComponent);
 	SpringArm->bUsePawnControlRotation = true;
-	SpringArm->TargetArmLength = 500.0f;
-	SpringArm->SocketOffset = FVector(0.0f, 40.0f*2.0f, 88.0f*2.0f);
+	SpringArm->TargetArmLength = 300.0f;
+	SpringArm->SocketOffset = FVector(0.0f, 40.0f, 88.0f);
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(SpringArm);
 
 	GetMesh()->SetRelativeLocation(FVector(0.0f, 0.0f, -GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight()));
 	GetMesh()->SetRelativeRotation(FRotator(0.0f, 270.0f, 0.0f));
+
+	PhysicsHandle  = CreateDefaultSubobject<UPhysicsHandleComponent>(TEXT("PhysicsHandle"));
+
+	HoldPosition = CreateDefaultSubobject<USceneComponent>(TEXT("HoldPosition"));
+	HoldPosition->SetupAttachment(Camera);
+	HoldPosition->SetRelativeLocation(FVector(200.0f,0.0f,-50.0f));
+
+	bUseControllerRotationYaw = false;
+	bUseControllerRotationPitch = false;
+	bUseControllerRotationRoll = false;
 
 
 	/*Trajectory Param's Default Parameter*/
@@ -75,13 +86,18 @@ void ABossCharacter::BeginPlay()
 void ABossCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	DrawProjectileTrajectory();
+	
+	//DrawProjectileTrajectory();
 
 	for (int i = 0; i < SpawnCooldown.Num(); i++)
 	{
 		SpawnCooldown[i] += DeltaTime;
 	}
 
+	if (PhysicsHandle)
+	{
+		PhysicsHandle->SetTargetLocation(HoldPosition->GetComponentLocation());
+	}
 }
 
 // Called to bind functionality to input
@@ -89,7 +105,7 @@ void ABossCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &ABossCharacter::FireToSpawn);
+	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &ABossCharacter::ReleaseSpawnProjectile);
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &ABossCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &ABossCharacter::MoveRight);
@@ -108,17 +124,17 @@ void ABossCharacter::DrawProjectileTrajectory()
 
 }
 
-void ABossCharacter::FireToSpawn()
-{
-	//Fire Monster Spawn Projectile if Valid.
-	if (MonsterSpawnProjectileClass)
-	{
-		FTransform transform;
-		transform.SetLocation(GetActorLocation() + GetActorForwardVector() * 100.0f);
-		transform.SetRotation(GetControlRotation().Quaternion());
-		GetWorld()->SpawnActor<AMonsterSpawnProjectile>(MonsterSpawnProjectileClass, transform);
-	}
-}
+//void ABossCharacter::FireToSpawn()
+//{
+//	//Fire Monster Spawn Projectile if Valid.
+//	if (MonsterSpawnProjectileClass)
+//	{
+//		FTransform transform;
+//		transform.SetLocation(GetActorLocation() + GetActorForwardVector() * 100.0f);
+//		transform.SetRotation(GetControlRotation().Quaternion());
+//		GetWorld()->SpawnActor<AMonsterSpawnProjectile>(MonsterSpawnProjectileClass, transform);
+//	}
+//}
 
 void ABossCharacter::SetProjectileClass(TSubclassOf<AMonsterSpawnProjectile> NewProjectileClass)
 {
@@ -174,5 +190,19 @@ void ABossCharacter::Turn(float Value)
 
 void ABossCharacter::LookUp(float Value)
 {
-	AddControllerPitchInput(-Value);
+	AddControllerPitchInput(Value);
+}
+
+void ABossCharacter::HoldSpawnProjectile(AMonsterSpawnProjectile* ProjectileObject)
+{
+	if (PhysicsHandle)
+	{
+		PhysicsHandle->GrabComponentAtLocation(ProjectileObject->Sphere, NAME_None, ProjectileObject->GetActorLocation());
+		UE_LOG(LogClass, Warning, TEXT("Hold OK"),);
+	}
+}
+
+void ABossCharacter::ReleaseSpawnProjectile()
+{
+	PhysicsHandle->ReleaseComponent();
 }

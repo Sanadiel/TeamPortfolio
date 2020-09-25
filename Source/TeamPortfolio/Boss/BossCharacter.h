@@ -11,6 +11,9 @@ class USpringArmComponent;
 class UCameraComponent;
 class AMonsterSpawnProjectile;
 class UBossWidgetBase;
+class UPhysicsHandleComponent;
+class USceneComponent;
+
 UCLASS()
 class TEAMPORTFOLIO_API ABossCharacter : public ACharacter
 {
@@ -27,6 +30,12 @@ public:
 	//Camera
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 		UCameraComponent* Camera;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPhysicsHandleComponent* PhysicsHandle;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+		USceneComponent* HoldPosition;
 
 
 protected:
@@ -51,8 +60,8 @@ public:
 	void Turn(float Value);
 	void LookUp(float Value);
 
-	//Fire & Spawn Monsters
-	void FireToSpawn();
+	////Fire & Spawn Monsters
+	//void FireToSpawn();
 
 	//List that You Can.
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Monster")
@@ -70,4 +79,8 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UMG")
 		TSubclassOf<UBossWidgetBase> BossWidgetClass;
+
+	void HoldSpawnProjectile(AMonsterSpawnProjectile* ProjectileObject);
+
+	void ReleaseSpawnProjectile();
 };
