@@ -22,12 +22,21 @@ public:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "UI")
 	class UResultFadeOutBase* ResultWidgetObject;
 
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "UI")
+	TSubclassOf<class UMainUIBase> MainWidgetClass;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "UI")
+	class UMainUIBase* MainWidgetObject;
+
 #pragma endregion
 
 
 #pragma region Public Function
 public:
 	virtual void BeginPlay() override;
+
+	void AddResultWidget();
 
 #pragma endregion
 };
