@@ -23,6 +23,13 @@ AMonster::AMonster()
 void AMonster::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (PawnSensing)
+	{
+		PawnSensing->OnSeePawn.AddDynamic(this, &AMonster::ProcessSeenPawn);
+		PawnSensing->OnHearNoise.AddDynamic(this, &AMonster::ProcessHearPawn);
+	}
+	
 	
 }
 
@@ -42,7 +49,8 @@ void AMonster::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void AMonster::ProcessSeenPawn(APawn* Pawn)
 {
-	if (CurrentState == EMonsterState::Normal)
+	if (Pawn->ActorHasTag(TEXT("PlayerMTest")) &&
+		CurrentState == EMonsterState::Normal)
 	{
 		UE_LOG(LogClass, Warning, TEXT("See %s"), *Pawn->GetName());
 		SetCurrentState(EMonsterState::Chase);
