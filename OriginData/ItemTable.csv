@@ -1,0 +1,7 @@
+RowName,ItemIndex,ItemName,ItemType,ItemEquipSlot,ItemFloat01,ItemCount,ItemThumnail,ItemMesh
+0,0,에너지드링크,Consume,NotUse,40,1,,
+1,1,수류탄,Equip,WeaponRightHand,0,1,,
+2,2,구급상자,Consume,NotUse,100,1,,
+3,3,권총,Equip,WeaponRightHand,0,1,,
+4,4,2배율스코프,Equip,Weapon,0,1,,
+5,5,SMG45,Equip,WeaponBack01,0,1,,

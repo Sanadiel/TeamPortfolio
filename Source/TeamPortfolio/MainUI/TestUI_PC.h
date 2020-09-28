@@ -22,12 +22,17 @@ public:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "UI")
 	class UResultFadeOutBase* ResultWidgetObject;
 
-
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "UI")
 	TSubclassOf<class UMainUIBase> MainWidgetClass;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "UI")
 	class UMainUIBase* MainWidgetObject;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "UI")
+	TSubclassOf<class UInventoryWidgetBase> InvenWidgetClass;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "UI")
+	class UInventoryWidgetBase* InvenWidgetObject;
 
 #pragma endregion
 
@@ -35,8 +40,12 @@ public:
 #pragma region Public Function
 public:
 	virtual void BeginPlay() override;
+	virtual void SetupInputComponent() override;
 
 	void AddResultWidget();
+
+	void Toggle_InvenWidget();
+	void UnToggle_InvenWidget();
 
 #pragma endregion
 };

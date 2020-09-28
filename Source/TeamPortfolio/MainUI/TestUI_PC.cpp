@@ -4,6 +4,7 @@
 #include "TestUI_PC.h"
 #include "ResultFadeOutBase.h"
 #include "MainUIBase.h"
+#include "InventoryWidgetBase.h"
 
 void ATestUI_PC::BeginPlay()
 {
@@ -13,6 +14,7 @@ void ATestUI_PC::BeginPlay()
 	{
 		ResultWidgetObject = CreateWidget<UResultFadeOutBase>(this, ResultWidgetClass);
 		MainWidgetObject = CreateWidget<UMainUIBase>(this, MainWidgetClass);
+		InvenWidgetObject = CreateWidget<UInventoryWidgetBase>(this, InvenWidgetClass);
 
 		if (MainWidgetObject)
 		{
@@ -23,10 +25,30 @@ void ATestUI_PC::BeginPlay()
 	}
 }
 
+void ATestUI_PC::SetupInputComponent()
+{
+}
+
 void ATestUI_PC::AddResultWidget()
 {
 	if (ResultWidgetObject)
 	{
 		ResultWidgetObject->AddToViewport();
+	}
+}
+
+void ATestUI_PC::Toggle_InvenWidget()
+{
+	if (InvenWidgetObject)
+	{
+		InvenWidgetObject->AddToViewport();
+	}
+}
+
+void ATestUI_PC::UnToggle_InvenWidget()
+{
+	if (InvenWidgetObject)
+	{
+		InvenWidgetObject->RemoveFromViewport();
 	}
 }
