@@ -42,8 +42,11 @@ ABossCharacter::ABossCharacter()
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationRoll = false;
 
+	//Boss Will Exist in Level. Normal Player will Spawn by GameMode.
+	AutoPossessPlayer = EAutoReceiveInput::Player0;
 
-	/*Trajectory Param's Default Parameter*/
+	/* Deprecated. 
+	//Trajectory Param's Default Parameter. Not Needed when Throwing PlayMode
 	TArray<TEnumAsByte<EObjectTypeQuery>> objectTypes;
 	objectTypes.Add(EObjectTypeQuery::ObjectTypeQuery1);
 	TrajectoryParams.ObjectTypes = objectTypes;
@@ -51,6 +54,7 @@ ABossCharacter::ABossCharacter()
 	TrajectoryParams.SimFrequency = 15.0f;
 	TrajectoryParams.MaxSimTime = 2.0f;
 	TrajectoryParams.ProjectileRadius = 10.0f;
+	*/
 }
 
 // Called when the game starts or when spawned
@@ -116,15 +120,15 @@ void ABossCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 }
 
-void ABossCharacter::DrawProjectileTrajectory()
-{
-
-	//Adjust Location to ActorLocation & LaunchVelocity... will equal to Projectile Speed I Think?
-	TrajectoryParams.StartLocation = GetActorLocation();
-	TrajectoryParams.LaunchVelocity = UKismetMathLibrary::GetForwardVector(GetControlRotation()) * 3000.0f;
-	UGameplayStatics::PredictProjectilePath(GetWorld(), TrajectoryParams, Trajectoryresult);
-
-}
+//void ABossCharacter::DrawProjectileTrajectory()
+//{
+//
+//	//Adjust Location to ActorLocation & LaunchVelocity... will equal to Projectile Speed I Think?
+//	TrajectoryParams.StartLocation = GetActorLocation();
+//	TrajectoryParams.LaunchVelocity = UKismetMathLibrary::GetForwardVector(GetControlRotation()) * 3000.0f;
+//	UGameplayStatics::PredictProjectilePath(GetWorld(), TrajectoryParams, Trajectoryresult);
+//
+//}
 
 //void ABossCharacter::FireToSpawn()
 //{
@@ -157,13 +161,8 @@ void ABossCharacter::MoveForward(float Value)
 	FRotator cameraRotation;
 
 	GetController()->GetPlayerViewPoint(cameraLocation, cameraRotation);
-
-
-	//FRotator controlRot = FRotator(0.0f, GetControlRotation().Yaw, 0.0f);
 	FRotator controlRot = FRotator(0.0f, cameraRotation.Yaw, 0.0f);
-
-	FVector temp
-		= UKismetMathLibrary::GetForwardVector(controlRot);
+	FVector temp = UKismetMathLibrary::GetForwardVector(controlRot);
 
 	AddMovementInput(temp, Value);
 }
@@ -175,12 +174,8 @@ void ABossCharacter::MoveRight(float Value)
 	FRotator cameraRotation;
 
 	GetController()->GetPlayerViewPoint(cameraLocation, cameraRotation);
-
-	//FRotator controlRot = FRotator(0.0f, GetControlRotation().Yaw, 0.0f);
 	FRotator controlRot = FRotator(0.0f, cameraRotation.Yaw, 0.0f);
-
-	FVector temp
-		= UKismetMathLibrary::GetRightVector(controlRot);
+	FVector temp = UKismetMathLibrary::GetRightVector(controlRot);
 
 	AddMovementInput(temp, Value);
 }
@@ -200,11 +195,17 @@ void ABossCharacter::HoldSpawnProjectile(AMonsterSpawnProjectile* ProjectileObje
 	if (PhysicsHandle)
 	{
 		PhysicsHandle->GrabComponentAtLocation(ProjectileObject->Sphere, NAME_None, ProjectileObject->GetActorLocation());
-		UE_LOG(LogClass, Warning, TEXT("Hold OK"),);
+		UE_LOG(LogClass, Warning, TEXT("Hold OK"));
+		
 	}
 }
 
 void ABossCharacter::ReleaseSpawnProjectile()
 {
 	PhysicsHandle->ReleaseComponent();
+}
+
+UPrimitiveComponent * ABossCharacter::GetGrabbedComponent() const
+{
+	return PhysicsHandle->GetGrabbedComponent();
 }

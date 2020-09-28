@@ -85,7 +85,7 @@ void USpawnSlotBase::OnButtonClicked()
 
 			int32 index = GetSlotNumber();
 			//UE_LOG(LogClass, Warning, TEXT("%s"),*number);
-			if (index < boss->SpawnClasses.Num() && boss->SpawnClasses[index] && boss->SpawnCooldown[index] >=boss->MaxSpawnCooldown[index])
+			if (index < boss->SpawnClasses.Num() && boss->SpawnClasses[index] && (boss->SpawnCooldown[index] >= boss->MaxSpawnCooldown[index]) && !boss->GetGrabbedComponent() )
 			{
 				//boss->SetProjectileClass(boss->SpawnClasses[index]);
 				FTransform transform;

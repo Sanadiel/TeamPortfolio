@@ -49,10 +49,12 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	/*Draw Trajectory in Tick.*/
+	/*
+	//Draw Trajectory in Tick. Deprecated.
 	FPredictProjectilePathParams TrajectoryParams;
 	FPredictProjectilePathResult Trajectoryresult;
 	void DrawProjectileTrajectory();
+	*/
 
 	/*Movement Functions*/
 	void MoveForward(float Value);
@@ -87,4 +89,6 @@ public:
 	void HoldSpawnProjectile(AMonsterSpawnProjectile* ProjectileObject);
 
 	void ReleaseSpawnProjectile();
+
+	UPrimitiveComponent* GetGrabbedComponent() const;
 };
