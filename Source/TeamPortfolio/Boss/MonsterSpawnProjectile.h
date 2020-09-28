@@ -17,6 +17,9 @@ class TEAMPORTFOLIO_API AMonsterSpawnProjectile : public AActor
 	GENERATED_BODY()
 
 public:
+
+	/*Warning. This Actor Had Projectile Movement Component in the Past. But, after the change to Throwing PlayMode, Projectile Component is Deleted. So, Do Not Use This As Having Projectile Movement Component.*/
+
 	// Sets default values for this actor's properties
 	AMonsterSpawnProjectile();
 
@@ -50,5 +53,7 @@ public:
 	UFUNCTION()
 		void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
+	UFUNCTION(Server, Reliable)
 	void SpawnMonster(const FHitResult& Hit);
+	void SpawnMonster_Implementation(const FHitResult& Hit);
 };

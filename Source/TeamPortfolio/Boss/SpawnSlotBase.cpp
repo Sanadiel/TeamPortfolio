@@ -55,25 +55,12 @@ void USpawnSlotBase::NativeTick(const FGeometry & MyGeometry, float InDeltaTime)
 
 	//UE_LOG(LogClass, Warning, TEXT("UserWidgetTick"));
 
-	APlayerController* pc = GetOwningPlayer();
-	if (pc)
-	{
-		ABossCharacter* boss = Cast<ABossCharacter>(pc->GetPawn());
-		if (boss)
-		{
-			int32 index = GetSlotNumber();
-			if (index < boss->SpawnCooldown.Num() && CooldownBar)
-			{
-				float currentCooldown = boss->SpawnCooldown[index];
-				CooldownBar->SetPercent(currentCooldown / boss->MaxSpawnCooldown[index]);
-			}
-		}
-	}
+	UpdateCooldown();
 }
 
-void USpawnSlotBase::OnButtonClicked()
+void USpawnSlotBase::OnButtonClicked_Implementation()
 {
-	//UE_LOG(LogClass, Warning, TEXT("%s's button Clicked."), *GetName());
+	UE_LOG(LogClass, Warning, TEXT("%s's button Clicked."), *GetName());
 
 	APlayerController* pc = GetOwningPlayer();
 	if (pc)
@@ -85,12 +72,27 @@ void USpawnSlotBase::OnButtonClicked()
 
 			int32 index = GetSlotNumber();
 			//UE_LOG(LogClass, Warning, TEXT("%s"),*number);
-			if (index < boss->SpawnClasses.Num() && boss->SpawnClasses[index] && (boss->SpawnCooldown[index] >= boss->MaxSpawnCooldown[index]) && !boss->GetGrabbedComponent() )
+			if (index < boss->SpawnClasses.Num() && boss->SpawnClasses[index])
 			{
+				if (boss->GetGrabbedComponent())
+				{
+					UE_LOG(LogClass, Warning, TEXT("Projectile Spawn Failed. You Already Hold Something."));
+					return;
+				}
+
+				if (boss->SpawnCooldown[index] < boss->MaxSpawnCooldown[index])
+				{
+					UE_LOG(LogClass, Warning, TEXT("Projectile Spawn Failed. Waiting for the Cooldown"));
+					return;
+				}
+
 				//boss->SetProjectileClass(boss->SpawnClasses[index]);
 				FTransform transform;
 				transform.SetLocation(boss->HoldPosition->GetComponentLocation());
-				AMonsterSpawnProjectile* projectile = GetWorld()->SpawnActor<AMonsterSpawnProjectile>(boss->SpawnClasses[index],transform);
+				FActorSpawnParameters params;
+				params.Owner = boss;
+				
+				AMonsterSpawnProjectile* projectile = GetWorld()->SpawnActor<AMonsterSpawnProjectile>(boss->SpawnClasses[index],transform,params);
 				if (projectile)
 				{
 					boss->HoldSpawnProjectile(projectile);
@@ -109,6 +111,24 @@ void USpawnSlotBase::OnButtonClicked()
 		}
 	}
 
+}
+
+void USpawnSlotBase::UpdateCooldown()
+{
+	APlayerController* pc = GetOwningPlayer();
+	if (pc && pc->IsLocalPlayerController())
+	{
+		ABossCharacter* boss = Cast<ABossCharacter>(pc->GetPawn());
+		if (boss)
+		{
+			int32 index = GetSlotNumber();
+			if (index < boss->SpawnCooldown.Num() && CooldownBar)
+			{
+				float currentCooldown = boss->SpawnCooldown[index];
+				CooldownBar->SetPercent(currentCooldown / boss->MaxSpawnCooldown[index]);
+			}
+		}
+	}
 }
 
 int32 USpawnSlotBase::GetSlotNumber() const

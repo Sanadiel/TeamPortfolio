@@ -190,9 +190,9 @@ void ABossCharacter::LookUp(float Value)
 	AddControllerPitchInput(Value);
 }
 
-void ABossCharacter::HoldSpawnProjectile(AMonsterSpawnProjectile* ProjectileObject)
+void ABossCharacter::HoldSpawnProjectile_Implementation(AMonsterSpawnProjectile* ProjectileObject)
 {
-	if (PhysicsHandle)
+	if (PhysicsHandle && ProjectileObject)
 	{
 		PhysicsHandle->GrabComponentAtLocation(ProjectileObject->Sphere, NAME_None, ProjectileObject->GetActorLocation());
 		UE_LOG(LogClass, Warning, TEXT("Hold OK"));

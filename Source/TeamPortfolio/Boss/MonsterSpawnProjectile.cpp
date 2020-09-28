@@ -34,6 +34,8 @@ AMonsterSpawnProjectile::AMonsterSpawnProjectile()
 	Mesh->SetRelativeScale3D(FVector(0.25f, 0.25f, 0.25f));
 	Mesh->SetRelativeLocation(FVector(0.0f, 0.0f, -15.0f));
 
+	SetReplicates(true);
+	SetReplicateMovement(true);
 	/*
 	// Use a ProjectileMovementComponent to govern this projectile's movement
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileComp"));
@@ -54,8 +56,7 @@ void AMonsterSpawnProjectile::BeginPlay()
 {
 	Super::BeginPlay();
 
-	Sphere->OnComponentHit.AddDynamic(this, &AMonsterSpawnProjectile::OnHit);		// set up a notification for when this component hits something blocking
-
+	Sphere->OnComponentHit.AddDynamic(this, &AMonsterSpawnProjectile::OnHit);		// set up a notification for when this component hits something blocking.
 }
 
 //// Called every frame
@@ -78,7 +79,10 @@ void AMonsterSpawnProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherA
 	//Spawn Monster when Hit Ground -> Not SimulatingPhysics.
 	else if (MonsterSpawnInfo.SpawnActorClass && OtherActor != NULL && OtherActor != this && OtherComp != NULL)
 	{
-		SpawnMonster(Hit);
+		if (HasAuthority()) // Only Do in Server
+		{
+			SpawnMonster(Hit);
+		}
 		Destroy();
 	}
 	else
@@ -87,7 +91,7 @@ void AMonsterSpawnProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherA
 	}
 }
 
-void AMonsterSpawnProjectile::SpawnMonster(const FHitResult& Hit)
+void AMonsterSpawnProjectile::SpawnMonster_Implementation(const FHitResult& Hit)
 {
 	//Spawn Monster 
 	if (MonsterSpawnInfo.SpawnActorClass)
@@ -95,17 +99,15 @@ void AMonsterSpawnProjectile::SpawnMonster(const FHitResult& Hit)
 		FTransform transform;
 		transform.SetLocation(Hit.Location);
 		FActorSpawnParameters params;
-		params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
+		params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+		params.Owner = GetOwner();
+		UE_LOG(LogClass, Warning, TEXT("Owner : %s"), *GetOwner()->GetName());
 		AActor* monster = GetWorld()->SpawnActor<AActor>(MonsterSpawnInfo.SpawnActorClass, transform, params);
 
-		if (!monster)		//Check Monster Spawn Success so you can Confirm that the Cooldown will Do.
+		if (!monster)		//Check Monster Spawn Success.
 		{
 			//Don't CoolDown Start
 			UE_LOG(LogClass, Warning, TEXT("Failed to Spawn Monster"));
-		}
-		else
-		{
-			//CoolDown Will Start..?
 		}
 	}
 

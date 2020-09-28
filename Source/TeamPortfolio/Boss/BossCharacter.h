@@ -86,7 +86,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UMG")
 		TSubclassOf<UBossWidgetBase> BossWidgetClass;
 
+	UFUNCTION(Server,Reliable)
 	void HoldSpawnProjectile(AMonsterSpawnProjectile* ProjectileObject);
+	void HoldSpawnProjectile_Implementation(AMonsterSpawnProjectile* ProjectileObject);
 
 	void ReleaseSpawnProjectile();
 
