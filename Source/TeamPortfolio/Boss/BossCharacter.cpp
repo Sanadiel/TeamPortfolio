@@ -32,14 +32,16 @@ ABossCharacter::ABossCharacter()
 	GetMesh()->SetRelativeLocation(FVector(0.0f, 0.0f, -GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight()));
 	GetMesh()->SetRelativeRotation(FRotator(0.0f, 270.0f, 0.0f));
 
+	//PhysicsHandle Component.
 	PhysicsHandle  = CreateDefaultSubobject<UPhysicsHandleComponent>(TEXT("PhysicsHandle"));
-
+	
+	//HoldPosition.
 	HoldPosition = CreateDefaultSubobject<USceneComponent>(TEXT("HoldPosition"));
 	HoldPosition->SetupAttachment(Camera);
 	HoldPosition->SetRelativeLocation(FVector(200.0f,0.0f,-50.0f));
 
-	bUseControllerRotationYaw = false;
-	bUseControllerRotationPitch = false;
+	bUseControllerRotationYaw = true;
+	bUseControllerRotationPitch = true;
 	bUseControllerRotationRoll = false;
 
 	//Boss Will Exist in Level. Normal Player will Spawn by GameMode.
@@ -72,6 +74,7 @@ void ABossCharacter::BeginPlay()
 		}
 	}
 
+	/*Show Mouse Cursor*/
 	APlayerController* pc = Cast<APlayerController>(GetController());
 	if (pc)
 	{
@@ -79,6 +82,7 @@ void ABossCharacter::BeginPlay()
 		pc->SetInputMode(FInputModeGameAndUI());
 	}
 	
+	//Initialize Spawn Cooldown.
 	for (int i = 0; i < SpawnClasses.Num(); i++)
 	{
 		SpawnCooldown.Add(0.0f);
@@ -100,6 +104,7 @@ void ABossCharacter::Tick(float DeltaTime)
 		SpawnCooldown[i] = FMath::Clamp<float>(SpawnCooldown[i], 0.0f, MaxSpawnCooldown[i]);
 	}
 
+	//PhysicsHandle Needed Update Target Location Per Frame.
 	if (PhysicsHandle)
 	{
 		PhysicsHandle->SetTargetLocation(HoldPosition->GetComponentLocation());
@@ -195,8 +200,7 @@ void ABossCharacter::HoldSpawnProjectile_Implementation(AMonsterSpawnProjectile*
 	if (PhysicsHandle && ProjectileObject)
 	{
 		PhysicsHandle->GrabComponentAtLocation(ProjectileObject->Sphere, NAME_None, ProjectileObject->GetActorLocation());
-		UE_LOG(LogClass, Warning, TEXT("Hold OK"));
-		
+		//UE_LOG(LogClass, Warning, TEXT("Hold OK"));
 	}
 }
 

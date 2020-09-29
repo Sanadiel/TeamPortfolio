@@ -12,7 +12,7 @@ void UBossWidgetBase::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	/*Spawn Slots will be add to SpawnSlots. currently default slot number is 8*/
+	/*Spawn Slots will be add to SpawnSlots. currently default slot Max Number is 8 (0~7)*/
 	SlotBox = Cast<UHorizontalBox>(GetWidgetFromName(TEXT("SlotBox")));
 	if (SlotBox)
 	{

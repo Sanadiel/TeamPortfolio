@@ -69,9 +69,11 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Monster")
 	TArray<TSubclassOf<AMonsterSpawnProjectile>> SpawnClasses;
 
+	//Current Cooldown.
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Monster")
 	TArray<float> SpawnCooldown;
 
+	//MaxCoolDown.
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Monster")
 		TArray<float> MaxSpawnCooldown;
 
@@ -86,11 +88,14 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UMG")
 		TSubclassOf<UBossWidgetBase> BossWidgetClass;
 
+	//Hold Projectile Actor.
 	UFUNCTION(Server,Reliable)
 	void HoldSpawnProjectile(AMonsterSpawnProjectile* ProjectileObject);
 	void HoldSpawnProjectile_Implementation(AMonsterSpawnProjectile* ProjectileObject);
 
+	//Release Holding Projectile Actor.
 	void ReleaseSpawnProjectile();
 
+	//Return Current GrabbedComponent.
 	UPrimitiveComponent* GetGrabbedComponent() const;
 };

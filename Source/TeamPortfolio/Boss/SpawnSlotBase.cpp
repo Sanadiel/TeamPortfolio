@@ -58,7 +58,7 @@ void USpawnSlotBase::NativeTick(const FGeometry & MyGeometry, float InDeltaTime)
 	UpdateCooldown();
 }
 
-void USpawnSlotBase::OnButtonClicked_Implementation()
+void USpawnSlotBase::OnButtonClicked()
 {
 	UE_LOG(LogClass, Warning, TEXT("%s's button Clicked."), *GetName());
 
@@ -115,6 +115,8 @@ void USpawnSlotBase::OnButtonClicked_Implementation()
 
 void USpawnSlotBase::UpdateCooldown()
 {
+
+	//Update Cooldown In Slot ProgressBar
 	APlayerController* pc = GetOwningPlayer();
 	if (pc && pc->IsLocalPlayerController())
 	{
@@ -133,6 +135,7 @@ void USpawnSlotBase::UpdateCooldown()
 
 int32 USpawnSlotBase::GetSlotNumber() const
 {
+	//Get Number. ex) "SpawnSlot7" == 7
 	FString widgetName = GetName();
 	widgetName.RemoveFromStart(TEXT("SpawnSlot"));
 	FString number = widgetName;

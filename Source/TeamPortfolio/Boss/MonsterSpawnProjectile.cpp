@@ -36,7 +36,9 @@ AMonsterSpawnProjectile::AMonsterSpawnProjectile()
 
 	SetReplicates(true);
 	SetReplicateMovement(true);
-	/*
+
+
+	/* Deprecated.
 	// Use a ProjectileMovementComponent to govern this projectile's movement
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileComp"));
 	ProjectileMovement->UpdatedComponent = Sphere;
@@ -44,10 +46,11 @@ AMonsterSpawnProjectile::AMonsterSpawnProjectile()
 	ProjectileMovement->MaxSpeed = 3000.f;
 	ProjectileMovement->bRotationFollowsVelocity = true;
 	ProjectileMovement->bShouldBounce = true;
-	*/
+
 
 	// Die after 3 seconds by default
 	//InitialLifeSpan = 3.0f;
+	*/
 
 }
 
@@ -56,7 +59,9 @@ void AMonsterSpawnProjectile::BeginPlay()
 {
 	Super::BeginPlay();
 
-	Sphere->OnComponentHit.AddDynamic(this, &AMonsterSpawnProjectile::OnHit);		// set up a notification for when this component hits something blocking.
+	// set up a notification for when this component hits something blocking.
+
+	Sphere->OnComponentHit.AddDynamic(this, &AMonsterSpawnProjectile::OnHit);
 }
 
 //// Called every frame
