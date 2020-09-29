@@ -22,11 +22,20 @@ void ATestUI_PC::BeginPlay()
 			bShowMouseCursor = false;
 			SetInputMode(FInputModeGameOnly());
 		}
+
+		if (InvenWidgetObject)
+		{
+			InvenWidgetObject->AddToViewport();
+			InvenWidgetObject->SetVisibility(ESlateVisibility::Collapsed);
+		}
 	}
 }
 
 void ATestUI_PC::SetupInputComponent()
 {
+	Super::SetupInputComponent();
+
+	InputComponent->BindAction(TEXT("InvenToggle"), IE_Pressed, this, &ATestUI_PC::Toggle_InvenWidget);	
 }
 
 void ATestUI_PC::AddResultWidget()
@@ -41,14 +50,26 @@ void ATestUI_PC::Toggle_InvenWidget()
 {
 	if (InvenWidgetObject)
 	{
-		InvenWidgetObject->AddToViewport();
+		if (bIsToggle == false)
+		{
+			//InvenWidgetObject->AddToViewport();
+			InvenWidgetObject->SetVisibility(ESlateVisibility::Visible);
+			bIsToggle = true;
+			bShowMouseCursor = true;
+			SetInputMode(FInputModeGameAndUI());
+			//SetInputMode(FInputModeUIOnly());
+		}
+		else
+		{
+			UnToggle_InvenWidget();
+		}		
 	}
 }
 
 void ATestUI_PC::UnToggle_InvenWidget()
-{
-	if (InvenWidgetObject)
-	{
-		InvenWidgetObject->RemoveFromViewport();
-	}
+{	
+	InvenWidgetObject->SetVisibility(ESlateVisibility::Collapsed);//->RemoveFromViewport();
+	bIsToggle = false;
+	bShowMouseCursor = false;
+	SetInputMode(FInputModeGameOnly());
 }

@@ -27,6 +27,9 @@ public:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Data")
 	TArray<FMonsterDataTable> MonsterDataArray;
 
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Data")
+	TArray<FItemDataTable> ItemDataArray;
+
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Kill_Record")
 	TArray<int> Kill_Record;
 

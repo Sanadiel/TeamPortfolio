@@ -31,7 +31,7 @@ void AMasterItem::BeginPlay()
 {
 	Super::BeginPlay();
 
-	static UTotalLog_GameInstance*	GameInstance = GetGameInstance<UTotalLog_GameInstance>();
+	UTotalLog_GameInstance*	GameInstance = GetGameInstance<UTotalLog_GameInstance>();
 
 	if(GameInstance)
 	{
@@ -41,11 +41,11 @@ void AMasterItem::BeginPlay()
 		}*/
 
 		ItemData = GameInstance->GetItemData(ItemIndex);
-		if (ItemIndex != 0)
+		/*if (ItemIndex != 0)
 		{
 			FStreamableManager Loader;
 			StaticMesh->SetStaticMesh(Loader.LoadSynchronous<UStaticMesh>(ItemData.ItemMesh));
-		}
+		}*/
 	}
 
 	Sphere->OnComponentBeginOverlap.AddDynamic(this, &AMasterItem::ProcessBeginOverlap);

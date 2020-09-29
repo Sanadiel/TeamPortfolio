@@ -8,6 +8,7 @@
 #include "Components/Border.h"
 #include "Components/CanvasPanel.h"
 #include "ItemSlotBase.h"
+#include "TestUI_PC.h"
 
 void UInventoryWidgetBase::NativeConstruct()
 {
@@ -18,6 +19,11 @@ void UInventoryWidgetBase::NativeConstruct()
 	Drag = Cast<UBorder>(GetWidgetFromName(TEXT("Drag")));
 	Exit = Cast<UButton>(GetWidgetFromName(TEXT("Exit")));
 	InventoryWindow = Cast<UCanvasPanel>(GetWidgetFromName(TEXT("InventoryWindow")));
+
+	if (Exit)
+	{
+		Exit->OnClicked.AddDynamic(this, &UInventoryWidgetBase::OnExitButton);
+	}
 }
 
 void UInventoryWidgetBase::UpdateInventory(TArray<class AMasterItem*> Inventory)
@@ -68,9 +74,21 @@ void UInventoryWidgetBase::SetSlot(int Index, AMasterItem* Item)
 	}
 }
 
-FEventReply UInventoryWidgetBase::OnMouseButtonDown(FGeometry MyGeometry, const FPointerEvent & MouseEvent)
+void UInventoryWidgetBase::OnExitButton()
 {
-	//Super::OnMouseButtonDown(MyGeometry, MouseEvent);
-
-	return FEventReply();
+	ATestUI_PC* PC = GetOwningPlayer<ATestUI_PC>();
+	PC->UnToggle_InvenWidget();
 }
+
+//FEventReply UInventoryWidgetBase::OnMouseButtonDown(FGeometry MyGeometry, const FPointerEvent & MouseEvent)
+//{
+//	Super::OnMouseButtonDown(MyGeometry, MouseEvent);
+//	UE_LOG(LogClass, Warning, TEXT("MouseButtoneDown"));
+//
+//	return FEventReply();
+//}
+//
+//void UInventoryWidgetBase::OnDragDetected(FGeometry MyGeometry, const FPointerEvent & PointerEvent, UDragDropOperation *& Operation)
+//{
+//	Super::OnDragDetected(MyGeometry, PointerEvent, Operation);
+//}

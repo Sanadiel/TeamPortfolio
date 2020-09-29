@@ -42,6 +42,10 @@ public:
 	int GetEmptySlot();
 	void SetSlot(int Index, class AMasterItem* Item);
 
-	FEventReply OnMouseButtonDown(FGeometry MyGeometry, const FPointerEvent& MouseEvent);
+	UFUNCTION()
+	void OnExitButton();
+
+	//FEventReply OnMouseButtonDown(FGeometry MyGeometry, const FPointerEvent& MouseEvent);
+	//void OnDragDetected(FGeometry MyGeometry, const FPointerEvent& PointerEvent, UDragDropOperation*& Operation);
 #pragma endregion
 };

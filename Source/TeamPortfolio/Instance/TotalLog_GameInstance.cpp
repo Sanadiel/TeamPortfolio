@@ -6,7 +6,14 @@
 
 FItemDataTable UTotalLog_GameInstance::GetItemData(int Index) const
 {
-	return *ItemDataTable->FindRow<FItemDataTable>(*FString::FromInt(Index), TEXT("ItemIndex"));
+	if (MonsterDataArray.IsValidIndex(Index))
+	{
+		return ItemDataArray[Index];
+	}
+	else
+	{
+		return FItemDataTable();
+	}
 }
 
 void UTotalLog_GameInstance::SettingMonsterData()
@@ -19,6 +26,19 @@ void UTotalLog_GameInstance::SettingMonsterData()
 
 void UTotalLog_GameInstance::SettingItemData()
 {
+	for(int Index = 0; ; ++Index)
+	{
+		FItemDataTable* Data = ItemDataTable->FindRow<FItemDataTable>(*FString::FromInt(Index), TEXT("ItemIndex"));
+		if (Data == nullptr)
+		{
+			break;
+		}		
+
+		ItemDataArray.Add(*Data);
+
+		//ItemDataArray.Add(*ItemDataTable->FindRow<FItemDataTable>(*FString::FromInt(Index), TEXT("ItemIndex")));
+		
+	}
 }
 
 void UTotalLog_GameInstance::Init()
@@ -38,6 +58,5 @@ FMonsterDataTable UTotalLog_GameInstance::GetMonsterData(int Index) const
 	else
 	{
 		return FMonsterDataTable();
-	}
-	
+	}	
 }

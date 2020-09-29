@@ -34,6 +34,9 @@ public:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "UI")
 	class UInventoryWidgetBase* InvenWidgetObject;
 
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "UI")
+	bool bIsToggle = false;
+
 #pragma endregion
 
 
