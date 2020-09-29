@@ -24,6 +24,8 @@ void AMonster::BeginPlay()
 {
 	Super::BeginPlay();
 
+	SetSpeed(WalkSpeed);
+
 	if (PawnSensing)
 	{
 		PawnSensing->OnSeePawn.AddDynamic(this, &AMonster::ProcessSeenPawn);

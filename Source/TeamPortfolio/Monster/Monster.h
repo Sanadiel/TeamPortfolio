@@ -53,6 +53,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetSpeed(float Speed);
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
+	float WalkSpeed = 150.0f;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
+	float RunSpeed = 300.0f;
+
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Status")
 	class UBehaviorTree* MonsterBT;
 };
