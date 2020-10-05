@@ -6,6 +6,8 @@
 
 void UAnimNotifyState_ChangeSpeed::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration)
 {
+
+
 	AMonster* Monster = Cast<AMonster>(MeshComp->GetOwner());
 	if (Monster)
 	{
