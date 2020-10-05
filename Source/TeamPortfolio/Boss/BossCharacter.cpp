@@ -104,8 +104,7 @@ void ABossCharacter::Tick(float DeltaTime)
 
 	for (int i = 0; i < SpawnCooldown.Num(); i++)
 	{
-		SpawnCooldown[i] += DeltaTime;
-		SpawnCooldown[i] = FMath::Clamp<float>(SpawnCooldown[i], 0.0f, MaxSpawnCooldown[i]);
+		SpawnCooldown[i] = FMath::Clamp<float>(SpawnCooldown[i] + DeltaTime, 0.0f, MaxSpawnCooldown[i]);
 	}
 
 	//PhysicsHandle Needed Update Target Location Per Frame.
