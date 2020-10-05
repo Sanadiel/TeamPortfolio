@@ -45,7 +45,6 @@ public:
 	UFUNCTION()
 	void OnExitButton();
 
-	//FEventReply OnMouseButtonDown(FGeometry MyGeometry, const FPointerEvent& MouseEvent);
-	//void OnDragDetected(FGeometry MyGeometry, const FPointerEvent& PointerEvent, UDragDropOperation*& Operation);
+	virtual void NativeOnInitialized() override;
 #pragma endregion
 };

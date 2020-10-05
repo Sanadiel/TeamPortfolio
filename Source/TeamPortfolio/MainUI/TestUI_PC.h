@@ -28,12 +28,6 @@ public:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "UI")
 	class UMainUIBase* MainWidgetObject;
 
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "UI")
-	TSubclassOf<class UInventoryWidgetBase> InvenWidgetClass;
-
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "UI")
-	class UInventoryWidgetBase* InvenWidgetObject;
-
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "UI")
 	bool bIsToggle = false;
 

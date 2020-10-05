@@ -17,10 +17,17 @@ class TEAMPORTFOLIO_API UMainUIBase : public UUserWidget
 #pragma region Public Member
 public:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-	class UProgressBar* HpBar;
+	class UHpBarBase* HpBar;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	class UProgressBar* MpBar;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	class UInventoryWidgetBase* Inventory;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	class UStatHoverBase* Hover;
+	
 
 #pragma endregion 
 
@@ -28,10 +35,17 @@ public:
 #pragma region Public Function
 public:
 	virtual void NativeConstruct() override;
+	virtual void NativeOnInitialized() override;
 
 	UFUNCTION(BlueprintCallable)
 	void UpdateHpBar(float Percent);
+	UFUNCTION(BlueprintCallable)
 	void UpdateMpBar(float Percent);
+
+	void ToggleInventory(bool bValue);	
+
+	UFUNCTION()
+	void ToggleHover(FVector2D Position, bool bValue);
 
 #pragma endregion 
 	

@@ -24,6 +24,8 @@ void UInventoryWidgetBase::NativeConstruct()
 	{
 		Exit->OnClicked.AddDynamic(this, &UInventoryWidgetBase::OnExitButton);
 	}
+
+	UE_LOG(LogClass, Warning, TEXT("NativeConstruct :: Inven"));
 }
 
 void UInventoryWidgetBase::UpdateInventory(TArray<class AMasterItem*> Inventory)
@@ -80,15 +82,9 @@ void UInventoryWidgetBase::OnExitButton()
 	PC->UnToggle_InvenWidget();
 }
 
-//FEventReply UInventoryWidgetBase::OnMouseButtonDown(FGeometry MyGeometry, const FPointerEvent & MouseEvent)
-//{
-//	Super::OnMouseButtonDown(MyGeometry, MouseEvent);
-//	UE_LOG(LogClass, Warning, TEXT("MouseButtoneDown"));
-//
-//	return FEventReply();
-//}
-//
-//void UInventoryWidgetBase::OnDragDetected(FGeometry MyGeometry, const FPointerEvent & PointerEvent, UDragDropOperation *& Operation)
-//{
-//	Super::OnDragDetected(MyGeometry, PointerEvent, Operation);
-//}
+void UInventoryWidgetBase::NativeOnInitialized()
+{
+	Super::NativeOnInitialized();
+
+	UE_LOG(LogClass, Warning, TEXT("NativeOnInitialized :: Inven"));
+}
