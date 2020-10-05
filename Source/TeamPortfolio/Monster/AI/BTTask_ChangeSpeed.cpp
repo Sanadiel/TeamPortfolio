@@ -2,22 +2,23 @@
 
 
 #include "BTTask_ChangeSpeed.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/BehaviorTree.h"
-#include "../Monster.h"
-#include "AIController.h"
+#include "../MonsterAIController.h"
 
 EBTNodeResult::Type UBTTask_ChangeSpeed::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	AAIController* AIC = Cast<AAIController>(OwnerComp.GetAIOwner());
+	AMonsterAIController* AIC = Cast<AMonsterAIController>(OwnerComp.GetAIOwner());
 
 	if (AIC)
 	{
-		AMonster* Monster = AIC->GetPawn<AMonster>();
-		if (Monster)
+		ACharacter* Pawn = Cast<ACharacter>(AIC->GetPawn());
+		if (Pawn)
 		{
-			Monster->SetSpeed(Speed);
+			float NewSpeed = AIC->BBComponent->GetValueAsFloat(GetSelectedBlackboardKey());
+			Pawn->GetCharacterMovement()->MaxWalkSpeed = NewSpeed;
 
 			return EBTNodeResult::Succeeded;
 

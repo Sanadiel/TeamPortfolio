@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "BehaviorTree/BTTaskNode.h"
+#include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
 #include "BTTask_ChangeSpeed.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class TEAMPORTFOLIO_API UBTTask_ChangeSpeed : public UBTTaskNode
+class TEAMPORTFOLIO_API UBTTask_ChangeSpeed : public UBTTask_BlackboardBase
 {
 	GENERATED_BODY()
 

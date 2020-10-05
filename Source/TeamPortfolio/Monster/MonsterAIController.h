@@ -34,5 +34,7 @@ public:
 	void SetTarget(FVector NewLocation);
 
 	void SetPlayer(AActor* Player);
+
+	void SetSpeedValue();
 	
 };

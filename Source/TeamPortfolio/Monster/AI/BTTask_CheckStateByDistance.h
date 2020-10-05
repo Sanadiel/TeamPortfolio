@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "BehaviorTree/BTTaskNode.h"
+#include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
 
 #include "../Monster.h"
 
@@ -20,7 +20,7 @@ enum class ETaskCondition : uint8
  * 
  */
 UCLASS()
-class TEAMPORTFOLIO_API UBTTask_CheckStateByDistance : public UBTTaskNode
+class TEAMPORTFOLIO_API UBTTask_CheckStateByDistance : public UBTTask_BlackboardBase
 {
 	GENERATED_BODY()
 public:

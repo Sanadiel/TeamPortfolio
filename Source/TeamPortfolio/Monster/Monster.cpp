@@ -16,6 +16,8 @@ AMonster::AMonster()
 	GetMesh()->SetRelativeLocation(FVector(0, 0, -GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight()));
 	GetMesh()->SetRelativeRotation(FRotator(0, -90.0f, 0));
 
+	Tags.Add(TEXT("Monster"));
+
 	PawnSensing = CreateDefaultSubobject<UPawnSensingComponent>(TEXT("PawnSensing"));
 }
 
@@ -73,11 +75,12 @@ void AMonster::ProcessHearPawn(APawn* Pawn, const FVector& Location, float Volum
 
 void AMonster::SetCurrentState(EMonsterState NewState)
 {
-	CurrentState = NewState;
+	
 
 	AMonsterAIController* AIC = GetController<AMonsterAIController>();
 	if (AIC)
 	{
+		CurrentState = NewState;
 		AIC->SetCurrnetState(NewState);
 	}
 }

@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "BehaviorTree/BTTaskNode.h"
+#include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
 #include "BTTask_SetRandomNextPoint.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class TEAMPORTFOLIO_API UBTTask_SetRandomNextPoint : public UBTTaskNode
+class TEAMPORTFOLIO_API UBTTask_SetRandomNextPoint : public UBTTask_BlackboardBase
 {
 	GENERATED_BODY()
 public:

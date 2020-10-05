@@ -27,6 +27,9 @@ void AMonsterAIController::OnPossess(APawn* InPawn)
 		{
 			BBComponent->InitializeBlackboard(*(Monster->MonsterBT->BlackboardAsset));
 			BTComponent->StartTree(*(Monster->MonsterBT));
+
+			SetSpeedValue();
+			SetCurrnetState(EMonsterState::Normal);
 		}
 	}
 
@@ -61,5 +64,15 @@ void AMonsterAIController::SetPlayer(AActor* Player)
 	if (BBComponent)
 	{
 		BBComponent->SetValueAsObject(TEXT("Player"), Player);
+	}
+}
+
+void AMonsterAIController::SetSpeedValue()
+{
+	AMonster* Monster = Cast<AMonster>(GetPawn());
+	if (Monster)
+	{
+		BBComponent->SetValueAsFloat(TEXT("WalkSpeed"), Monster->WalkSpeed);
+		BBComponent->SetValueAsFloat(TEXT("RunSpeed"), Monster->RunSpeed);
 	}
 }
