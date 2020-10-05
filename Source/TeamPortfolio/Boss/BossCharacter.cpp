@@ -13,6 +13,8 @@
 #include "BossWidgetBase.h" //Beginplay
 #include "PhysicsEngine/PhysicsHandleComponent.h" // Physics Handle.
 #include "Components/SphereComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
+
 // Sets default values
 ABossCharacter::ABossCharacter()
 {
@@ -40,9 +42,11 @@ ABossCharacter::ABossCharacter()
 	HoldPosition->SetupAttachment(Camera);
 	HoldPosition->SetRelativeLocation(FVector(200.0f,0.0f,-50.0f));
 
-	bUseControllerRotationYaw = true;
-	bUseControllerRotationPitch = true;
+	//Disable Use Controller Rotation on Character. Character Rotation will Followed by Character Movement.
+	bUseControllerRotationYaw = false;
+	bUseControllerRotationPitch = false;
 	bUseControllerRotationRoll = false;
+	GetCharacterMovement()->bUseControllerDesiredRotation = true;
 
 	//Boss Will Exist in Level. Normal Player will Spawn by GameMode.
 	AutoPossessPlayer = EAutoReceiveInput::Player0;

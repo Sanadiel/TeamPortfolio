@@ -35,9 +35,8 @@ public:
 
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
-	UFUNCTION() //	UFUNCTION(Server, Reliable)
+	UFUNCTION()
 	void OnButtonClicked();
-	//void OnButtonClicked_Implementation();
 
 	void UpdateCooldown();
 
