@@ -17,3 +17,8 @@ void UMonsterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	}
 	
 }
+
+void UMonsterAnimInstance::AnimNotify_CheckAttack2(UAnimNotify* Notify)
+{
+	UE_LOG(LogClass, Warning, TEXT("Attack2"));
+}
