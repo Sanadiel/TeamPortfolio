@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ItemDataTable.h"
 #include "Components/ActorComponent.h"
 #include "Inventory.generated.h"
 
@@ -29,7 +30,12 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	UFUNCTION()
-	void ChangeSlot(class AMasterItem* A, class AMasterItem* B);
+	void SwapSlot(int32 Slot, int32 OtherSlot);
+
+	UFUNCTION()
+	FItemDataTable GetItemData(int32 InvenIndex);
+
+	void DataLoading();
 
 #pragma endregion
 

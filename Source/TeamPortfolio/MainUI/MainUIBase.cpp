@@ -3,6 +3,7 @@
 
 #include "MainUIBase.h"
 #include "Components/ProgressBar.h"
+#include "Components/CanvasPanel.h"
 #include "InventoryWidgetBase.h"
 #include "StatHoverBase.h"
 #include "HpBarBase.h"
@@ -11,25 +12,19 @@ void UMainUIBase::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	//HpBar = Cast<UProgressBar>(GetWidgetFromName(TEXT("HpBar_1")));
 	HpBar = Cast<UHpBarBase>(GetWidgetFromName(TEXT("HpBar_1")));
-	MpBar = Cast<UProgressBar>(GetWidgetFromName(TEXT("MpBar")));
-	Inventory = Cast<UInventoryWidgetBase>(GetWidgetFromName(TEXT("Inventory")));
+	StBar = Cast<UHpBarBase>(GetWidgetFromName(TEXT("StaminaBar")));
+	Inventory = Cast<UInventoryWidgetBase>(GetWidgetFromName(TEXT("Inventory")));	
 	Hover = Cast<UStatHoverBase>(GetWidgetFromName(TEXT("Hover")));
+	HpBarParent = Cast<UCanvasPanel>(GetWidgetFromName(TEXT("HpBarParent")));
+	RootCanvas = Cast<UCanvasPanel>(GetWidgetFromName(TEXT("RootPanel")));
 
 	Inventory->SetVisibility(ESlateVisibility::Collapsed);
-	HpBar->Fuc_DeleSingle_TwoParam.BindUFunction(this, FName("ToggleHover"));
-
-	UE_LOG(LogClass, Warning, TEXT("NativeConstruct :: MainUI"));
+	HpBar->Fuc_DeleSingle_ThreeParam.BindUFunction(this, FName("ToggleHover"));
+	StBar->Fuc_DeleSingle_ThreeParam.BindUFunction(this, FName("ToggleHover"));
+	Hover->SetVisibility(ESlateVisibility::Collapsed);
+	Hover->RemoveFromViewport();
 }
-
-void UMainUIBase::NativeOnInitialized()
-{
-	Super::NativeOnInitialized();
-
-	UE_LOG(LogClass, Warning, TEXT("NativeOnInitialized :: MainUI"));
-}
-
 
 void UMainUIBase::UpdateHpBar(float Percent)
 {
@@ -39,11 +34,11 @@ void UMainUIBase::UpdateHpBar(float Percent)
 	}
 }
 
-void UMainUIBase::UpdateMpBar(float Percent)
+void UMainUIBase::UpdateStBar(float Percent)
 {
-	if (MpBar)
+	if (StBar)
 	{
-		MpBar->SetPercent(Percent);
+		StBar->UpdateHpBar(Percent);
 	}
 }
 
@@ -59,16 +54,26 @@ void UMainUIBase::ToggleInventory(bool bValue)
 	}
 }
 
-void UMainUIBase::ToggleHover(FVector2D Position, bool bValue)
+void UMainUIBase::ToggleHover(FVector2D LocalPosition, FVector2D AbsolutePosition, int32 Value)
 {
-	if (bValue)
+	FVector2D NewPosition = LocalPosition + CN_PaddingVector + 
+							RootCanvas->GetCachedGeometry().AbsoluteToLocal(AbsolutePosition);
+
+	if (Value == CN_Activate)
 	{
-		Hover->SetVisibility(ESlateVisibility::Visible);
-		Hover->SetPositionInViewport(Position, false);
+		Hover->AddToViewport();
+		Hover->SetPositionInViewport(NewPosition, false);
+		Hover->SettingText(FString("HP : 0"));
+		Hover->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	}
+	else if(Value == CN_Deactivate)
+	{
+		Hover->SetVisibility(ESlateVisibility::Collapsed);
+		Hover->RemoveFromViewport();
 	}
 	else
 	{
-		Hover->SetVisibility(ESlateVisibility::Collapsed);
+		Hover->SetPositionInViewport(NewPosition, false);
+		Hover->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	}
-
 }

@@ -9,7 +9,6 @@ void UStatHoverBase::NativeConstruct()
 	Super::NativeConstruct();
 
 	TextBox = Cast<UTextBlock>(GetWidgetFromName(TEXT("TextBox")));
-
 }
 
 void UStatHoverBase::SettingText(FString NewText)
@@ -17,5 +16,6 @@ void UStatHoverBase::SettingText(FString NewText)
 	if (TextBox)
 	{
 		TextBox->SetText(FText::FromString(NewText));
+		UE_LOG(LogTemp, Warning, TEXT("%s"), *NewText);
 	}
 }

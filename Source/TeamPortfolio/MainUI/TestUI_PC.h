@@ -15,6 +15,7 @@ class TEAMPORTFOLIO_API ATestUI_PC : public APlayerController
 	GENERATED_BODY()
 
 #pragma region Public Member
+#pragma region UI
 public:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "UI")
 	TSubclassOf<class UResultFadeOutBase> ResultWidgetClass;
@@ -33,9 +34,15 @@ public:
 
 #pragma endregion
 
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Inven")
+	class UInventory* Inventory;
+
+#pragma endregion
+
 
 #pragma region Public Function
 public:
+	ATestUI_PC();
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
 

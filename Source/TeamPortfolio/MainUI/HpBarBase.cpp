@@ -19,7 +19,7 @@ void UHpBarBase::UpdateHpBar(float Percent)
 
 void UHpBarBase::BeginDestroy()
 {
-	Fuc_DeleSingle_TwoParam.Unbind();
+	Fuc_DeleSingle_ThreeParam.Unbind();
 
 	Super::BeginDestroy();
 }
@@ -28,24 +28,22 @@ void UHpBarBase::NativeOnMouseEnter(const FGeometry & InGeometry, const FPointer
 {
 	Super::NativeOnMouseEnter(InGeometry, InMouseEvent);
 
-	if (Fuc_DeleSingle_TwoParam.IsBound() == true)
+	if (Fuc_DeleSingle_ThreeParam.IsBound() == true)
 	{
-		Fuc_DeleSingle_TwoParam.Execute(InGeometry.AbsoluteToLocal(InMouseEvent.GetScreenSpacePosition()), true);
-	}
-
-	UE_LOG(LogClass, Warning, TEXT("MouseEnter"));
+		Fuc_DeleSingle_ThreeParam.Execute(InGeometry.AbsoluteToLocal(InMouseEvent.GetScreenSpacePosition()), InGeometry.GetAbsolutePosition(), CN_Activate);
+		UE_LOG(LogClass, Warning, TEXT("MouseEnter"));
+	}	
 }
 
 void UHpBarBase::NativeOnMouseLeave(const FPointerEvent & MouseEvent)
 {
 	Super::NativeOnMouseLeave(MouseEvent);
 
-	if (Fuc_DeleSingle_TwoParam.IsBound() == true)
+	if (Fuc_DeleSingle_ThreeParam.IsBound() == true)
 	{
-		Fuc_DeleSingle_TwoParam.Execute(FVector2D::ZeroVector, false);
-	}
-
-	UE_LOG(LogClass, Warning, TEXT("MouseLeave"));
+		Fuc_DeleSingle_ThreeParam.Execute(FVector2D::ZeroVector, FVector2D::ZeroVector, CN_Deactivate);
+		UE_LOG(LogClass, Warning, TEXT("MouseLeave"));
+	}	
 }
 
 FReply UHpBarBase::NativeOnMouseMove(const FGeometry & InGeometry, const FPointerEvent & InMouseEvent)
@@ -54,7 +52,13 @@ FReply UHpBarBase::NativeOnMouseMove(const FGeometry & InGeometry, const FPointe
 
 	FEventReply Reply = UWidgetBlueprintLibrary::Handled();
 
-	//MakePosition(InGeometry.AbsoluteToLocal(InMouseEvent.GetScreenSpacePosition()));
+	if (Fuc_DeleSingle_ThreeParam.IsBound() == true)
+	{
+		Fuc_DeleSingle_ThreeParam.Execute(InGeometry.AbsoluteToLocal(InMouseEvent.GetScreenSpacePosition()), InGeometry.GetAbsolutePosition(), CN_NonChange);
+		
+		//부모 떼고 자식의 로컬좌표
+		//InGeometry.AbsoluteToLocal(InMouseEvent.GetScreenSpacePosition()) 
+	}
 
 	return Reply.NativeReply;
 }

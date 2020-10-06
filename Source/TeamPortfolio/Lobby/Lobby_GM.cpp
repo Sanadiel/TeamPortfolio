@@ -38,11 +38,11 @@ void ALobby_GM::CheckButton()
 	{
 		bool button0 = Cast<ASelectButtonBase>(Buttons[0])->bIsPush;
 		bool button1 = Cast<ASelectButtonBase>(Buttons[1])->bIsPush;
-
+		
 		if (button0 && button1)
 		{
 			GetWorldTimerManager().ClearTimer(ButtonTimer);
-			StartCountDown();
+			StartCountDown();			
 		}
 	}
 }
@@ -65,7 +65,7 @@ void ALobby_GM::DecreaseTime()
 	if (GS)
 	{
 		GS->LeftTime--;
-		GS->OnRep_LeftTime();
+		GS->OnRep_LeftTime();		
 
 		if (GS->LeftTime < 0)
 		{

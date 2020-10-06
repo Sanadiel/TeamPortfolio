@@ -9,13 +9,13 @@
 #include "Components/CanvasPanel.h"
 #include "ItemSlotBase.h"
 #include "TestUI_PC.h"
+#include "../Item/Inventory.h"
 
 void UInventoryWidgetBase::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	ItemSlots = Cast<UWrapBox>(GetWidgetFromName(TEXT("WrapBox")));
-	InvalidationBox = Cast<UInvalidationBox>(GetWidgetFromName(TEXT("InvalidationBox")));
+	ItemSlots = Cast<UWrapBox>(GetWidgetFromName(TEXT("WrapBox_Item")));	
 	Drag = Cast<UBorder>(GetWidgetFromName(TEXT("Drag")));
 	Exit = Cast<UButton>(GetWidgetFromName(TEXT("Exit")));
 	InventoryWindow = Cast<UCanvasPanel>(GetWidgetFromName(TEXT("InventoryWindow")));
@@ -24,22 +24,10 @@ void UInventoryWidgetBase::NativeConstruct()
 	{
 		Exit->OnClicked.AddDynamic(this, &UInventoryWidgetBase::OnExitButton);
 	}
-
-	UE_LOG(LogClass, Warning, TEXT("NativeConstruct :: Inven"));
 }
 
 void UInventoryWidgetBase::UpdateInventory(TArray<class AMasterItem*> Inventory)
 {
-	for (int i = 0; i < ItemSlots->GetChildrenCount(); ++i)
-	{
-		UItemSlotBase* InventorySlot = Cast<UItemSlotBase>(ItemSlots->GetChildAt(i));
-		if (InventorySlot)
-		{
-			InventorySlot->bUse = false;
-			InventorySlot->SetVisibility(ESlateVisibility::Collapsed);
-		}
-	}
-
 	for (int i = 0; i < Inventory.Num(); ++i)
 	{
 		int FindIndex = GetEmptySlot();
@@ -48,7 +36,11 @@ void UInventoryWidgetBase::UpdateInventory(TArray<class AMasterItem*> Inventory)
 			SetSlot(FindIndex, Inventory[i]);
 		}
 	}
+}
 
+void UInventoryWidgetBase::UpdateInventoryWithIndex(TArray<class AMasterItem*> Inventory, int32 FirstIndex)
+{
+	SetSlot(FirstIndex, Inventory[FirstIndex]);
 }
 
 int UInventoryWidgetBase::GetEmptySlot()
@@ -76,15 +68,21 @@ void UInventoryWidgetBase::SetSlot(int Index, AMasterItem* Item)
 	}
 }
 
+FItemDataTable UInventoryWidgetBase::GetItemData(int32 Index)
+{
+	ATestUI_PC* PC = GetOwningPlayer<ATestUI_PC>();
+	return PC->Inventory->GetItemData(Index);
+}
+
+void UInventoryWidgetBase::SwapSlot(int32 FrontslotIndex, int32 OtherSlotIndex)
+{
+	ATestUI_PC* PC = GetOwningPlayer<ATestUI_PC>();
+	PC->Inventory->SwapSlot(FrontslotIndex, OtherSlotIndex);
+	UpdateInventory(PC->Inventory->Inven);
+}
+
 void UInventoryWidgetBase::OnExitButton()
 {
 	ATestUI_PC* PC = GetOwningPlayer<ATestUI_PC>();
 	PC->UnToggle_InvenWidget();
-}
-
-void UInventoryWidgetBase::NativeOnInitialized()
-{
-	Super::NativeOnInitialized();
-
-	UE_LOG(LogClass, Warning, TEXT("NativeOnInitialized :: Inven"));
 }

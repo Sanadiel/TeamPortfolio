@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "../Item/ItemDataTable.h"
 #include "Blueprint/UserWidget.h"
 #include "InventoryWidgetBase.generated.h"
 
@@ -19,10 +20,7 @@ public:
 	class UWrapBox* ItemSlots;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	TSubclassOf<class UItemSlotBase> ItemSlotClass;
-
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-	class UInvalidationBox* InvalidationBox;
+	TSubclassOf<class UItemSlotBase> ItemSlotClass;	
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	class UBorder* Drag;
@@ -31,7 +29,7 @@ public:
 	class UButton* Exit;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-	class UCanvasPanel* InventoryWindow;	
+	class UCanvasPanel* InventoryWindow;
 
 #pragma endregion
 
@@ -39,12 +37,15 @@ public:
 public:
 	virtual void NativeConstruct() override;
 	void UpdateInventory(TArray<class AMasterItem*> Inventory);
+	void UpdateInventoryWithIndex(TArray<class AMasterItem*> Inventory, int32 FirstIndex);
 	int GetEmptySlot();
 	void SetSlot(int Index, class AMasterItem* Item);
+
+	FItemDataTable GetItemData(int32 Index);
+	void SwapSlot(int32 FrontslotIndex, int32 OtherSlotIndex);
 
 	UFUNCTION()
 	void OnExitButton();
 
-	virtual void NativeOnInitialized() override;
 #pragma endregion
 };

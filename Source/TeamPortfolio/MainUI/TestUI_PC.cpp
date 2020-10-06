@@ -5,6 +5,12 @@
 #include "ResultFadeOutBase.h"
 #include "MainUIBase.h"
 #include "InventoryWidgetBase.h"
+#include "../Item/Inventory.h"
+
+ATestUI_PC::ATestUI_PC()
+{
+	Inventory = CreateDefaultSubobject<UInventory>(TEXT("Inventory"));
+}
 
 void ATestUI_PC::BeginPlay()
 {
@@ -14,7 +20,7 @@ void ATestUI_PC::BeginPlay()
 	{
 		ResultWidgetObject = CreateWidget<UResultFadeOutBase>(this, ResultWidgetClass);
 		MainWidgetObject = CreateWidget<UMainUIBase>(this, MainWidgetClass);
-		
+
 		if (MainWidgetObject)
 		{
 			MainWidgetObject->AddToViewport();

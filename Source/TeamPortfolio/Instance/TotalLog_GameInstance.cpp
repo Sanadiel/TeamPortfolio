@@ -35,9 +35,6 @@ void UTotalLog_GameInstance::SettingItemData()
 		}		
 
 		ItemDataArray.Add(*Data);
-
-		//ItemDataArray.Add(*ItemDataTable->FindRow<FItemDataTable>(*FString::FromInt(Index), TEXT("ItemIndex")));
-		
 	}
 }
 

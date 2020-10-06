@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "../TeamPortfolio.h"
 #include "Blueprint/UserWidget.h"
 #include "MainUIBase.generated.h"
 
@@ -20,13 +20,19 @@ public:
 	class UHpBarBase* HpBar;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-	class UProgressBar* MpBar;
+	class UHpBarBase* StBar;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	class UInventoryWidgetBase* Inventory;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	class UStatHoverBase* Hover;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	class UCanvasPanel* HpBarParent;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	class UCanvasPanel* RootCanvas;
 	
 
 #pragma endregion 
@@ -35,17 +41,16 @@ public:
 #pragma region Public Function
 public:
 	virtual void NativeConstruct() override;
-	virtual void NativeOnInitialized() override;
 
 	UFUNCTION(BlueprintCallable)
 	void UpdateHpBar(float Percent);
 	UFUNCTION(BlueprintCallable)
-	void UpdateMpBar(float Percent);
+	void UpdateStBar(float Percent);
 
 	void ToggleInventory(bool bValue);	
 
 	UFUNCTION()
-	void ToggleHover(FVector2D Position, bool bValue);
+	void ToggleHover(FVector2D LocalPosition, FVector2D AbsolutePosition, int32 Value);
 
 #pragma endregion 
 	

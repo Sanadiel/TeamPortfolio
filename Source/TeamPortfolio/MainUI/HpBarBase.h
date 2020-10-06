@@ -2,11 +2,11 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "../TeamPortfolio.h"
 #include "Blueprint/UserWidget.h"
 #include "HpBarBase.generated.h"
 
-DECLARE_DELEGATE_TwoParams(FDele_Single_TwoParam, FVector2D, bool)
+DECLARE_DELEGATE_ThreeParams(FDele_Single_ThreeParam, FVector2D, FVector2D, int32)
 /**
  * 
  */
@@ -25,7 +25,7 @@ public:
 public:
 	virtual void NativeConstruct() override;
 
-	FDele_Single_TwoParam Fuc_DeleSingle_TwoParam;
+	FDele_Single_ThreeParam Fuc_DeleSingle_ThreeParam;
 
 	UFUNCTION(BlueprintCallable)
 	void UpdateHpBar(float Percent);
@@ -35,9 +35,6 @@ public:
 	virtual void NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 	virtual void NativeOnMouseLeave(const FPointerEvent& InMouseEvent) override;
 	virtual FReply NativeOnMouseMove(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
-
-	//void MakePosition(FVector2D MousePosiion);
-
 
 #pragma endregion 
 };
