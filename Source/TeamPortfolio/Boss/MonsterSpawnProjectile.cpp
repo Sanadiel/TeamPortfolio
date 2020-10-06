@@ -76,23 +76,31 @@ void AMonsterSpawnProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherA
 	// Only add impulse and destroy projectile if we hit a physics
 	if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && OtherComp->IsSimulatingPhysics())
 	{
+		//Don't Impulse to Projectile.
+		if (OtherActor->IsA(AMonsterSpawnProjectile::StaticClass()))
+		{
+			return;
+		}
+
 		OtherComp->AddImpulseAtLocation(GetVelocity() * 100.0f, GetActorLocation());
 
 		Destroy();
 	}
-
-	//Spawn Monster when Hit Ground -> Not SimulatingPhysics.
-	else if (MonsterSpawnInfo.SpawnActorClass && OtherActor != NULL && OtherActor != this && OtherComp != NULL)
+	else if (OtherActor != NULL && OtherActor != this && OtherComp != NULL) //Spawn Monster when Hit Ground -> Not SimulatingPhysics.
 	{
-		if (HasAuthority()) // Only Do in Server
+		if (HasAuthority() && MonsterSpawnInfo.SpawnActorClass) // Only Do in Server
 		{
 			SpawnMonster(Hit);
+		}
+		else
+		{
+			UE_LOG(LogClass, Warning, TEXT("You Don't Assign MonsterActorClass in \"MonsterSpawnProjectileClass\"... Maybe?"))
 		}
 		Destroy();
 	}
 	else
 	{
-		UE_LOG(LogClass, Warning, TEXT("You Don't Assign MonsterActorClass in \"MonsterSpawnProjectileClass\" Maybe"))
+		UE_LOG(LogClass, Warning, TEXT("other actor is null? otheractor is this? othercompo NULL?"))
 	}
 }
 
@@ -106,7 +114,7 @@ void AMonsterSpawnProjectile::SpawnMonster_Implementation(const FHitResult& Hit)
 		FActorSpawnParameters params;
 		params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 		params.Owner = GetOwner();
-		UE_LOG(LogClass, Warning, TEXT("Owner : %s"), *GetOwner()->GetName());
+		//UE_LOG(LogClass, Warning, TEXT("Owner : %s"), *GetOwner()->GetName());
 		AActor* monster = GetWorld()->SpawnActor<AActor>(MonsterSpawnInfo.SpawnActorClass, transform, params);
 
 		if (!monster)		//Check Monster Spawn Success.

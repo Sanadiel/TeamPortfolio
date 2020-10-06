@@ -93,8 +93,8 @@ public:
 	void HoldSpawnProjectile(AMonsterSpawnProjectile* ProjectileObject);
 	void HoldSpawnProjectile_Implementation(AMonsterSpawnProjectile* ProjectileObject);
 
-	//Release Holding Projectile Actor.
-	void ReleaseSpawnProjectile();
+	//Release when it is holding something, if not hold anything, find actor to hold.
+	void HandAction();
 
 	//Return Current GrabbedComponent.
 	UPrimitiveComponent* GetGrabbedComponent() const;

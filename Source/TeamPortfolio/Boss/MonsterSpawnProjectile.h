@@ -38,7 +38,7 @@ public:
 	//UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Monster")
 	//	TSubclassOf<AActor> MonsterActorClass;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Monster")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Monster")
 		FMonsterSpawnInfo MonsterSpawnInfo;
 
 protected:

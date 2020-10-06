@@ -15,6 +15,8 @@
 #include "Components/SphereComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
+#include "Engine/EngineTypes.h"
+
 // Sets default values
 ABossCharacter::ABossCharacter()
 {
@@ -119,7 +121,7 @@ void ABossCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &ABossCharacter::ReleaseSpawnProjectile);
+	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &ABossCharacter::HandAction);
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &ABossCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &ABossCharacter::MoveRight);
@@ -207,9 +209,83 @@ void ABossCharacter::HoldSpawnProjectile_Implementation(AMonsterSpawnProjectile*
 	}
 }
 
-void ABossCharacter::ReleaseSpawnProjectile()
+void ABossCharacter::HandAction()
 {
-	PhysicsHandle->ReleaseComponent();
+	//when hold something
+	if (PhysicsHandle->GetGrabbedComponent())
+	{
+		PhysicsHandle->ReleaseComponent();
+	}
+	else //when hold nothing.
+	{
+
+		APlayerController* playerController = Cast<APlayerController>(GetController());
+		if (playerController)
+		{
+			int32 sizeX, sizeY;
+			FVector crosshairLocation, crosshairDirection; // this is world location & direction.
+			playerController->GetViewportSize(sizeX, sizeY);
+			playerController->DeprojectScreenPositionToWorld(
+				sizeX / 2, sizeY / 2, crosshairLocation, crosshairDirection);
+
+			FVector cameraLocation;
+			FRotator cameraRotation;
+			playerController->GetPlayerViewPoint(cameraLocation, cameraRotation);
+
+
+			FVector traceStart = cameraLocation;
+			FVector traceEnd = traceStart + crosshairDirection * 100000.0f;
+
+			TArray<TEnumAsByte<EObjectTypeQuery>> objects;
+
+			//objects.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_EngineTraceChannel1));
+			
+			//ObjectTypeQuery7 == Projectile(custom)
+			objects.Add(EObjectTypeQuery::ObjectTypeQuery7);
+
+			TArray<AActor*> ignores;
+			ignores.Add(this);
+
+			FHitResult hit;
+
+			bool result = UKismetSystemLibrary::LineTraceSingleForObjects(
+				GetWorld(),
+				traceStart,
+				traceEnd,
+				objects,
+				true,
+				ignores,
+
+				//EDrawDebugTrace::None, 
+				EDrawDebugTrace::ForDuration,
+
+				hit,
+				true,
+				FLinearColor::Red,
+				FLinearColor::Blue,
+				2.0f
+			);
+
+			if (result)
+			{
+				//check hit result actor is Projectile or not.
+				AMonsterSpawnProjectile * projectile = Cast<AMonsterSpawnProjectile>(hit.GetActor());
+				if (projectile)
+				{
+					HoldSpawnProjectile(projectile);
+				}
+				else
+				{
+					UE_LOG(LogClass, Warning, TEXT("You Can't Hold this."));
+				}
+			}
+			else
+			{
+				UE_LOG(LogClass, Warning, TEXT("failed."));
+			}
+		}
+
+	}
 }
 
 UPrimitiveComponent * ABossCharacter::GetGrabbedComponent() const
