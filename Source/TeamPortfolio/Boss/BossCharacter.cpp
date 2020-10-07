@@ -216,9 +216,9 @@ void ABossCharacter::HandAction()
 	{
 		AMonsterSpawnProjectile* projectile =Cast<AMonsterSpawnProjectile>(PhysicsHandle->GetGrabbedComponent()->GetOwner());
 		if (projectile) //set Activate value to Spawn monsters. See AMonsterSpawnPRojectile's Onhit.
-		{
+		{		
 			projectile->bActivated = true;
-		}
+		} 
 
 		PhysicsHandle->ReleaseComponent();
 	}
@@ -244,8 +244,6 @@ void ABossCharacter::HandAction()
 
 			TArray<TEnumAsByte<EObjectTypeQuery>> objects;
 
-			//objects.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_EngineTraceChannel1));
-			
 			//ObjectTypeQuery7 == Projectile(custom)
 			objects.Add(EObjectTypeQuery::ObjectTypeQuery7);
 

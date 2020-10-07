@@ -62,8 +62,8 @@ void AMonsterSpawnProjectile::BeginPlay()
 	Super::BeginPlay();
 
 	// set up a notification for when this component hits something blocking.
-
 	Sphere->OnComponentHit.AddDynamic(this, &AMonsterSpawnProjectile::OnHit);
+
 }
 
 //// Called every frame
@@ -97,8 +97,9 @@ void AMonsterSpawnProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherA
 	}
 	else if (OtherActor != NULL && OtherActor != this && OtherComp != NULL) //Spawn Monster when Hit Ground -> Not SimulatingPhysics.
 	{
+
 		//Check Hit Location is Navigatable.
-		UNavigationSystemV1* navSys = Cast<UNavigationSystemV1>(GetWorld()->GetNavigationSystem());
+		UNavigationSystemV1* navSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());
 		bool bOnNav = false;
 		if (navSys)
 		{
@@ -113,16 +114,9 @@ void AMonsterSpawnProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherA
 			}
 		}
 
+		//Do This Only Server
+		SpawnMonster(Hit);
 
-
-		if (HasAuthority() && MonsterSpawnInfo.SpawnActorClass) // Only Do in Server
-		{
-			SpawnMonster(Hit);
-		}
-		//else
-		//{
-		//	UE_LOG(LogClass, Warning, TEXT("You Don't Assign MonsterActorClass in \"MonsterSpawnProjectileClass\"... Maybe?"))
-		//}
 		Destroy();
 	}
 	else
@@ -136,7 +130,7 @@ void AMonsterSpawnProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherA
 void AMonsterSpawnProjectile::SpawnMonster_Implementation(const FHitResult& Hit)
 {
 	//Spawn Monster 
-	if (MonsterSpawnInfo.SpawnActorClass)
+	if (HasAuthority() && MonsterSpawnInfo.SpawnActorClass)
 	{
 		FTransform transform;
 		transform.SetLocation(Hit.Location);
@@ -152,6 +146,10 @@ void AMonsterSpawnProjectile::SpawnMonster_Implementation(const FHitResult& Hit)
 			UE_LOG(LogClass, Warning, TEXT("Failed to Spawn Monster"));
 		}
 	}
+	//else
+	//{
+	//	UE_LOG(LogClass, Warning, TEXT("You Don't Assign MonsterActorClass in \"MonsterSpawnProjectileClass\"... Maybe?"))
+	//}
 
 }
 

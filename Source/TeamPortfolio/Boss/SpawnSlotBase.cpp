@@ -69,7 +69,6 @@ void USpawnSlotBase::OnButtonClicked()
 		ABossCharacter* boss = Cast<ABossCharacter>(pc->GetPawn());
 		if (boss)
 		{
-
 			int32 index = GetSlotNumber();
 			//UE_LOG(LogClass, Warning, TEXT("%s"),*number);
 			if (index < boss->SpawnClasses.Num() && boss->SpawnClasses[index])
@@ -126,8 +125,7 @@ void USpawnSlotBase::UpdateCooldown()
 			int32 index = GetSlotNumber();
 			if (index < boss->SpawnCooldown.Num() && CooldownBar)
 			{
-				float currentCooldown = boss->SpawnCooldown[index];
-				CooldownBar->SetPercent(currentCooldown / boss->MaxSpawnCooldown[index]);
+				CooldownBar->SetPercent(boss->SpawnCooldown[index] / boss->MaxSpawnCooldown[index]);
 			}
 		}
 	}
@@ -138,6 +136,5 @@ int32 USpawnSlotBase::GetSlotNumber() const
 	//Get Number. ex) "SpawnSlot7" == 7
 	FString widgetName = GetName();
 	widgetName.RemoveFromStart(TEXT("SpawnSlot"));
-	FString number = widgetName;
-	return FCString::Atoi(*number);
+	return FCString::Atoi(*widgetName);
 }

@@ -17,6 +17,7 @@ void UBossWidgetBase::NativeConstruct()
 	if (SlotBox)
 	{
 		TArray<UWidget*> childrenArray = SlotBox->GetAllChildren();
+		
 		//UE_LOG(LogClass, Warning, TEXT("Array Size : %d"), childrenArray.Num());
 		
 		for (auto iter = childrenArray.CreateConstIterator(); iter; iter++)

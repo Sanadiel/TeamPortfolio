@@ -41,6 +41,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Monster")
 		FMonsterSpawnInfo MonsterSpawnInfo;
 
+	//true Means "Spawn OK"
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Monster")
 		bool bActivated;
 protected:
