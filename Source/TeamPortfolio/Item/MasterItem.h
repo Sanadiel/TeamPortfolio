@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "../TeamPortfolio.h"
 #include "GameFramework/Actor.h"
 #include "ItemDataTable.h"
 //#include "../Instance/TotalLog_GameInstance.h"

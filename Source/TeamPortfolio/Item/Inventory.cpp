@@ -8,6 +8,13 @@
 UInventory::UInventory()
 {
 	PrimaryComponentTick.bCanEverTick = false;
+	AMasterItem* Item = CreateDefaultSubobject<AMasterItem>("NullItem");
+	Inven.Reserve(CN_InventoryMaxChild);
+
+	for (int i = 0; i != CN_InventoryMaxChild; ++i)
+	{
+		Inven.Add(Item);
+	}
 }
 
 void UInventory::BeginPlay()
@@ -32,5 +39,18 @@ FItemDataTable UInventory::GetItemData(int32 InvenIndex)
 
 void UInventory::DataLoading()
 {
+	
+}
+
+bool UInventory::isNull(int32 Index)
+{
+	if (Inven[Index]->ItemIndex == CN_NullItemIndex)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 

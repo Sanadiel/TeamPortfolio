@@ -8,17 +8,18 @@
 #include "Components/Border.h"
 #include "Components/CanvasPanel.h"
 #include "ItemSlotBase.h"
+#include "ItemWidgetBase.h"
 #include "TestUI_PC.h"
 #include "../Item/Inventory.h"
+#include "../Item/MasterItem.h"
 
 void UInventoryWidgetBase::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	ItemSlots = Cast<UWrapBox>(GetWidgetFromName(TEXT("WrapBox_Item")));	
+	ItemSlots = Cast<UWrapBox>(GetWidgetFromName(TEXT("WrapBox_Item")));
 	Drag = Cast<UBorder>(GetWidgetFromName(TEXT("Drag")));
 	Exit = Cast<UButton>(GetWidgetFromName(TEXT("Exit")));
-	InventoryWindow = Cast<UCanvasPanel>(GetWidgetFromName(TEXT("InventoryWindow")));
 
 	if (Exit)
 	{
@@ -45,26 +46,41 @@ void UInventoryWidgetBase::UpdateInventoryWithIndex(TArray<class AMasterItem*> I
 
 int UInventoryWidgetBase::GetEmptySlot()
 {
-	for (int i = 0; i < ItemSlots->GetChildrenCount(); ++i)
-	{
-		UItemSlotBase* InventorySlot = Cast<UItemSlotBase>(ItemSlots->GetChildAt(i));
-		if (InventorySlot && InventorySlot->bUse == false)
-		{
-			return i;
-		}
-	}
+	int temp = ItemSlots->GetChildrenCount();
 
-	return -1; //full
+	//for (int Index = 0; Index < ItemSlots->GetChildrenCount(); ++Index)
+	//{
+	//	UItemSlotBase* InventorySlot = Cast<UItemSlotBase>(ItemSlots->GetChildAt(Index));
+	//	if (InventorySlot && InventorySlot->ItemWidget->Item->ItemIndex == CN_NullItemIndex)
+	//	{
+	//		return Index;
+	//	}
+	//}
+
+	return -1;
 }
 
 void UInventoryWidgetBase::SetSlot(int Index, AMasterItem* Item)
 {
-	UItemSlotBase* EmptySlot = Cast<UItemSlotBase>(ItemSlots->GetChildAt(Index));
-	if (EmptySlot && EmptySlot->bUse == false)
+	UItemSlotBase* EmptySlot = Cast<UItemSlotBase>(ItemSlots->GetChildAt(Index));//Cast<UItemSlotBase>(ItemSlots->GetSlots()[Index]);
+	
+	if (EmptySlot && EmptySlot->ItemWidget->Item->ItemIndex == CN_NullItemIndex)
+	{
+		EmptySlot->ItemWidget->SetVisibility(ESlateVisibility::Hidden);
+	}
+	else
 	{
 		EmptySlot->UpdateItemSlot(Item);
-		EmptySlot->bUse = true;
 		EmptySlot->SetVisibility(ESlateVisibility::Visible);
+	}
+}
+
+void UInventoryWidgetBase::SetSlotsParent()
+{
+	for (int index = 0; index < ItemSlots->GetChildrenCount(); ++index)
+	{
+		UItemSlotBase* ChildSlot = Cast<UItemSlotBase>(ItemSlots->GetChildAt(index));
+		ChildSlot->SetInvenParent(this);
 	}
 }
 
@@ -78,7 +94,8 @@ void UInventoryWidgetBase::SwapSlot(int32 FrontslotIndex, int32 OtherSlotIndex)
 {
 	ATestUI_PC* PC = GetOwningPlayer<ATestUI_PC>();
 	PC->Inventory->SwapSlot(FrontslotIndex, OtherSlotIndex);
-	UpdateInventory(PC->Inventory->Inven);
+	UpdateInventoryWithIndex(PC->Inventory->Inven, FrontslotIndex);
+	UpdateInventoryWithIndex(PC->Inventory->Inven, OtherSlotIndex);
 }
 
 void UInventoryWidgetBase::OnExitButton()

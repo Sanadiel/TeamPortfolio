@@ -24,6 +24,7 @@ AMasterItem::AMasterItem()
 	StaticMesh->SetupAttachment(RootComponent);
 
 	bReplicates = true;
+	ItemIndex = CN_NullItemIndex;
 }
 
 // Called when the game starts or when spawned

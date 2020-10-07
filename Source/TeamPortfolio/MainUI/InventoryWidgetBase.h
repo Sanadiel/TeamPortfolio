@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "../TeamPortfolio.h"
 #include "../Item/ItemDataTable.h"
 #include "Blueprint/UserWidget.h"
 #include "InventoryWidgetBase.generated.h"
@@ -19,17 +19,11 @@ public:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	class UWrapBox* ItemSlots;
 
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	TSubclassOf<class UItemSlotBase> ItemSlotClass;	
-
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	class UBorder* Drag;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	class UButton* Exit;
-
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-	class UCanvasPanel* InventoryWindow;
 
 #pragma endregion
 
@@ -40,8 +34,11 @@ public:
 	void UpdateInventoryWithIndex(TArray<class AMasterItem*> Inventory, int32 FirstIndex);
 	int GetEmptySlot();
 	void SetSlot(int Index, class AMasterItem* Item);
+	void SetSlotsParent();
 
 	FItemDataTable GetItemData(int32 Index);
+
+	UFUNCTION(BlueprintCallable)
 	void SwapSlot(int32 FrontslotIndex, int32 OtherSlotIndex);
 
 	UFUNCTION()

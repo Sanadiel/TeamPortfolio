@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "../TeamPortfolio.h"
 #include "ItemDataTable.h"
 #include "Components/ActorComponent.h"
 #include "Inventory.generated.h"
@@ -36,6 +36,7 @@ public:
 	FItemDataTable GetItemData(int32 InvenIndex);
 
 	void DataLoading();
+	bool isNull(int32 Index);
 
 #pragma endregion
 

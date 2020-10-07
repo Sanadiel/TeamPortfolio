@@ -15,33 +15,24 @@ class TEAMPORTFOLIO_API UItemSlotBase : public UUserWidget
 	GENERATED_BODY()
 
 #pragma region Public Member
-public:
+public:	   
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-	class UBorder* ItemThumnail;
-
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-	class UTextBlock* ItemName;
+	class UItemWidgetBase* ItemWidget;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-	class UTextBlock* ItemCount;
+	class UInventoryWidgetBase* InvenWidget;
 
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-	class UButton* ItemButton;
-
-	class AMasterItem* SelectedItem;
-
-	bool bUse = false;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int32 SlotIndex;
 
 #pragma endregion
 
 #pragma region Public Function
 public:
 	virtual void NativeConstruct() override;
-
-	UFUNCTION()
-	void OnItemButton();
-
 	void UpdateItemSlot(class AMasterItem* Item);
+	void SetInvenParent(class UInventoryWidgetBase* InvenParent);
+	void SetEquipParent(class UInventoryWidgetBase* InvenParent);
 
 #pragma endregion
 

@@ -6,6 +6,7 @@
 #include "MainUIBase.h"
 #include "InventoryWidgetBase.h"
 #include "../Item/Inventory.h"
+#include "InventoryWidgetBase.h"
 
 ATestUI_PC::ATestUI_PC()
 {
@@ -26,6 +27,8 @@ void ATestUI_PC::BeginPlay()
 			MainWidgetObject->AddToViewport();
 			bShowMouseCursor = false;
 			SetInputMode(FInputModeGameOnly());
+			MainWidgetObject->Inventory->SetSlotsParent();
+			MainWidgetObject->Inventory->UpdateInventory(Inventory->Inven);
 		}
 	}
 }
