@@ -57,7 +57,7 @@ public:
 	float WalkSpeed = 150.0f;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
-	float RunSpeed = 250.0f;
+	float RunSpeed = 400.0f;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Status")
 	class UBehaviorTree* MonsterBT;
