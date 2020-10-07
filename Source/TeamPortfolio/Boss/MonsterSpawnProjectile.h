@@ -41,6 +41,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Monster")
 		FMonsterSpawnInfo MonsterSpawnInfo;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Monster")
+		bool bActivated;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

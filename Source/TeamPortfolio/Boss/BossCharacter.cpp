@@ -214,6 +214,12 @@ void ABossCharacter::HandAction()
 	//when hold something
 	if (PhysicsHandle->GetGrabbedComponent())
 	{
+		AMonsterSpawnProjectile* projectile =Cast<AMonsterSpawnProjectile>(PhysicsHandle->GetGrabbedComponent()->GetOwner());
+		if (projectile) //set Activate value to Spawn monsters. See AMonsterSpawnPRojectile's Onhit.
+		{
+			projectile->bActivated = true;
+		}
+
 		PhysicsHandle->ReleaseComponent();
 	}
 	else //when hold nothing.

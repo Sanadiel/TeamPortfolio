@@ -5,6 +5,8 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Components/SphereComponent.h"
 #include "Components/SkeletalMeshcomponent.h"
+#include "NavigationSystem.h"
+
 // Sets default values
 AMonsterSpawnProjectile::AMonsterSpawnProjectile()
 {
@@ -51,7 +53,7 @@ AMonsterSpawnProjectile::AMonsterSpawnProjectile()
 	// Die after 3 seconds by default
 	//InitialLifeSpan = 3.0f;
 	*/
-
+	bActivated = false;
 }
 
 // Called when the game starts or when spawned
@@ -73,6 +75,11 @@ void AMonsterSpawnProjectile::BeginPlay()
 
 void AMonsterSpawnProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
+	if (!bActivated)
+	{
+		return;
+	}
+
 	// Only add impulse and destroy projectile if we hit a physics
 	if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && OtherComp->IsSimulatingPhysics())
 	{
@@ -82,25 +89,47 @@ void AMonsterSpawnProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherA
 			return;
 		}
 
-		OtherComp->AddImpulseAtLocation(GetVelocity() * 100.0f, GetActorLocation());
-
-		Destroy();
+		if (HasAuthority())
+		{
+			OtherComp->AddImpulseAtLocation(GetVelocity() * 100.0f, GetActorLocation());
+		}
+		//Destroy();
 	}
 	else if (OtherActor != NULL && OtherActor != this && OtherComp != NULL) //Spawn Monster when Hit Ground -> Not SimulatingPhysics.
 	{
+		//Check Hit Location is Navigatable.
+		UNavigationSystemV1* navSys = Cast<UNavigationSystemV1>(GetWorld()->GetNavigationSystem());
+		bool bOnNav = false;
+		if (navSys)
+		{
+			FNavLocation temp;
+			FVector temp2;
+
+			bOnNav = navSys->ProjectPointToNavigation(Hit.Location, temp, temp2);
+			if (!bOnNav)
+			{
+				UE_LOG(LogClass, Warning, TEXT("Can't Spawn at the Wrong Location."));
+				return;
+			}
+		}
+
+
+
 		if (HasAuthority() && MonsterSpawnInfo.SpawnActorClass) // Only Do in Server
 		{
 			SpawnMonster(Hit);
 		}
-		else
-		{
-			UE_LOG(LogClass, Warning, TEXT("You Don't Assign MonsterActorClass in \"MonsterSpawnProjectileClass\"... Maybe?"))
-		}
+		//else
+		//{
+		//	UE_LOG(LogClass, Warning, TEXT("You Don't Assign MonsterActorClass in \"MonsterSpawnProjectileClass\"... Maybe?"))
+		//}
 		Destroy();
 	}
 	else
 	{
-		UE_LOG(LogClass, Warning, TEXT("other actor is null? otheractor is this? othercompo NULL?"))
+		UE_LOG(LogClass, Warning, TEXT("other actor is null? otheractor is this? othercompo NULL?"));
+		//De-Activate. wrong Position.
+		bActivated = false;
 	}
 }
 
