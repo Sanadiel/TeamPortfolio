@@ -48,14 +48,27 @@ int UInventoryWidgetBase::GetEmptySlot()
 {
 	int temp = ItemSlots->GetChildrenCount();
 
-	//for (int Index = 0; Index < ItemSlots->GetChildrenCount(); ++Index)
-	//{
-	//	UItemSlotBase* InventorySlot = Cast<UItemSlotBase>(ItemSlots->GetChildAt(Index));
-	//	if (InventorySlot && InventorySlot->ItemWidget->Item->ItemIndex == CN_NullItemIndex)
-	//	{
-	//		return Index;
-	//	}
-	//}
+	for (int Index = 0; Index < ItemSlots->GetChildrenCount(); ++Index)
+	{
+		UItemSlotBase* InventorySlot = Cast<UItemSlotBase>(ItemSlots->GetChildAt(Index));
+
+		UE_LOG(LogClass, Warning, TEXT("GetEmptySlot %x"), InventorySlot);
+
+		if (InventorySlot)
+		{
+			if (IsValid(InventorySlot->ItemWidget->Item))
+			{
+				if (InventorySlot->ItemWidget->Item->ItemIndex == CN_NullItemIndex)
+				{
+					return Index;
+				}
+			}
+			else
+			{
+				return Index;
+			}
+		}
+	}
 
 	return -1;
 }
@@ -64,8 +77,9 @@ void UInventoryWidgetBase::SetSlot(int Index, AMasterItem* Item)
 {
 	UItemSlotBase* EmptySlot = Cast<UItemSlotBase>(ItemSlots->GetChildAt(Index));//Cast<UItemSlotBase>(ItemSlots->GetSlots()[Index]);
 	
-	if (EmptySlot && EmptySlot->ItemWidget->Item->ItemIndex == CN_NullItemIndex)
-	{
+	if (EmptySlot && IsValid(EmptySlot->ItemWidget->Item)
+		&& EmptySlot->ItemWidget->Item->ItemIndex == CN_NullItemIndex)
+	{		
 		EmptySlot->ItemWidget->SetVisibility(ESlateVisibility::Hidden);
 	}
 	else
