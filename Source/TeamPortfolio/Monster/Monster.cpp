@@ -31,7 +31,7 @@ void AMonster::BeginPlay()
 	if (PawnSensing)
 	{
 		PawnSensing->OnSeePawn.AddDynamic(this, &AMonster::ProcessSeenPawn);
-		PawnSensing->OnHearNoise.AddDynamic(this, &AMonster::ProcessHearPawn);
+		PawnSensing->OnHearNoise.AddDynamic(this, &AMonster::ProcessHeardPawn);
 	}
 	
 	
@@ -53,7 +53,7 @@ void AMonster::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void AMonster::ProcessSeenPawn(APawn* Pawn)
 {
-	if (Pawn->ActorHasTag(TEXT("PlayerMTest")) &&
+	if (Pawn->ActorHasTag(TEXT("Player")) &&
 		CurrentState == EMonsterState::Normal)
 	{
 		UE_LOG(LogClass, Warning, TEXT("See %s"), *Pawn->GetName());
@@ -68,7 +68,7 @@ void AMonster::ProcessSeenPawn(APawn* Pawn)
 	}
 }
 
-void AMonster::ProcessHearPawn(APawn* Pawn, const FVector& Location, float Volume)
+void AMonster::ProcessHeardPawn(APawn* Pawn, const FVector& Location, float Volume)
 {
 	UE_LOG(LogClass, Warning, TEXT("Heard %s"), *Pawn->GetName());
 }

@@ -45,7 +45,7 @@ public:
 	void ProcessSeenPawn(APawn* Pawn);
 
 	UFUNCTION()
-	void ProcessHearPawn(APawn* Pawn, const FVector&Location, float Volume);
+	void ProcessHeardPawn(APawn* Pawn, const FVector&Location, float Volume);
 
 	UFUNCTION(BlueprintCallable)
 	void SetCurrentState(EMonsterState NewState);
