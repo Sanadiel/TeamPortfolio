@@ -90,3 +90,16 @@ void AMonster::SetSpeed(float NewSpeed)
 	GetCharacterMovement()->MaxWalkSpeed = NewSpeed;
 }
 
+float AMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	CurrentHP -= DamageAmount;
+	CurrentHP = FMath::Clamp(CurrentHP, 0.0f, 100.0f);
+
+	if (CurrentHP <= 0)
+	{
+		SetCurrentState(EMonsterState::Death);
+	}
+
+	return 0.0f;
+}
+
