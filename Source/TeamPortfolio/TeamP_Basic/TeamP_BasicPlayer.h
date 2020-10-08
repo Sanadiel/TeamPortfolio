@@ -32,8 +32,20 @@ public:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	class UCameraComponent* Camera;
 
-	UPROPERTY(BlueprintREadOnly, VisibleAnywhere)
-	class UWeaponComponent* Weapon;
+
+	// 무기 여기있음
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	class UWeaponComponent* Weapon1;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	class UWeaponComponent* Weapon2;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	class UWeaponComponent* Weapon3;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	class UWeaponComponent* Weapon4;
+
 
 
 	//앞뒤양옆 이동, 상하좌우 카메라 이동
@@ -73,9 +85,24 @@ public:
 
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
+	UFUNCTION()
 	void OnFire();
 
-	FTimerHandle FireTimerHandle;
+	UFUNCTION()
+	void OnSpawnFire();
+
+	FTimerHandle *FireTimerHandle;
+
+	FTimerHandle *FireTimerHandle2;
+
+	FTimerHandle Weapon1_FireTimerHande;
+	FTimerHandle Weapon1_FireTimerHande2;
+	FTimerHandle Weapon2_FireTimerHande;
+	FTimerHandle Weapon2_FireTimerHande2;
+	FTimerHandle Weapon3_FireTimerHande;
+	FTimerHandle Weapon3_FireTimerHande2;
+	FTimerHandle Weapon4_FireTimerHande;
+	FTimerHandle Weapon4_FireTimerHande2;
 
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Data")
@@ -104,11 +131,20 @@ public:
 	uint64 bIsFire : 1;
 
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
+	uint64 bIsFireAnim : 1;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
+	uint64 bDoFire : 1;
+
+
 	void StartFire();
 
 	void StopFire();
 
 	void Reload();
+
+	void canfire();
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, category = "Data")
 	class UAnimMontage* ReloadMontage;
@@ -119,5 +155,27 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, category = "Data")
 	class UAnimMontage* HitMontage;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, category = "Data")
+	class UAnimMontage* ChangeWeaponMontage;
+
+
+	//무기 변경 
+	void WeaponChange(int WeaponNumber);
+	void WeaponChange1();
+	void WeaponChange2();
+	void WeaponChange3();
+	void WeaponChange4();
 	
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
+	float WeaponDamage = 1.0f;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
+	float WeaponAttackSpeed = 0.05f;
+
+	UPROPERTY(EditDefaultsOnly, Category = Projectile)
+	TSubclassOf<class ASpawnTest> ProjectileClass;
+
+	int UsingWeaponNumber;
+
 };
