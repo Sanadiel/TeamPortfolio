@@ -16,6 +16,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 
 #include "Engine/EngineTypes.h"
+#include "MotionControllerComponent.h"
 
 // Sets default values
 ABossCharacter::ABossCharacter()
@@ -63,6 +64,20 @@ ABossCharacter::ABossCharacter()
 	TrajectoryParams.MaxSimTime = 2.0f;
 	TrajectoryParams.ProjectileRadius = 10.0f;
 	*/
+
+	VR_Left = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("VR_Left"));
+	VR_Right = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("VR_Right"));
+
+	VR_Left->SetupAttachment(Camera);
+	VR_Right->SetupAttachment(Camera);
+
+	VR_Left->bDisplayDeviceModel = true;
+	VR_Right->bDisplayDeviceModel = true;
+
+	VR_Left->MotionSource = FName("Left");
+	VR_Right->MotionSource = FName("Right");
+
+	
 }
 
 // Called when the game starts or when spawned
@@ -80,13 +95,13 @@ void ABossCharacter::BeginPlay()
 		}
 	}
 
-	/*Show Mouse Cursor*/
-	APlayerController* pc = Cast<APlayerController>(GetController());
-	if (pc)
-	{
-		pc->bShowMouseCursor = true;
-		pc->SetInputMode(FInputModeGameAndUI());
-	}
+	///*Show Mouse Cursor*/
+	//APlayerController* pc = Cast<APlayerController>(GetController());
+	//if (pc)
+	//{
+	//	pc->bShowMouseCursor = true;
+	//	pc->SetInputMode(FInputModeGameAndUI());
+	//}
 	
 	//Initialize Spawn Cooldown.
 	for (int i = 0; i < SpawnClasses.Num(); i++)
@@ -112,7 +127,8 @@ void ABossCharacter::Tick(float DeltaTime)
 	//PhysicsHandle Needed Update Target Location Per Frame.
 	if (PhysicsHandle)
 	{
-		PhysicsHandle->SetTargetLocation(HoldPosition->GetComponentLocation());
+		//Update Hold Location at Left.
+		PhysicsHandle->SetTargetLocation(VR_Left->GetComponentLocation());
 	}
 }
 
@@ -122,6 +138,8 @@ void ABossCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &ABossCharacter::HandAction);
+	PlayerInputComponent->BindAction("OculusLeft", IE_Pressed, this, &ABossCharacter::LeftHandAction);
+	PlayerInputComponent->BindAction("OculusRight", IE_Pressed, this, &ABossCharacter::RightHandAction);
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &ABossCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &ABossCharacter::MoveRight);
@@ -290,6 +308,84 @@ void ABossCharacter::HandAction()
 		}
 
 	}
+}
+
+void ABossCharacter::LeftHandAction()
+{
+	//when hold something
+	if (PhysicsHandle->GetGrabbedComponent())
+	{
+		AMonsterSpawnProjectile* projectile = Cast<AMonsterSpawnProjectile>(PhysicsHandle->GetGrabbedComponent()->GetOwner());
+		if (projectile) //set Activate value to Spawn monsters. See AMonsterSpawnPRojectile's Onhit.
+		{
+			projectile->bActivated = true;
+		}
+
+		PhysicsHandle->ReleaseComponent();
+	}
+	else //when hold nothing.
+	{
+
+		if (VR_Left)
+		{
+			FVector traceStart = VR_Left->GetComponentLocation();
+			FVector traceEnd = traceStart + VR_Left->GetForwardVector() * 5000.0f;
+
+
+			TArray<TEnumAsByte<EObjectTypeQuery>> objects;
+
+			//ObjectTypeQuery7 == Projectile(custom)
+			objects.Add(EObjectTypeQuery::ObjectTypeQuery7);
+
+			TArray<AActor*> ignores;
+			ignores.Add(this);
+
+			FHitResult hit;
+
+			bool result = UKismetSystemLibrary::LineTraceSingleForObjects(
+				GetWorld(),
+				traceStart,
+				traceEnd,
+				objects,
+				true,
+				ignores,
+
+				//EDrawDebugTrace::None, 
+				EDrawDebugTrace::ForDuration,
+
+				hit,
+				true,
+				FLinearColor::Red,
+				FLinearColor::Blue,
+				2.0f
+			);
+
+			if (result)
+			{
+				//check hit result actor is Projectile or not.
+				AMonsterSpawnProjectile * projectile = Cast<AMonsterSpawnProjectile>(hit.GetActor());
+				if (projectile)
+				{
+					HoldSpawnProjectile(projectile);
+				}
+				else
+				{
+					UE_LOG(LogClass, Warning, TEXT("You Can't Hold this."));
+				}
+			}
+			else
+			{
+				UE_LOG(LogClass, Warning, TEXT("failed."));
+			}
+
+		}
+
+		
+	}
+}
+
+void ABossCharacter::RightHandAction()
+{
 }
 
 UPrimitiveComponent * ABossCharacter::GetGrabbedComponent() const

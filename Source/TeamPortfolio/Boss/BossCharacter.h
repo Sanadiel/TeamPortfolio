@@ -13,6 +13,7 @@ class AMonsterSpawnProjectile;
 class UBossWidgetBase;
 class UPhysicsHandleComponent;
 class USceneComponent;
+class UMotionControllerComponent;
 
 UCLASS()
 class TEAMPORTFOLIO_API ABossCharacter : public ACharacter
@@ -36,6 +37,12 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 		USceneComponent* HoldPosition;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+		UMotionControllerComponent* VR_Left;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+		UMotionControllerComponent* VR_Right;
 
 
 protected:
@@ -95,6 +102,9 @@ public:
 
 	//Release when it is holding something, if not hold anything, find actor to hold.
 	void HandAction();
+
+	void LeftHandAction();
+	void RightHandAction();
 
 	//Return Current GrabbedComponent.
 	UPrimitiveComponent* GetGrabbedComponent() const;
