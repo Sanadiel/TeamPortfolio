@@ -31,11 +31,12 @@ void UInventoryWidgetBase::UpdateInventory(TArray<class AMasterItem*> Inventory)
 {
 	for (int i = 0; i < Inventory.Num(); ++i)
 	{
-		int FindIndex = GetEmptySlot();
+		SetSlot(i, Inventory[i]);
+		/*int FindIndex = GetEmptySlot();
 		if (FindIndex > -1)
 		{
 			SetSlot(FindIndex, Inventory[i]);
-		}
+		}*/
 	}
 }
 
@@ -46,13 +47,9 @@ void UInventoryWidgetBase::UpdateInventoryWithIndex(TArray<class AMasterItem*> I
 
 int UInventoryWidgetBase::GetEmptySlot()
 {
-	int temp = ItemSlots->GetChildrenCount();
-
 	for (int Index = 0; Index < ItemSlots->GetChildrenCount(); ++Index)
 	{
-		UItemSlotBase* InventorySlot = Cast<UItemSlotBase>(ItemSlots->GetChildAt(Index));
-
-		UE_LOG(LogClass, Warning, TEXT("GetEmptySlot %x"), InventorySlot);
+		UItemSlotBase* InventorySlot = Cast<UItemSlotBase>(ItemSlots->GetChildAt(Index));		
 
 		if (InventorySlot)
 		{
@@ -61,9 +58,9 @@ int UInventoryWidgetBase::GetEmptySlot()
 				if (InventorySlot->ItemWidget->Item->ItemIndex == CN_NullItemIndex)
 				{
 					return Index;
-				}
+				}//아이템이 존재하는데 널이 아니면 있으니 다음으로 진행
 			}
-			else
+			else//아이템이 없으니 생성
 			{
 				return Index;
 			}
@@ -75,17 +72,17 @@ int UInventoryWidgetBase::GetEmptySlot()
 
 void UInventoryWidgetBase::SetSlot(int Index, AMasterItem* Item)
 {
-	UItemSlotBase* EmptySlot = Cast<UItemSlotBase>(ItemSlots->GetChildAt(Index));//Cast<UItemSlotBase>(ItemSlots->GetSlots()[Index]);
+	UItemSlotBase* EmptySlot = Cast<UItemSlotBase>(ItemSlots->GetChildAt(Index));
 	
-	if (EmptySlot && IsValid(EmptySlot->ItemWidget->Item)
-		&& EmptySlot->ItemWidget->Item->ItemIndex == CN_NullItemIndex)
-	{		
-		EmptySlot->ItemWidget->SetVisibility(ESlateVisibility::Hidden);
+	if (EmptySlot && Item->ItemIndex == CN_NullItemIndex)
+	{
+		EmptySlot->UpdateItemSlot(Item);
+		EmptySlot->ItemWidget->SetVisibility(ESlateVisibility::Collapsed);
 	}
 	else
 	{
 		EmptySlot->UpdateItemSlot(Item);
-		EmptySlot->SetVisibility(ESlateVisibility::Visible);
+		EmptySlot->ItemWidget->SetVisibility(ESlateVisibility::HitTestInvisible);
 	}
 }
 

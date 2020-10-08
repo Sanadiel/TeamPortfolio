@@ -7,6 +7,7 @@
 #include "Engine/StreamableManager.h"
 #include "ItemDataTable.h"
 #include "Net/UnrealNetwork.h"
+#include "Kismet/GameplayStatics.h"
 #include "../Instance/TotalLog_GameInstance.h"
 
 
@@ -27,26 +28,30 @@ AMasterItem::AMasterItem()
 	ItemIndex = CN_NullItemIndex;
 }
 
+void AMasterItem::SettingByIndex(int32 Index, UWorld* World)
+{
+	UTotalLog_GameInstance*	GameInstance = Cast<UTotalLog_GameInstance>(UGameplayStatics::GetGameInstance(World));
+
+	if (IsValid(GameInstance))
+	{
+		ItemData = GameInstance->GetItemData(Index);
+		ItemIndex = Index;
+	}
+	else
+	{
+		UE_LOG(LogClass, Warning, TEXT("GameInstance is not Exist"));
+	}
+}
+
 // Called when the game starts or when spawned
 void AMasterItem::BeginPlay()
 {
 	Super::BeginPlay();
-
-	UTotalLog_GameInstance*	GameInstance = GetGameInstance<UTotalLog_GameInstance>();
-
-	if(GameInstance)
+	
+	if (ItemIndex != CN_NullItemIndex)
 	{
-		/*if (HasAuthority()) 
-		{
-			ItemIndex = FMath::RandRange(0, 6);
-		}*/
-
-		ItemData = GameInstance->GetItemData(ItemIndex);
-		/*if (ItemIndex != 0)
-		{
-			FStreamableManager Loader;
-			StaticMesh->SetStaticMesh(Loader.LoadSynchronous<UStaticMesh>(ItemData.ItemMesh));
-		}*/
+		FStreamableManager Loader;
+		StaticMesh->SetStaticMesh(Loader.LoadSynchronous<UStaticMesh>(ItemData.ItemMesh));
 	}
 
 	Sphere->OnComponentBeginOverlap.AddDynamic(this, &AMasterItem::ProcessBeginOverlap);

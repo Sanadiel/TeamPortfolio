@@ -17,12 +17,12 @@ void UItemWidgetBase::NativeConstruct()
 
 void UItemWidgetBase::UpdateItemSlot(AMasterItem* ParamItem)
 {
-	if (Item)
+	if (ParamItem)
 	{		
 		FStreamableManager Loader;
 
-		/*Item = ParamItem;
+		Item = ParamItem;
 		ItemThumnail->SetBrushFromTexture(Loader.LoadSynchronous<UTexture2D>(Item->ItemData.ItemThumnail));
-		ItemCount->SetText(FText::FromString(FString::FromInt(Item->ItemData.ItemCount)));*/
+		ItemCount->SetText(FText::FromString(FString::FromInt(Item->ItemData.ItemCount)));
 	}
 }

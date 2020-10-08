@@ -8,18 +8,25 @@
 UInventory::UInventory()
 {
 	PrimaryComponentTick.bCanEverTick = false;
-	AMasterItem* Item = CreateDefaultSubobject<AMasterItem>("NullItem");
 	Inven.Reserve(CN_InventoryMaxChild);
-
-	for (int i = 0; i != CN_InventoryMaxChild; ++i)
-	{
-		Inven.Add(Item);
-	}
 }
 
 void UInventory::BeginPlay()
 {
 	Super::BeginPlay();
+
+	for (int i = 0; i != CN_InventoryMaxChild; ++i)
+	{
+		AMasterItem* MasterItem = NewObject<AMasterItem>();
+		MasterItem->SettingByIndex(FMath::RandRange(0, 6), GetWorld());
+		Inven.Add(MasterItem);
+		MasterItem->ConditionalBeginDestroy();
+	}
+
+	for (int i = 0; i != CN_InventoryMaxChild; ++i)
+	{
+		UE_LOG(LogClass, Warning, TEXT("%d"), Inven[i]->ItemIndex);
+	}
 }
 
 void UInventory::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)

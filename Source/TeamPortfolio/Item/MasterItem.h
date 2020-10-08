@@ -34,6 +34,7 @@ public:
 #pragma region Public Function
 public:
 	AMasterItem();
+	void SettingByIndex(int32 Index, UWorld* World);
 	virtual void Tick(float DeltaTime) override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 

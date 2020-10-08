@@ -6,7 +6,7 @@
 
 FItemDataTable UTotalLog_GameInstance::GetItemData(int Index) const
 {
-	if (MonsterDataArray.IsValidIndex(Index))
+	if (ItemDataArray.IsValidIndex(Index))
 	{
 		return ItemDataArray[Index];
 	}
@@ -44,6 +44,11 @@ void UTotalLog_GameInstance::Init()
 
 	SettingMonsterData();
 	SettingItemData();
+}
+
+void UTotalLog_GameInstance::PostLoad()
+{
+	Super::PostLoad();	
 }
 
 FMonsterDataTable UTotalLog_GameInstance::GetMonsterData(int Index) const

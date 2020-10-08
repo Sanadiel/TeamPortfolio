@@ -47,6 +47,7 @@ public:
 	void SettingItemData();
 
 	virtual void Init() override;
+	virtual void PostLoad() override;
 
 #pragma endregion
 };
