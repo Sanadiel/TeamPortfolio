@@ -117,3 +117,33 @@ FReply UItemSlotBase::NativeOnMouseMove(const FGeometry & InGeometry, const FPoi
 	return Reply.NativeReply;
 }
 
+FReply UItemSlotBase::NativeOnMouseButtonDown(const FGeometry & InGeometry, const FPointerEvent & InMouseEvent)
+{
+	Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
+
+	FEventReply Reply = UWidgetBlueprintLibrary::DetectDragIfPressed(InMouseEvent, this, EKeys::LeftMouseButton);//FReply::Handled().DetectDrag(this?, EKeys::LeftMouseButton);
+
+	if (InMouseEvent.IsMouseButtonDown(EKeys::RightMouseButton))
+	{
+		UE_LOG(LogClass, Warning, TEXT("RightButton"));
+
+		if (SlotType == ESlotParentType::Inventory)
+		{
+			//소비재 -> 사용
+			//장착템 -> 장착템 위치와 스왑
+		}
+		else if(SlotType == ESlotParentType::Equipment)
+		{
+			//장착해제
+		}
+		else if (SlotType == ESlotParentType::Shop)
+		{
+			//구입
+		}
+	}
+
+	
+
+	return Reply.NativeReply;
+}
+

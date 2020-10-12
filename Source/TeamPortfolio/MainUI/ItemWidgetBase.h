@@ -25,6 +25,7 @@ public:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	bool bUse = false;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	class AMasterItem* Item;
 
 #pragma endregion

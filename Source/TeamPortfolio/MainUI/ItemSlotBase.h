@@ -7,6 +7,14 @@
 #include "Blueprint/UserWidget.h"
 #include "ItemSlotBase.generated.h"
 
+UENUM(BlueprintType)
+enum class ESlotParentType : uint8
+{
+	Inventory = 0		UMETA(Display = "Inventory"),
+	Equipment = 1		UMETA(Display = "Equipment"),
+	Shop = 2			UMETA(Display = "Shop"),
+};
+
 /**
  * 
  */
@@ -25,6 +33,9 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	int32 SlotIndex;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	ESlotParentType SlotType;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	class UCanvasPanel* MainUIRootCanvas;
@@ -49,6 +60,7 @@ public:
 	virtual void NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 	virtual void NativeOnMouseLeave(const FPointerEvent& InMouseEvent) override;
 	virtual FReply NativeOnMouseMove(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 
 #pragma endregion
 

@@ -50,6 +50,8 @@ void AMasterItem::BeginPlay()
 	
 	if (ItemIndex != CN_NullItemIndex)
 	{
+		SettingByIndex(ItemIndex, GetWorld());
+
 		FStreamableManager Loader;
 		StaticMesh->SetStaticMesh(Loader.LoadSynchronous<UStaticMesh>(ItemData.ItemMesh));
 	}
