@@ -465,8 +465,9 @@ void ATeamP_BasicPlayer::StartFire() //발사키 입력시
 void ATeamP_BasicPlayer::StopFire()
 {
 	bIsFire = false;
-
-	bIsFireAnim = false;
+	if (!bIsShotgun) {
+		bIsFireAnim = false;
+	}
 }
 
 void ATeamP_BasicPlayer::Reload()
@@ -486,6 +487,7 @@ void ATeamP_BasicPlayer::canfire()
 
 void ATeamP_BasicPlayer::WeaponChange(int WeaponNumber)
 {
+	bIsFire = false;
 	switch (WeaponNumber)
 	{
 	case 1: WeaponNumber = 1;
@@ -524,6 +526,7 @@ void ATeamP_BasicPlayer::WeaponChange1()
 	WeaponChange(UsingWeaponNumber);
 	WeaponAttackSpeed = 0.05f;
 	WeaponDamage = 1.0f;
+	bIsShotgun = false;
 
 	FireTimerHandle = &Weapon1_FireTimerHande;
 	FireTimerHandle2 = &Weapon1_FireTimerHande2;
@@ -535,6 +538,8 @@ void ATeamP_BasicPlayer::WeaponChange2()
 	WeaponChange(UsingWeaponNumber);
 	WeaponAttackSpeed = 0.2f;
 	WeaponDamage = 8.0f;
+	bIsShotgun = false;
+
 
 	FireTimerHandle = &Weapon2_FireTimerHande;
 	FireTimerHandle2 = &Weapon2_FireTimerHande2;
@@ -546,6 +551,7 @@ void ATeamP_BasicPlayer::WeaponChange3()//타이머루다가 애니메이션 한
 	WeaponChange(UsingWeaponNumber);
 	WeaponAttackSpeed = 2.f;
 	WeaponDamage = 75.0f;
+	bIsShotgun = true;
 
 	FireTimerHandle = &Weapon3_FireTimerHande;
 	FireTimerHandle2 = &Weapon3_FireTimerHande2;
@@ -557,6 +563,8 @@ void ATeamP_BasicPlayer::WeaponChange4()
 	WeaponChange(UsingWeaponNumber);
 	WeaponAttackSpeed = 2.f;
 	WeaponDamage = 75.0f;
+	bIsShotgun = false;
+
 
 	FireTimerHandle = &Weapon4_FireTimerHande;
 	FireTimerHandle2 = &Weapon4_FireTimerHande2;

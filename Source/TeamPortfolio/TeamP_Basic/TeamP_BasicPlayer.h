@@ -122,7 +122,11 @@ public:
 
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
-	uint64 bIsIronsight : 1;
+		uint64 bIsIronsight : 1;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status") //샷건임???
+		uint64 bIsShotgun : 1;
+
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
 	uint64 bIsReload : 1;

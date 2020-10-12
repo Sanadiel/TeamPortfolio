@@ -24,7 +24,11 @@ void UTeamP_AnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 		bIsReload = Pawn->bIsReload;
 
-		bIsFire = Pawn->bIsFireAnim;
+		bIsShotgun = Pawn->bIsShotgun;
+
+		if (!bIsShotgun) {
+			bIsFire = Pawn->bIsFireAnim;
+		}
 
 		FRotator AimRotation = Pawn->GetAimOffset();
 		AimYaw = AimRotation.Yaw;

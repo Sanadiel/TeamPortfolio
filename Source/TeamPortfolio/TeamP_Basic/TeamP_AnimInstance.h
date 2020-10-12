@@ -29,6 +29,10 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
 	uint64 bIsFire : 1;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")//º¶∞«¿”??
+	uint64 bIsShotgun : 1;
+
+
 
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, category = "Status")
