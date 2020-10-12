@@ -19,7 +19,7 @@ void UHpBarBase::UpdateHpBar(float Percent)
 
 void UHpBarBase::BeginDestroy()
 {
-	Fuc_DeleSingle_ThreeParam.Unbind();
+	Fuc_DeleSingle_ThreeParam.Unbind();	
 
 	Super::BeginDestroy();
 }
@@ -35,9 +35,9 @@ void UHpBarBase::NativeOnMouseEnter(const FGeometry & InGeometry, const FPointer
 	}	
 }
 
-void UHpBarBase::NativeOnMouseLeave(const FPointerEvent & MouseEvent)
+void UHpBarBase::NativeOnMouseLeave(const FPointerEvent & InMouseEvent)
 {
-	Super::NativeOnMouseLeave(MouseEvent);
+	Super::NativeOnMouseLeave(InMouseEvent);
 
 	if (Fuc_DeleSingle_ThreeParam.IsBound() == true)
 	{

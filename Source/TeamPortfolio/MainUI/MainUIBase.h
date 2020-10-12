@@ -29,10 +29,16 @@ public:
 	class UStatHoverBase* Hover;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	class UItemTooltipBase* ItemHover;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	class UCanvasPanel* HpBarParent;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	class UCanvasPanel* RootCanvas;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Drag")
+	bool isDraging = false;
 	
 
 #pragma endregion 
@@ -51,6 +57,8 @@ public:
 
 	UFUNCTION()
 	void ToggleHover(FVector2D LocalPosition, FVector2D AbsolutePosition, int32 Value);
+
+	UCanvasPanel* GetRootCanvas();
 
 #pragma endregion 
 	

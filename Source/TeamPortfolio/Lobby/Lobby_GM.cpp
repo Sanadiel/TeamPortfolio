@@ -8,7 +8,8 @@
 
 void ALobby_GM::StartGame()
 {
-	GetWorld()->ServerTravel(TEXT("UITest_Level"));
+	//()->ServerTravel(TEXT("UITest_Level")); 
+	GetWorld()->ServerTravel(TEXT("CrumblingRuins_Level"), true, true);
 }
 
 void ALobby_GM::BeginPlay()

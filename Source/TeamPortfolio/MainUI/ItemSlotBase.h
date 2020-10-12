@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "../Item/ItemDataTable.h"
 #include "Blueprint/UserWidget.h"
 #include "ItemSlotBase.generated.h"
 
@@ -25,6 +26,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	int32 SlotIndex;
 
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	class UCanvasPanel* MainUIRootCanvas;
+
 #pragma endregion
 
 #pragma region Public Function
@@ -33,6 +37,18 @@ public:
 	void UpdateItemSlot(class AMasterItem* Item);
 	void SetInvenParent(class UInventoryWidgetBase* InvenParent);
 	void SetEquipParent(class UInventoryWidgetBase* InvenParent);
+	void SetMainUIRootCanvas(class UCanvasPanel* Canvas);
+	FItemDataTable GetThisItemData();
+
+	bool GetisDraging();
+	void TooltipVisible(bool bValue);
+
+	UFUNCTION(BlueprintCallable)
+	void SetisDraging(bool bValue);
+
+	virtual void NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+	virtual void NativeOnMouseLeave(const FPointerEvent& InMouseEvent) override;
+	virtual FReply NativeOnMouseMove(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 
 #pragma endregion
 

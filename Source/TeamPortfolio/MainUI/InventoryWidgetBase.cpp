@@ -7,8 +7,10 @@
 #include "Components/Button.h"
 #include "Components/Border.h"
 #include "Components/CanvasPanel.h"
+#include "MainUIBase.h"
 #include "ItemSlotBase.h"
 #include "ItemWidgetBase.h"
+#include "ItemTooltipBase.h"
 #include "TestUI_PC.h"
 #include "../Item/Inventory.h"
 #include "../Item/MasterItem.h"
@@ -92,13 +94,34 @@ void UInventoryWidgetBase::SetSlotsParent()
 	{
 		UItemSlotBase* ChildSlot = Cast<UItemSlotBase>(ItemSlots->GetChildAt(index));
 		ChildSlot->SetInvenParent(this);
+		ChildSlot->SetMainUIRootCanvas(MainUIParent->RootCanvas);
 	}
+}
+
+void UInventoryWidgetBase::SetMainUIParent(UMainUIBase* MainUI)
+{
+	MainUIParent = MainUI;
+}
+
+bool UInventoryWidgetBase::GetisDraging()
+{	
+	return MainUIParent->isDraging;
+}
+
+void UInventoryWidgetBase::SetisDraging(bool bValue)
+{
+	MainUIParent->isDraging = bValue;
 }
 
 FItemDataTable UInventoryWidgetBase::GetItemData(int32 Index)
 {
 	ATestUI_PC* PC = GetOwningPlayer<ATestUI_PC>();
 	return PC->Inventory->GetItemData(Index);
+}
+
+UItemTooltipBase* UInventoryWidgetBase::GetTooltipWidget()
+{
+	return MainUIParent->ItemHover;
 }
 
 void UInventoryWidgetBase::SwapSlot(int32 FrontslotIndex, int32 OtherSlotIndex)

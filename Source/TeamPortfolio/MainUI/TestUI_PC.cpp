@@ -27,6 +27,7 @@ void ATestUI_PC::BeginPlay()
 			MainWidgetObject->AddToViewport();
 			bShowMouseCursor = false;
 			SetInputMode(FInputModeGameOnly());
+			MainWidgetObject->Inventory->SetMainUIParent(MainWidgetObject);
 			MainWidgetObject->Inventory->SetSlotsParent();
 			MainWidgetObject->Inventory->UpdateInventory(Inventory->Inven);
 		}

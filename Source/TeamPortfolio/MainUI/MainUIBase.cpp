@@ -7,6 +7,7 @@
 #include "InventoryWidgetBase.h"
 #include "StatHoverBase.h"
 #include "HpBarBase.h"
+#include "ItemTooltipBase.h"
 
 void UMainUIBase::NativeConstruct()
 {
@@ -18,12 +19,15 @@ void UMainUIBase::NativeConstruct()
 	Hover = Cast<UStatHoverBase>(GetWidgetFromName(TEXT("Hover")));
 	HpBarParent = Cast<UCanvasPanel>(GetWidgetFromName(TEXT("HpBarParent")));
 	RootCanvas = Cast<UCanvasPanel>(GetWidgetFromName(TEXT("RootPanel")));
+	ItemHover = Cast<UItemTooltipBase>(GetWidgetFromName(TEXT("ItemTooltip")));
 
 	Inventory->SetVisibility(ESlateVisibility::Collapsed);
 	HpBar->Fuc_DeleSingle_ThreeParam.BindUFunction(this, FName("ToggleHover"));
 	StBar->Fuc_DeleSingle_ThreeParam.BindUFunction(this, FName("ToggleHover"));
 	Hover->SetVisibility(ESlateVisibility::Collapsed);
 	Hover->RemoveFromViewport();
+	ItemHover->SetVisibility(ESlateVisibility::Collapsed);
+	ItemHover->RemoveFromViewport();
 }
 
 void UMainUIBase::UpdateHpBar(float Percent)
@@ -51,6 +55,7 @@ void UMainUIBase::ToggleInventory(bool bValue)
 	else
 	{
 		Inventory->SetVisibility(ESlateVisibility::Collapsed);
+		GetCachedGeometry();
 	}
 }
 
@@ -76,4 +81,9 @@ void UMainUIBase::ToggleHover(FVector2D LocalPosition, FVector2D AbsolutePositio
 		Hover->SetPositionInViewport(NewPosition, false);
 		Hover->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	}
+}
+
+UCanvasPanel* UMainUIBase::GetRootCanvas()
+{
+	return RootCanvas;
 }

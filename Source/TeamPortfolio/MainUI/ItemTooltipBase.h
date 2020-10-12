@@ -17,6 +17,12 @@ class TEAMPORTFOLIO_API UItemTooltipBase : public UUserWidget
 public:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	class UTextBlock* ItemName;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	class UTextBlock* ItemBodyText;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	class UImage* ItemThumnail;
 #pragma endregion
 
 #pragma region Public Function
@@ -25,5 +31,14 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SetItemName(FString NewName);
+
+	UFUNCTION(BlueprintCallable)
+	void SetItemBodyText(FString NewBody);
+
+	UFUNCTION(BlueprintCallable)
+	void SetImage(TAssetPtr<class UTexture2D> Thumnail);
+
+	UFUNCTION(BlueprintCallable)
+	void SetTooltipsInfo(FString NewName, FString NewBody, TAssetPtr<class UTexture2D> Thumnail);
 #pragma endregion
 };

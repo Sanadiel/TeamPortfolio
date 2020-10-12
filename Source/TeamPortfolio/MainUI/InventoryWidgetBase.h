@@ -25,6 +25,9 @@ public:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	class UButton* Exit;
 
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	class UMainUIBase* MainUIParent;
+
 #pragma endregion
 
 #pragma region Public Function
@@ -35,8 +38,12 @@ public:
 	int GetEmptySlot();
 	void SetSlot(int Index, class AMasterItem* Item);
 	void SetSlotsParent();
+	void SetMainUIParent(class UMainUIBase* MainUI);
+	bool GetisDraging();
+	void SetisDraging(bool bValue);
 
 	FItemDataTable GetItemData(int32 Index);
+	class UItemTooltipBase* GetTooltipWidget();
 
 	UFUNCTION(BlueprintCallable)
 	void SwapSlot(int32 FrontslotIndex, int32 OtherSlotIndex);
