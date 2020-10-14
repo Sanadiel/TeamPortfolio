@@ -98,7 +98,7 @@ public:
 		TSubclassOf<UBossWidgetBase> BossWidgetClass;
 
 	//Hold Projectile Actor.
-	UFUNCTION(Server,Reliable)
+	UFUNCTION(Server, Reliable)
 		void HoldSpawnProjectile(ABossProjectileBase* ProjectileObject);
 		void HoldSpawnProjectile_Implementation(ABossProjectileBase* ProjectileObject);
 

@@ -23,6 +23,8 @@ public:
 	//// Called every frame
 	//virtual void Tick(float DeltaTime) override;
 
-	//Implementation For Spawn Monster.
-	virtual void ProjectileTask_Implementation(const FHitResult& Hit) override;
+
+	//Override for Spawn Monster
+	virtual void StartFunction_Implementation(const FHitResult& Hit) override;
+
 };

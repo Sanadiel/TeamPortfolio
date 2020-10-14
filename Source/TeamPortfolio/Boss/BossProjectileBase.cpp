@@ -116,7 +116,7 @@ void ABossProjectileBase::OnHit(UPrimitiveComponent * HitComp, AActor * OtherAct
 			}
 		}
 
-		//Do This Only Server
+		//Do This Only Server. It Has Own Function.
 		ProjectileTask(Hit);
 
 		Destroy();
@@ -133,6 +133,11 @@ void ABossProjectileBase::OnHit(UPrimitiveComponent * HitComp, AActor * OtherAct
 
 void ABossProjectileBase::ProjectileTask_Implementation(const FHitResult & Hit)
 {
-	UE_LOG(LogClass, Warning, TEXT("ABossProjectileBase::ProjectileTask"));
+	StartFunction(Hit);
+}
+
+void ABossProjectileBase::StartFunction_Implementation(const FHitResult & Hit)
+{
+	UE_LOG(LogClass, Warning, TEXT("ABossProjectileBase::StartFunction. It is a Base Function. You Must Override it."));
 }
 

@@ -39,7 +39,7 @@ public:
 
 	//Info Has What Do you Want to Spawn.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Info")
-	FBossProjectileInfo ProjectileInfo;
+		FBossProjectileInfo ProjectileInfo;
 
 protected:
 	// Called when the game starts or when spawned
@@ -53,11 +53,17 @@ public:
 	UFUNCTION()
 		void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 	
-	/*ProjectileFunction. Do Implement virtual _Implementation() at Derived Class.
+	
+	/*
+	ProjectileFunction. Do Implement virtual _Implementation() at Derived Class.
 	It Does In Server Only.
 	*/
 	UFUNCTION(Server, Reliable)
 		void ProjectileTask(const FHitResult& Hit);
 		virtual void ProjectileTask_Implementation(const FHitResult& Hit);
 
+	//It is Actual Function of Projectile. You Must Override In Blueprint or C++.
+	UFUNCTION(BlueprintNativeEvent)
+		void StartFunction(const FHitResult& Hit);
+		virtual void StartFunction_Implementation(const FHitResult& Hit);
 };

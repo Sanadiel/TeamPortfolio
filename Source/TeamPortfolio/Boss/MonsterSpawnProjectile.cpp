@@ -19,7 +19,7 @@ void AMonsterSpawnProjectile::BeginPlay()
 
 }
 
-void AMonsterSpawnProjectile::ProjectileTask_Implementation(const FHitResult& Hit)
+void AMonsterSpawnProjectile::StartFunction_Implementation(const FHitResult& Hit)
 {
 	if (!HasAuthority())
 	{
