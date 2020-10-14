@@ -9,7 +9,9 @@
 
 class USpringArmComponent;
 class UCameraComponent;
-class AMonsterSpawnProjectile;
+
+class ABossProjectileBase;
+//class AMonsterSpawnProjectile;
 class UBossWidgetBase;
 class UPhysicsHandleComponent;
 class USceneComponent;
@@ -33,7 +35,7 @@ public:
 		UCameraComponent* Camera;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	UPhysicsHandleComponent* PhysicsHandle;
+		UPhysicsHandleComponent* PhysicsHandle;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 		USceneComponent* HoldPosition;
@@ -74,11 +76,11 @@ public:
 
 	//List that You Can.
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Monster")
-	TArray<TSubclassOf<AMonsterSpawnProjectile>> SpawnClasses;
+		TArray<TSubclassOf<ABossProjectileBase>> ProjectileClasses;
 
 	//Current Cooldown.
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Monster")
-	TArray<float> SpawnCooldown;
+		TArray<float> SpawnCooldown;
 
 	//MaxCoolDown.
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Monster")
@@ -87,18 +89,18 @@ public:
 
 	//Currently Selected Projectile Class.
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Monster")
-	TSubclassOf<AMonsterSpawnProjectile> MonsterSpawnProjectileClass;
+		TSubclassOf<ABossProjectileBase> BossProjectileClass;
 
 	//Change Projectile Class --> Will Use In Boss UI Button.
-	void SetProjectileClass(TSubclassOf<AMonsterSpawnProjectile> NewProjectileClass);
+	void SetProjectileClass(TSubclassOf<ABossProjectileBase> NewProjectileClass);
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UMG")
 		TSubclassOf<UBossWidgetBase> BossWidgetClass;
 
 	//Hold Projectile Actor.
 	UFUNCTION(Server,Reliable)
-	void HoldSpawnProjectile(AMonsterSpawnProjectile* ProjectileObject);
-	void HoldSpawnProjectile_Implementation(AMonsterSpawnProjectile* ProjectileObject);
+		void HoldSpawnProjectile(ABossProjectileBase* ProjectileObject);
+		void HoldSpawnProjectile_Implementation(ABossProjectileBase* ProjectileObject);
 
 	//Release when it is holding something, if not hold anything, find actor to hold.
 	void HandAction();

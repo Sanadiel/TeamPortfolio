@@ -8,15 +8,13 @@
 #include "Camera/CameraComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/CapsuleComponent.h"
-#include "MonsterSpawnProjectile.h"
-
-#include "BossWidgetBase.h" //Beginplay
+#include "BossProjectileBase.h"
+#include "BossWidgetBase.h" //See Beginplay
 #include "PhysicsEngine/PhysicsHandleComponent.h" // Physics Handle.
 #include "Components/SphereComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-
-#include "Engine/EngineTypes.h"
-#include "MotionControllerComponent.h"
+#include "Engine/EngineTypes.h" //EObjectTypeQuery
+#include "MotionControllerComponent.h" // Motion Controller.
 
 // Sets default values
 ABossCharacter::ABossCharacter()
@@ -104,10 +102,10 @@ void ABossCharacter::BeginPlay()
 	//}
 	
 	//Initialize Spawn Cooldown.
-	for (int i = 0; i < SpawnClasses.Num(); i++)
+	for (int i = 0; i < ProjectileClasses.Num(); i++)
 	{
 		SpawnCooldown.Add(0.0f);
-		MaxSpawnCooldown.Add(SpawnClasses[i].GetDefaultObject()->MonsterSpawnInfo.Cooldown);
+		MaxSpawnCooldown.Add(ProjectileClasses[i].GetDefaultObject()->ProjectileInfo.Cooldown);
 	}
 
 }
@@ -170,11 +168,11 @@ void ABossCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 //	}
 //}
 
-void ABossCharacter::SetProjectileClass(TSubclassOf<AMonsterSpawnProjectile> NewProjectileClass)
+void ABossCharacter::SetProjectileClass(TSubclassOf<ABossProjectileBase> NewProjectileClass)
 {
 	if (NewProjectileClass)
 	{
-		MonsterSpawnProjectileClass = NewProjectileClass;
+		BossProjectileClass = NewProjectileClass;
 	}
 	else
 	{
@@ -218,7 +216,7 @@ void ABossCharacter::LookUp(float Value)
 	AddControllerPitchInput(Value);
 }
 
-void ABossCharacter::HoldSpawnProjectile_Implementation(AMonsterSpawnProjectile* ProjectileObject)
+void ABossCharacter::HoldSpawnProjectile_Implementation(ABossProjectileBase* ProjectileObject)
 {
 	if (PhysicsHandle && ProjectileObject)
 	{
@@ -232,7 +230,7 @@ void ABossCharacter::HandAction()
 	//when hold something
 	if (PhysicsHandle->GetGrabbedComponent())
 	{
-		AMonsterSpawnProjectile* projectile =Cast<AMonsterSpawnProjectile>(PhysicsHandle->GetGrabbedComponent()->GetOwner());
+		ABossProjectileBase* projectile =Cast<ABossProjectileBase>(PhysicsHandle->GetGrabbedComponent()->GetOwner());
 		if (projectile) //set Activate value to Spawn monsters. See AMonsterSpawnPRojectile's Onhit.
 		{		
 			projectile->bActivated = true;
@@ -291,7 +289,7 @@ void ABossCharacter::HandAction()
 			if (result)
 			{
 				//check hit result actor is Projectile or not.
-				AMonsterSpawnProjectile * projectile = Cast<AMonsterSpawnProjectile>(hit.GetActor());
+				ABossProjectileBase * projectile = Cast<ABossProjectileBase>(hit.GetActor());
 				if (projectile)
 				{
 					HoldSpawnProjectile(projectile);
@@ -315,7 +313,7 @@ void ABossCharacter::LeftHandAction()
 	//when hold something
 	if (PhysicsHandle->GetGrabbedComponent())
 	{
-		AMonsterSpawnProjectile* projectile = Cast<AMonsterSpawnProjectile>(PhysicsHandle->GetGrabbedComponent()->GetOwner());
+		ABossProjectileBase* projectile = Cast<ABossProjectileBase>(PhysicsHandle->GetGrabbedComponent()->GetOwner());
 		if (projectile) //set Activate value to Spawn monsters. See AMonsterSpawnPRojectile's Onhit.
 		{
 			projectile->bActivated = true;
@@ -334,7 +332,7 @@ void ABossCharacter::LeftHandAction()
 
 			TArray<TEnumAsByte<EObjectTypeQuery>> objects;
 
-			//ObjectTypeQuery7 == Projectile(custom)
+			//explaination : ObjectTypeQuery7 == Projectile(custom)
 			objects.Add(EObjectTypeQuery::ObjectTypeQuery7);
 
 			TArray<AActor*> ignores;
@@ -363,7 +361,7 @@ void ABossCharacter::LeftHandAction()
 			if (result)
 			{
 				//check hit result actor is Projectile or not.
-				AMonsterSpawnProjectile * projectile = Cast<AMonsterSpawnProjectile>(hit.GetActor());
+				ABossProjectileBase * projectile = Cast<ABossProjectileBase>(hit.GetActor());
 				if (projectile)
 				{
 					HoldSpawnProjectile(projectile);
@@ -380,7 +378,6 @@ void ABossCharacter::LeftHandAction()
 
 		}
 
-		
 	}
 }
 
