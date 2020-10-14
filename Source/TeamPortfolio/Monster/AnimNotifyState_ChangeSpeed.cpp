@@ -3,33 +3,33 @@
 
 #include "AnimNotifyState_ChangeSpeed.h"
 #include "Monster.h"
+#include "Components/SkeletalMeshComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 void UAnimNotifyState_ChangeSpeed::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration)
 {
-
+	Super::NotifyBegin(MeshComp, Animation, TotalDuration);
 
 	AMonster* Monster = Cast<AMonster>(MeshComp->GetOwner());
 	if (Monster)
 	{
-		Monster->SetSpeed(3);
+		Monster->GetCharacterMovement()->MaxWalkSpeed = 0.1f;
 	}
 }
 
 void UAnimNotifyState_ChangeSpeed::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float FrameDeltaTime)
 {
-	AMonster* Monster = Cast<AMonster>(MeshComp->GetOwner());
-	if (Monster)
-	{
-		Monster->SetSpeed(3);
-	}
+	Super::NotifyTick(MeshComp, Animation, FrameDeltaTime);
 
 }
 
 void UAnimNotifyState_ChangeSpeed::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation)
 {
+	Super::NotifyEnd(MeshComp, Animation);
+
 	AMonster* Monster = Cast<AMonster>(MeshComp->GetOwner());
 	if (Monster)
 	{
-		Monster->SetSpeed(150);
+		Monster->GetCharacterMovement()->MaxWalkSpeed = Monster->WalkSpeed;
 	}
 }
