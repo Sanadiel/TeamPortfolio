@@ -47,7 +47,6 @@ public:
 	virtual void NativeConstruct() override;
 	void UpdateItemSlot(class AMasterItem* Item);
 	void SetInvenParent(class UInventoryWidgetBase* InvenParent);
-	void SetEquipParent(class UInventoryWidgetBase* InvenParent);
 	void SetMainUIRootCanvas(class UCanvasPanel* Canvas);
 	FItemDataTable GetThisItemData();
 

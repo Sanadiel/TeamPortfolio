@@ -30,7 +30,10 @@ public:
 	class UMainUIBase* MainWidgetObject;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "UI")
-	bool bIsToggle = false;
+	bool bInvenToggle = false;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "UI")
+	bool bEquipToggle = false;
 
 #pragma endregion
 
@@ -50,6 +53,9 @@ public:
 
 	void Toggle_InvenWidget();
 	void UnToggle_InvenWidget();
+
+	void Toggle_EquipWidget();
+	void UnToggle_EquipWidget();
 
 #pragma endregion
 };

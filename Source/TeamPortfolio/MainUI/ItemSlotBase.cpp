@@ -9,6 +9,10 @@
 #include "../Item/MasterItem.h"
 #include "Components/CanvasPanel.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
+#include "TestUI_PC.h"
+#include "../Item/Inventory.h"
+#include "MainUIBase.h"
+#include "EquipmentBase.h"
 
 void UItemSlotBase::NativeConstruct()
 {
@@ -28,11 +32,6 @@ void UItemSlotBase::UpdateItemSlot(AMasterItem* Item)
 void UItemSlotBase::SetInvenParent(UInventoryWidgetBase * InvenParent)
 {
 	InvenWidget = InvenParent;
-}
-
-void UItemSlotBase::SetEquipParent(UInventoryWidgetBase* InvenParent)
-{
-	
 }
 
 void UItemSlotBase::SetMainUIRootCanvas(UCanvasPanel* Canvas)
@@ -85,8 +84,6 @@ void UItemSlotBase::NativeOnMouseEnter(const FGeometry & InGeometry, const FPoin
 		FVector2D NewPosition = InGeometry.AbsoluteToLocal(InMouseEvent.GetScreenSpacePosition()) +
 			MainUIRootCanvas->GetCachedGeometry().AbsoluteToLocal(InGeometry.GetAbsolutePosition());
 
-		UE_LOG(LogClass, Warning, TEXT("%f, %f"), NewPosition.X, NewPosition.Y);
-
 		InvenWidget->GetTooltipWidget()->SetPositionInViewport(NewPosition, false);
 
 		TooltipVisible(true);
@@ -125,24 +122,66 @@ FReply UItemSlotBase::NativeOnMouseButtonDown(const FGeometry & InGeometry, cons
 
 	if (InMouseEvent.IsMouseButtonDown(EKeys::RightMouseButton))
 	{
-		UE_LOG(LogClass, Warning, TEXT("RightButton"));
+		ATestUI_PC* PC = GetOwningPlayer<ATestUI_PC>();
 
-		if (SlotType == ESlotParentType::Inventory)
+		if (SlotType == ESlotParentType::Inventory)//인벤토리에서 실행
 		{
 			//소비재 -> 사용
+			if (ItemWidget->GetItem()->ItemData.ItemType == EItemType::Consume)
+			{
+				ItemWidget->UseConsumeItem();
+				ItemWidget->UpdateCount();
+			}
 			//장착템 -> 장착템 위치와 스왑
+			else if (ItemWidget->GetItem()->ItemData.ItemType == EItemType::Equip)
+			{				
+				ESlotType SlotNum = ItemWidget->GetItem()->ItemData.ItemEquipSlot;
+
+				AMasterItem* MasterItem = PC->Inventory->Equipment[(int)SlotNum];
+				PC->Inventory->Equipment[(int)SlotNum] = PC->Inventory->Inven[SlotIndex];
+				PC->Inventory->Equipment[(int)SlotNum]->ItemIndex = PC->Inventory->Equipment[(int)SlotNum]->ItemData.ItemIndex;
+				PC->Inventory->Inven[SlotIndex] = MasterItem;
+				UpdateItemSlot(PC->Inventory->Inven[SlotIndex]);
+				PC->MainWidgetObject->EquipWindow->SetSlot((int)SlotNum, PC->Inventory->Equipment[(int)SlotNum]);				
+			}
 		}
-		else if(SlotType == ESlotParentType::Equipment)
-		{
-			//장착해제
+		else if(SlotType == ESlotParentType::Equipment)//장비창에서 실행
+		{//장착해제
+			int EmptySlotNum = PC->MainWidgetObject->Inventory->GetEmptySlot();
+
+			AMasterItem* MasterItem = PC->Inventory->Equipment[SlotIndex];
+			PC->Inventory->Equipment[SlotIndex] = PC->Inventory->Inven[EmptySlotNum];
+			PC->Inventory->Equipment[SlotIndex]->ItemIndex = PC->Inventory->Equipment[SlotIndex]->ItemData.ItemIndex;
+			PC->Inventory->Inven[EmptySlotNum] = MasterItem;
+			UpdateItemSlot(PC->Inventory->Equipment[SlotIndex]);
+			PC->MainWidgetObject->Inventory->SetSlot(EmptySlotNum, PC->Inventory->Inven[EmptySlotNum]);
 		}
 		else if (SlotType == ESlotParentType::Shop)
 		{
 			//구입
-		}
-	}
+			//장착 일반템 -> 그냥 한칸 차지
+			//소비템 -> 합쳐져야됨
+			//골드 깎아야됨
+			
+			//AMasterItem* MasterItem = ;
+			//int ExistIndex = PC->MainWidgetObject->Inventory->HaveThis(MasterItem);
+			//if (MasterItem->ItemData.ItemType == EItemType::Consume && ExistIndex != -1)//합치기
+			//{
+			//	PC->Inventory->Inven[ExistIndex]->ItemData.ItemCount += 1;
+			//	PC->MainWidgetObject->Inventory->UpdateInventoryWithIndex(PC->Inventory->Inven, ExistIndex);
+			//}
+			//else//그냥 생성
+			//{
+			//	int EmptySlotNum = PC->MainWidgetObject->Inventory->GetEmptySlot();
 
-	
+			//	PC->Inventory->Inven[EmptySlotNum] = MasterItem;
+			//	PC->Inventory->Equipment[SlotIndex] = PC->Inventory->Inven[EmptySlotNum];
+			//	PC->Inventory->Equipment[SlotIndex]->ItemIndex = PC->Inventory->Equipment[SlotIndex]->ItemData.ItemIndex;
+			//	PC->Inventory->Inven[EmptySlotNum] = MasterItem;
+			//	PC->MainWidgetObject->Inventory->SetSlot(EmptySlotNum, PC->Inventory->Inven[EmptySlotNum]);
+			//}
+		}
+	}	
 
 	return Reply.NativeReply;
 }

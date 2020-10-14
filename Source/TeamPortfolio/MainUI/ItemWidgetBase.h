@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "../TeamPortfolio.h"
 #include "Blueprint/UserWidget.h"
 #include "ItemWidgetBase.generated.h"
 
@@ -22,9 +22,6 @@ public:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	class UTextBlock* ItemCount;
 
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-	bool bUse = false;
-
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	class AMasterItem* Item;
 
@@ -35,6 +32,12 @@ public:
 	virtual void NativeConstruct() override;
 
 	void UpdateItemSlot(class AMasterItem* ParamItem);
+
+	class AMasterItem* GetItem();
+
+	void UseConsumeItem();
+
+	void UpdateCount();
 
 #pragma endregion
 };

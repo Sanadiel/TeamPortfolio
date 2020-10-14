@@ -34,13 +34,15 @@ public:
 public:
 	virtual void NativeConstruct() override;
 	void UpdateInventory(TArray<class AMasterItem*> Inventory);
-	void UpdateInventoryWithIndex(TArray<class AMasterItem*> Inventory, int32 FirstIndex);
+	virtual void UpdateInventoryWithIndex(TArray<class AMasterItem*> Inventory, int32 FirstIndex);
 	int GetEmptySlot();
-	void SetSlot(int Index, class AMasterItem* Item);
-	void SetSlotsParent();
+	virtual void SetSlot(int Index, class AMasterItem* Item);
+	virtual void SetSlotsParent();
 	void SetMainUIParent(class UMainUIBase* MainUI);
 	bool GetisDraging();
 	void SetisDraging(bool bValue);
+
+	int HaveThis(AMasterItem* FuncItem);
 
 	FItemDataTable GetItemData(int32 Index);
 	class UItemTooltipBase* GetTooltipWidget();
@@ -50,6 +52,7 @@ public:
 
 	UFUNCTION()
 	void OnExitButton();
+	virtual void SetExitButton();
 
 #pragma endregion
 };

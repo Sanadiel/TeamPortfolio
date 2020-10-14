@@ -26,6 +26,12 @@ public:
 	class UInventoryWidgetBase* Inventory;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	class UEquipmentBase* EquipWindow;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	class UShopBase* ShopWindow;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	class UStatHoverBase* Hover;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
@@ -54,6 +60,7 @@ public:
 	void UpdateStBar(float Percent);
 
 	void ToggleInventory(bool bValue);	
+	void ToggleEquipWindow(bool bValue);
 
 	UFUNCTION()
 	void ToggleHover(FVector2D LocalPosition, FVector2D AbsolutePosition, int32 Value);

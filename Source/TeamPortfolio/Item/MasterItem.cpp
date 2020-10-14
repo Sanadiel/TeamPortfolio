@@ -43,6 +43,21 @@ void AMasterItem::SettingByIndex(int32 Index, UWorld* World)
 	}
 }
 
+void AMasterItem::SettingByIndexWithoutWorld(int32 Index)
+{
+	UTotalLog_GameInstance*	GameInstance = Cast<UTotalLog_GameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+
+	if (IsValid(GameInstance))
+	{
+		ItemData = GameInstance->GetItemData(Index);
+		ItemIndex = Index;
+	}
+	else
+	{
+		UE_LOG(LogClass, Warning, TEXT("GameInstance is not Exist"));
+	}
+}
+
 // Called when the game starts or when spawned
 void AMasterItem::BeginPlay()
 {

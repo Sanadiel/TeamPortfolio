@@ -3,3 +3,7 @@
 
 #include "ItemDataTable.h"
 
+void FItemDataTable::SetItemData(FItemDataTable Data)
+{
+	*this = Data;
+}

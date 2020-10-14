@@ -19,10 +19,10 @@ enum class EItemType : uint8
 UENUM(BlueprintType)
 enum class ESlotType : uint8
 {
-	NotUse = 0		UMETA(Display = "NotUse"),
-	WeaponRightHand = 1		UMETA(Display = "WeaponRightHand"),
-	Weapon = 2		UMETA(Display = "Weapon"),
-	WeaponBack01 = 3		UMETA(Display = "WeaponBack01"),
+	Head = 0		UMETA(Display = "Head"),
+	Body = 1		UMETA(Display = "Body"),
+	Grove = 2		UMETA(Display = "Grove"),
+	Weapon = 3		UMETA(Display = "Weapon"),
 };
 /**
  *
@@ -55,5 +55,7 @@ public:
 	TAssetPtr<class UTexture2D> ItemThumnail;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	TAssetPtr<class UStaticMesh>ItemMesh;
+	TAssetPtr<class UStaticMesh> ItemMesh;
+
+	void SetItemData(FItemDataTable Data);
 };

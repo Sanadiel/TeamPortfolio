@@ -35,6 +35,7 @@ public:
 public:
 	AMasterItem();
 	void SettingByIndex(int32 Index, UWorld* World);
+	void SettingByIndexWithoutWorld(int32 Index);
 	virtual void Tick(float DeltaTime) override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 

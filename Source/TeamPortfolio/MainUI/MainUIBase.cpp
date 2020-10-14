@@ -8,6 +8,8 @@
 #include "StatHoverBase.h"
 #include "HpBarBase.h"
 #include "ItemTooltipBase.h"
+#include "EquipmentBase.h"
+#include "ShopBase.h"
 
 void UMainUIBase::NativeConstruct()
 {
@@ -15,13 +17,17 @@ void UMainUIBase::NativeConstruct()
 
 	HpBar = Cast<UHpBarBase>(GetWidgetFromName(TEXT("HpBar_1")));
 	StBar = Cast<UHpBarBase>(GetWidgetFromName(TEXT("StaminaBar")));
-	Inventory = Cast<UInventoryWidgetBase>(GetWidgetFromName(TEXT("Inventory")));	
+	Inventory = Cast<UInventoryWidgetBase>(GetWidgetFromName(TEXT("Inventory")));
+	EquipWindow = Cast<UEquipmentBase>(GetWidgetFromName(TEXT("Equipment")));
+	ShopWindow = Cast<UShopBase>(GetWidgetFromName(TEXT("Shop")));
 	Hover = Cast<UStatHoverBase>(GetWidgetFromName(TEXT("Hover")));
 	HpBarParent = Cast<UCanvasPanel>(GetWidgetFromName(TEXT("HpBarParent")));
 	RootCanvas = Cast<UCanvasPanel>(GetWidgetFromName(TEXT("RootPanel")));
 	ItemHover = Cast<UItemTooltipBase>(GetWidgetFromName(TEXT("ItemTooltip")));
 
+	ShopWindow->SetVisibility(ESlateVisibility::Collapsed);
 	Inventory->SetVisibility(ESlateVisibility::Collapsed);
+	EquipWindow->SetVisibility(ESlateVisibility::Collapsed);
 	HpBar->Fuc_DeleSingle_ThreeParam.BindUFunction(this, FName("ToggleHover"));
 	StBar->Fuc_DeleSingle_ThreeParam.BindUFunction(this, FName("ToggleHover"));
 	Hover->SetVisibility(ESlateVisibility::Collapsed);
@@ -55,7 +61,18 @@ void UMainUIBase::ToggleInventory(bool bValue)
 	else
 	{
 		Inventory->SetVisibility(ESlateVisibility::Collapsed);
-		GetCachedGeometry();
+	}
+}
+
+void UMainUIBase::ToggleEquipWindow(bool bValue)
+{
+	if (bValue)
+	{
+		EquipWindow->SetVisibility(ESlateVisibility::Visible);
+	}
+	else
+	{
+		EquipWindow->SetVisibility(ESlateVisibility::Collapsed);
 	}
 }
 

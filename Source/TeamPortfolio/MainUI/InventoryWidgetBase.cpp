@@ -23,10 +23,7 @@ void UInventoryWidgetBase::NativeConstruct()
 	Drag = Cast<UBorder>(GetWidgetFromName(TEXT("Drag")));
 	Exit = Cast<UButton>(GetWidgetFromName(TEXT("Exit")));
 
-	if (Exit)
-	{
-		Exit->OnClicked.AddDynamic(this, &UInventoryWidgetBase::OnExitButton);
-	}
+	SetExitButton();
 }
 
 void UInventoryWidgetBase::UpdateInventory(TArray<class AMasterItem*> Inventory)
@@ -57,7 +54,7 @@ int UInventoryWidgetBase::GetEmptySlot()
 		{
 			if (IsValid(InventorySlot->ItemWidget->Item))
 			{
-				if (InventorySlot->ItemWidget->Item->ItemIndex == CN_NullItemIndex)
+				if (InventorySlot->ItemWidget->Item->ItemData.ItemIndex == CN_NullItemIndex)
 				{
 					return Index;
 				}//아이템이 존재하는데 널이 아니면 있으니 다음으로 진행
@@ -93,8 +90,12 @@ void UInventoryWidgetBase::SetSlotsParent()
 	for (int index = 0; index < ItemSlots->GetChildrenCount(); ++index)
 	{
 		UItemSlotBase* ChildSlot = Cast<UItemSlotBase>(ItemSlots->GetChildAt(index));
-		ChildSlot->SetInvenParent(this);
-		ChildSlot->SetMainUIRootCanvas(MainUIParent->RootCanvas);
+		
+		if (IsValid(ChildSlot))
+		{
+			ChildSlot->SetInvenParent(this);
+			ChildSlot->SetMainUIRootCanvas(MainUIParent->RootCanvas);
+		}
 	}
 }
 
@@ -111,6 +112,24 @@ bool UInventoryWidgetBase::GetisDraging()
 void UInventoryWidgetBase::SetisDraging(bool bValue)
 {
 	MainUIParent->isDraging = bValue;
+}
+
+int UInventoryWidgetBase::HaveThis(AMasterItem* FuncItem)
+{
+	for (int Index = 0; Index < ItemSlots->GetChildrenCount(); ++Index)
+	{
+		UItemSlotBase* InventorySlot = Cast<UItemSlotBase>(ItemSlots->GetChildAt(Index));
+
+		if (InventorySlot)
+		{
+			if (IsValid(InventorySlot->ItemWidget->Item))
+			{
+				if (InventorySlot->ItemWidget->Item->ItemData.ItemIndex == FuncItem->ItemData.ItemIndex)
+					return Index;
+			}
+		}
+	}
+	return -1;
 }
 
 FItemDataTable UInventoryWidgetBase::GetItemData(int32 Index)
@@ -136,4 +155,12 @@ void UInventoryWidgetBase::OnExitButton()
 {
 	ATestUI_PC* PC = GetOwningPlayer<ATestUI_PC>();
 	PC->UnToggle_InvenWidget();
+}
+
+void UInventoryWidgetBase::SetExitButton()
+{
+	if (Exit)
+	{
+		Exit->OnClicked.AddDynamic(this, &UInventoryWidgetBase::OnExitButton);
+	}
 }

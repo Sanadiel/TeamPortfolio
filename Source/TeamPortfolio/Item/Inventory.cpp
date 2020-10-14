@@ -23,9 +23,12 @@ void UInventory::BeginPlay()
 		MasterItem->ConditionalBeginDestroy();
 	}
 
-	for (int i = 0; i != CN_InventoryMaxChild; ++i)
+	for (int i = 0; i != CN_EquipMaxChild; ++i)
 	{
-		UE_LOG(LogClass, Warning, TEXT("%d"), Inven[i]->ItemIndex);
+		AMasterItem* MasterItem = NewObject<AMasterItem>();
+		MasterItem->SettingByIndex(CN_NullItemIndex, GetWorld());
+		Equipment.Add(MasterItem);
+		MasterItem->ConditionalBeginDestroy();
 	}
 }
 

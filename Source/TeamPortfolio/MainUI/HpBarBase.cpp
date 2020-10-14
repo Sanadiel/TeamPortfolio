@@ -31,7 +31,6 @@ void UHpBarBase::NativeOnMouseEnter(const FGeometry & InGeometry, const FPointer
 	if (Fuc_DeleSingle_ThreeParam.IsBound() == true)
 	{
 		Fuc_DeleSingle_ThreeParam.Execute(InGeometry.AbsoluteToLocal(InMouseEvent.GetScreenSpacePosition()), InGeometry.GetAbsolutePosition(), CN_Activate);
-		UE_LOG(LogClass, Warning, TEXT("MouseEnter"));
 	}	
 }
 
@@ -42,7 +41,6 @@ void UHpBarBase::NativeOnMouseLeave(const FPointerEvent & InMouseEvent)
 	if (Fuc_DeleSingle_ThreeParam.IsBound() == true)
 	{
 		Fuc_DeleSingle_ThreeParam.Execute(FVector2D::ZeroVector, FVector2D::ZeroVector, CN_Deactivate);
-		UE_LOG(LogClass, Warning, TEXT("MouseLeave"));
 	}	
 }
 
