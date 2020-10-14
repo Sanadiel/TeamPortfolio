@@ -6,8 +6,10 @@
 #include "Components/ProgressBar.h"
 #include "Components/Border.h"
 #include "BossCharacter.h"
-#include "MonsterSpawnProjectile.h"
+#include "BossProjectileBase.h"
 #include "BossObject.h"
+
+
 void USpawnSlotBase::NativeConstruct()
 {
 	Super::NativeConstruct();
@@ -32,15 +34,16 @@ void USpawnSlotBase::NativeConstruct()
 		if (boss)
 		{
 			int32 index = GetSlotNumber();
-			if (index < boss->SpawnClasses.Num())
+			if (index < boss->ProjectileClasses.Num())
 			{
 				//Access To CDO and get the Info.
-				FMonsterSpawnInfo monsterSpawnInfo = boss->SpawnClasses[index]->GetDefaultObject<AMonsterSpawnProjectile>()->MonsterSpawnInfo;
+				//FMonsterSpawnInfo monsterSpawnInfo = boss->SpawnClasses[index]->GetDefaultObject<AMonsterSpawnProjectile>()->MonsterSpawnInfo;
+				FBossProjectileInfo projectileInfo = boss->ProjectileClasses[index]->GetDefaultObject<ABossProjectileBase>()->ProjectileInfo;
 
 				//set UMG Icon.
-				if (monsterSpawnInfo.Thumbnail)
+				if (projectileInfo.Thumbnail)
 				{
-					ImageBorder->SetBrushFromTexture(monsterSpawnInfo.Thumbnail);
+					ImageBorder->SetBrushFromTexture(projectileInfo.Thumbnail);
 				}
 			}
 		}
@@ -71,7 +74,7 @@ void USpawnSlotBase::OnButtonClicked()
 		{
 			int32 index = GetSlotNumber();
 			//UE_LOG(LogClass, Warning, TEXT("%s"),*number);
-			if (index < boss->SpawnClasses.Num() && boss->SpawnClasses[index])
+			if (index < boss->ProjectileClasses.Num() && boss->ProjectileClasses[index])
 			{
 				if (boss->GetGrabbedComponent())
 				{
@@ -91,7 +94,7 @@ void USpawnSlotBase::OnButtonClicked()
 				FActorSpawnParameters params;
 				params.Owner = boss;
 				
-				AMonsterSpawnProjectile* projectile = GetWorld()->SpawnActor<AMonsterSpawnProjectile>(boss->SpawnClasses[index],transform,params);
+				ABossProjectileBase* projectile = GetWorld()->SpawnActor<ABossProjectileBase>(boss->ProjectileClasses[index],transform,params);
 				if (projectile)
 				{
 					boss->HoldSpawnProjectile(projectile);
@@ -104,7 +107,7 @@ void USpawnSlotBase::OnButtonClicked()
 			}
 			else
 			{
-				UE_LOG(LogClass, Warning, TEXT("Invalid. you are trying to access %d. Current Spawn Class Size is %d"), index, boss->SpawnClasses.Num());
+				UE_LOG(LogClass, Warning, TEXT("Invalid. you are trying to access %d. Current Spawn Class Size is %d"), index, boss->ProjectileClasses.Num());
 			}
 
 		}

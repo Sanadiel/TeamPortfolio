@@ -9,7 +9,7 @@
 class UTexture2D;
 
 USTRUCT(BlueprintType)
-struct FMonsterSpawnInfo : public FTableRowBase
+struct FBossProjectileInfo : public FTableRowBase
 {
 	GENERATED_BODY()
 

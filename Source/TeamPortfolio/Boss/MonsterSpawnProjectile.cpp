@@ -2,10 +2,7 @@
 
 
 #include "MonsterSpawnProjectile.h"
-#include "GameFramework/ProjectileMovementComponent.h"
-#include "Components/SphereComponent.h"
-#include "Components/SkeletalMeshcomponent.h"
-#include "NavigationSystem.h"
+
 
 // Sets default values
 AMonsterSpawnProjectile::AMonsterSpawnProjectile()
@@ -13,47 +10,6 @@ AMonsterSpawnProjectile::AMonsterSpawnProjectile()
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
-	// Use a sphere as a simple collision representation
-	Sphere = CreateDefaultSubobject<USphereComponent>(TEXT("Sphere"));
-	Sphere->InitSphereRadius(10.0f);
-	Sphere->BodyInstance.SetCollisionProfileName("Projectile");
-
-	// Players can't walk on it
-	Sphere->SetWalkableSlopeOverride(FWalkableSlopeOverride(WalkableSlope_Unwalkable, 0.f));
-	Sphere->CanCharacterStepUpOn = ECB_No;
-
-	SetRootComponent(Sphere);
-
-	Sphere->SetSimulatePhysics(true);
-	Sphere->SetEnableGravity(true);
-	Sphere->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	Sphere->SetNotifyRigidBodyCollision(true);
-
-
-	//MeshSetting
-	Mesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh"));
-	Mesh->SetupAttachment(RootComponent);
-	Mesh->SetRelativeScale3D(FVector(0.25f, 0.25f, 0.25f));
-	Mesh->SetRelativeLocation(FVector(0.0f, 0.0f, -15.0f));
-
-	SetReplicates(true);
-	SetReplicateMovement(true);
-
-
-	/* Deprecated.
-	// Use a ProjectileMovementComponent to govern this projectile's movement
-	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileComp"));
-	ProjectileMovement->UpdatedComponent = Sphere;
-	ProjectileMovement->InitialSpeed = 3000.f;
-	ProjectileMovement->MaxSpeed = 3000.f;
-	ProjectileMovement->bRotationFollowsVelocity = true;
-	ProjectileMovement->bShouldBounce = true;
-
-
-	// Die after 3 seconds by default
-	//InitialLifeSpan = 3.0f;
-	*/
-	bActivated = false;
 }
 
 // Called when the game starts or when spawned
@@ -61,84 +17,24 @@ void AMonsterSpawnProjectile::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// set up a notification for when this component hits something blocking.
-	Sphere->OnComponentHit.AddDynamic(this, &AMonsterSpawnProjectile::OnHit);
-
 }
 
-//// Called every frame
-//void AMonsterSpawnProjectile::Tick(float DeltaTime)
-//{
-//	Super::Tick(DeltaTime);
-//
-//}
-
-void AMonsterSpawnProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+void AMonsterSpawnProjectile::StartFunction_Implementation(const FHitResult& Hit)
 {
-	if (!bActivated)
+	if (!HasAuthority())
 	{
 		return;
 	}
 
-	// Only add impulse and destroy projectile if we hit a physics
-	if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && OtherComp->IsSimulatingPhysics())
-	{
-		//Don't Impulse to Projectile.
-		if (OtherActor->IsA(AMonsterSpawnProjectile::StaticClass()))
-		{
-			return;
-		}
-
-		if (HasAuthority())
-		{
-			OtherComp->AddImpulseAtLocation(GetVelocity() * 100.0f, GetActorLocation());
-		}
-		//Destroy();
-	}
-	else if (OtherActor != NULL && OtherActor != this && OtherComp != NULL) //Spawn Monster when Hit Ground -> Not SimulatingPhysics.
-	{
-
-		//Check Hit Location is Navigatable.
-		UNavigationSystemV1* navSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());
-		bool bOnNav = false;
-		if (navSys)
-		{
-			FNavLocation temp;
-			FVector temp2;
-
-			bOnNav = navSys->ProjectPointToNavigation(Hit.Location, temp, temp2);
-			if (!bOnNav)
-			{
-				UE_LOG(LogClass, Warning, TEXT("Can't Spawn at the Wrong Location."));
-				return;
-			}
-		}
-
-		//Do This Only Server
-		SpawnMonster(Hit);
-
-		Destroy();
-	}
-	else
-	{
-		UE_LOG(LogClass, Warning, TEXT("other actor is null? otheractor is this? othercompo NULL?"));
-		//De-Activate. wrong Position.
-		bActivated = false;
-	}
-}
-
-void AMonsterSpawnProjectile::SpawnMonster_Implementation(const FHitResult& Hit)
-{
 	//Spawn Monster 
-	if (HasAuthority() && MonsterSpawnInfo.SpawnActorClass)
+	if (ProjectileInfo.SpawnActorClass)
 	{
 		FTransform transform;
 		transform.SetLocation(Hit.Location);
 		FActorSpawnParameters params;
 		params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 		params.Owner = GetOwner();
-		//UE_LOG(LogClass, Warning, TEXT("Owner : %s"), *GetOwner()->GetName());
-		AActor* monster = GetWorld()->SpawnActor<AActor>(MonsterSpawnInfo.SpawnActorClass, transform, params);
+		AActor* monster = GetWorld()->SpawnActor<AActor>(ProjectileInfo.SpawnActorClass, transform, params);
 
 		if (!monster)		//Check Monster Spawn Success.
 		{
@@ -146,10 +42,6 @@ void AMonsterSpawnProjectile::SpawnMonster_Implementation(const FHitResult& Hit)
 			UE_LOG(LogClass, Warning, TEXT("Failed to Spawn Monster"));
 		}
 	}
-	//else
-	//{
-	//	UE_LOG(LogClass, Warning, TEXT("You Don't Assign MonsterActorClass in \"MonsterSpawnProjectileClass\"... Maybe?"))
-	//}
 
 }
 
