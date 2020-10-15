@@ -15,7 +15,7 @@ ABossProjectileBase::ABossProjectileBase()
 
 	// Use a sphere as a simple collision representation
 	Sphere = CreateDefaultSubobject<USphereComponent>(TEXT("Sphere"));
-	Sphere->InitSphereRadius(10.0f);
+	Sphere->InitSphereRadius(30.0f);
 	Sphere->BodyInstance.SetCollisionProfileName("Projectile");
 
 	// Players can't walk on it
@@ -34,7 +34,7 @@ ABossProjectileBase::ABossProjectileBase()
 	Mesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh"));
 	Mesh->SetupAttachment(RootComponent);
 	Mesh->SetRelativeScale3D(FVector(0.25f, 0.25f, 0.25f));
-	Mesh->SetRelativeLocation(FVector(0.0f, 0.0f, -15.0f));
+	Mesh->SetRelativeLocation(FVector(0.0f, 0.0f, -Sphere->GetScaledSphereRadius()));
 
 	SetReplicates(true);
 	SetReplicateMovement(true);
