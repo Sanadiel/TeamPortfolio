@@ -17,6 +17,9 @@
 #include "BulletDamageType.h"
 #include "Components/DecalComponent.h"
 #include "SpawnTest.h"
+#include "../MainUI/MainUIBase.h"
+#include "../Item/Inventory.h"
+#include "../Item/MasterItem.h"
 
 
 // Sets default values
@@ -65,6 +68,11 @@ void ATeamP_BasicPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	ATeamP_BasicPC* PC = GetController<ATeamP_BasicPC>();
+	if (IsValid(PC))
+	{
+		PC->GetMainUI()->UpdateHpBar(CurrentHP / MaxHP);
+	}
 }
 
 // 플레이어 입력
@@ -252,7 +260,11 @@ float ATeamP_BasicPlayer::TakeDamage(float DamageAmount, FDamageEvent const& Dam
 	}
 
 
-
+	ATeamP_BasicPC* PC = GetController<ATeamP_BasicPC>();
+	if (IsValid(PC))
+	{
+		PC->GetMainUI()->UpdateHpBar(CurrentHP / MaxHP);
+	}
 
 	return 0.0f;
 }
@@ -588,4 +600,34 @@ void ATeamP_BasicPlayer::WeaponChange4()
 
 	FireTimerHandle = &Weapon4_FireTimerHande;
 	FireTimerHandle2 = &Weapon4_FireTimerHande2;
+
+
+
+}
+
+void ATeamP_BasicPlayer::LoadWeapon(int Index)
+{
+	ATeamP_BasicPC* PC = GetController<ATeamP_BasicPC>();
+	if (IsValid(PC))
+	{
+		switch (Index)
+		{
+		case 1:
+			WeaponChange1();
+			break;
+		case 2:
+			WeaponChange2();
+			break;
+		case 3:
+			WeaponChange3();
+			break;
+		case 4:
+			WeaponChange4();
+			break;
+		}	
+		
+		//PC->Inventory->Equipment[Index]->ItemData.;
+		
+		//PC->Inventory->Equipment[Index]->StaticMesh;//StaticMesh
+	}
 }

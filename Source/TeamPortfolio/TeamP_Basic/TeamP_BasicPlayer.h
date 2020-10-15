@@ -184,6 +184,11 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = Projectile)
 	TSubclassOf<class ASpawnTest> ProjectileClass;
 
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class AWeapon0> Weapon;
+
 	int UsingWeaponNumber;
+
+	void LoadWeapon(int Index);
 
 };
