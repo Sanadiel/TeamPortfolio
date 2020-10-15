@@ -19,6 +19,10 @@ AMonster::AMonster()
 	Tags.Add(TEXT("Monster"));
 
 	PawnSensing = CreateDefaultSubobject<UPawnSensingComponent>(TEXT("PawnSensing"));
+
+
+	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+
 }
 
 // Called when the game starts or when spawned
