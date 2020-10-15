@@ -2,13 +2,20 @@
 
 
 #include "MonsterSpawnProjectile.h"
-
+#include "GameFramework/Character.h"
 
 // Sets default values
 AMonsterSpawnProjectile::AMonsterSpawnProjectile()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
+
+	if (ProjectileInfo.SpawnActorClass)
+	{
+		USkeletalMeshComponent* mesh = Cast<ACharacter>(ProjectileInfo.SpawnActorClass->GetDefaultObject())->GetMesh();
+		Mesh->SetSkeletalMesh(mesh->SkeletalMesh);
+	}
+
 
 }
 
