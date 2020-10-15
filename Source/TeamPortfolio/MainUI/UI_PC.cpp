@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "TestUI_PC.h"
+#include "UI_PC.h"
 #include "ResultFadeOutBase.h"
 #include "MainUIBase.h"
 #include "InventoryWidgetBase.h"
@@ -9,12 +9,12 @@
 #include "InventoryWidgetBase.h"
 #include "EquipmentBase.h"
 
-ATestUI_PC::ATestUI_PC()
+AUI_PC::AUI_PC()
 {
 	Inventory = CreateDefaultSubobject<UInventory>(TEXT("Inventory"));
 }
 
-void ATestUI_PC::BeginPlay()
+void AUI_PC::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -38,15 +38,20 @@ void ATestUI_PC::BeginPlay()
 	}
 }
 
-void ATestUI_PC::SetupInputComponent()
+void AUI_PC::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 
-	InputComponent->BindAction(TEXT("InvenToggle"), IE_Pressed, this, &ATestUI_PC::Toggle_InvenWidget);
-	InputComponent->BindAction(TEXT("EquipToggle"), IE_Pressed, this, &ATestUI_PC::Toggle_EquipWidget);
+	InputComponent->BindAction(TEXT("InvenToggle"), IE_Pressed, this, &AUI_PC::Toggle_InvenWidget);
+	InputComponent->BindAction(TEXT("EquipToggle"), IE_Pressed, this, &AUI_PC::Toggle_EquipWidget);
 }
 
-void ATestUI_PC::AddResultWidget()
+UMainUIBase* AUI_PC::GetMainUI()
+{
+	return MainWidgetObject;
+}
+
+void AUI_PC::AddResultWidget()
 {
 	if (ResultWidgetObject)
 	{
@@ -54,7 +59,7 @@ void ATestUI_PC::AddResultWidget()
 	}
 }
 
-void ATestUI_PC::Toggle_InvenWidget()
+void AUI_PC::Toggle_InvenWidget()
 {	
 	if (bInvenToggle == false)
 	{
@@ -69,7 +74,7 @@ void ATestUI_PC::Toggle_InvenWidget()
 	}	
 }
 
-void ATestUI_PC::UnToggle_InvenWidget()
+void AUI_PC::UnToggle_InvenWidget()
 {
 	MainWidgetObject->ToggleInventory(false);
 	bInvenToggle = false;
@@ -82,7 +87,7 @@ void ATestUI_PC::UnToggle_InvenWidget()
 	}
 }
 
-void ATestUI_PC::Toggle_EquipWidget()
+void AUI_PC::Toggle_EquipWidget()
 {
 	if (bEquipToggle == false)
 	{
@@ -97,7 +102,7 @@ void ATestUI_PC::Toggle_EquipWidget()
 	}
 }
 
-void ATestUI_PC::UnToggle_EquipWidget()
+void AUI_PC::UnToggle_EquipWidget()
 {
 	MainWidgetObject->ToggleEquipWindow(false);
 	bEquipToggle = false;

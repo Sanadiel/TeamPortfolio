@@ -11,7 +11,7 @@
 #include "ItemSlotBase.h"
 #include "ItemWidgetBase.h"
 #include "ItemTooltipBase.h"
-#include "TestUI_PC.h"
+#include "UI_PC.h"
 #include "../Item/Inventory.h"
 #include "../Item/MasterItem.h"
 
@@ -134,7 +134,7 @@ int UInventoryWidgetBase::HaveThis(AMasterItem* FuncItem)
 
 FItemDataTable UInventoryWidgetBase::GetItemData(int32 Index)
 {
-	ATestUI_PC* PC = GetOwningPlayer<ATestUI_PC>();
+	AUI_PC* PC = GetOwningPlayer<AUI_PC>();
 	return PC->Inventory->GetItemData(Index);
 }
 
@@ -145,7 +145,7 @@ UItemTooltipBase* UInventoryWidgetBase::GetTooltipWidget()
 
 void UInventoryWidgetBase::SwapSlot(int32 FrontslotIndex, int32 OtherSlotIndex)
 {
-	ATestUI_PC* PC = GetOwningPlayer<ATestUI_PC>();
+	AUI_PC* PC = GetOwningPlayer<AUI_PC>();
 	PC->Inventory->SwapSlot(FrontslotIndex, OtherSlotIndex);
 	UpdateInventoryWithIndex(PC->Inventory->Inven, FrontslotIndex);
 	UpdateInventoryWithIndex(PC->Inventory->Inven, OtherSlotIndex);
@@ -153,7 +153,7 @@ void UInventoryWidgetBase::SwapSlot(int32 FrontslotIndex, int32 OtherSlotIndex)
 
 void UInventoryWidgetBase::OnExitButton()
 {
-	ATestUI_PC* PC = GetOwningPlayer<ATestUI_PC>();
+	AUI_PC* PC = GetOwningPlayer<AUI_PC>();
 	PC->UnToggle_InvenWidget();
 }
 

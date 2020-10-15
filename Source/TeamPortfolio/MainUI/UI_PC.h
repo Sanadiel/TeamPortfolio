@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
-#include "TestUI_PC.generated.h"
+#include "UI_PC.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class TEAMPORTFOLIO_API ATestUI_PC : public APlayerController
+class TEAMPORTFOLIO_API AUI_PC : public APlayerController
 {
 	GENERATED_BODY()
 
@@ -45,9 +45,10 @@ public:
 
 #pragma region Public Function
 public:
-	ATestUI_PC();
+	AUI_PC();
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
+	class UMainUIBase* GetMainUI();
 
 	void AddResultWidget();
 

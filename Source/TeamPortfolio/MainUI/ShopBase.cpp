@@ -2,7 +2,7 @@
 
 
 #include "ShopBase.h"
-#include "TestUI_PC.h"
+#include "UI_PC.h"
 #include "Components/Button.h"
 
 void UShopBase::NativeConstruct()
@@ -12,7 +12,7 @@ void UShopBase::NativeConstruct()
 
 void UShopBase::OnExitButtonShop()
 {
-	ATestUI_PC* PC = GetOwningPlayer<ATestUI_PC>();
+	AUI_PC* PC = GetOwningPlayer<AUI_PC>();
 	PC->UnToggle_InvenWidget();
 	SetVisibility(ESlateVisibility::Collapsed);
 }

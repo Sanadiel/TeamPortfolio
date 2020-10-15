@@ -2,7 +2,7 @@
 
 
 #include "EquipmentBase.h"
-#include "TestUI_PC.h"
+#include "UI_PC.h"
 #include "Components/Button.h"
 #include "ItemSlotBase.h"
 #include "Components/WrapBox.h"
@@ -40,7 +40,7 @@ void UEquipmentBase::UpdateEquipment(TArray<class AMasterItem*> Equipment)
 
 void UEquipmentBase::OnExitButtonEquipment()
 {
-	ATestUI_PC* PC = GetOwningPlayer<ATestUI_PC>();
+	AUI_PC* PC = GetOwningPlayer<AUI_PC>();
 	PC->UnToggle_EquipWidget();
 }
 

@@ -3,16 +3,16 @@
 
 #include "ItemSlotBase.h"
 #include "Components/Button.h"
+#include "Components/CanvasPanel.h"
+#include "Blueprint/WidgetBlueprintLibrary.h"
+#include "../Item/Inventory.h"
+#include "../Item/MasterItem.h"
 #include "ItemWidgetBase.h"
 #include "InventoryWidgetBase.h"
 #include "ItemTooltipBase.h"
-#include "../Item/MasterItem.h"
-#include "Components/CanvasPanel.h"
-#include "Blueprint/WidgetBlueprintLibrary.h"
-#include "TestUI_PC.h"
-#include "../Item/Inventory.h"
 #include "MainUIBase.h"
 #include "EquipmentBase.h"
+#include "UI_PC.h"
 
 void UItemSlotBase::NativeConstruct()
 {
@@ -122,7 +122,7 @@ FReply UItemSlotBase::NativeOnMouseButtonDown(const FGeometry & InGeometry, cons
 
 	if (InMouseEvent.IsMouseButtonDown(EKeys::RightMouseButton))
 	{
-		ATestUI_PC* PC = GetOwningPlayer<ATestUI_PC>();
+		AUI_PC* PC = GetOwningPlayer<AUI_PC>();
 
 		if (SlotType == ESlotParentType::Inventory)//인벤토리에서 실행
 		{
