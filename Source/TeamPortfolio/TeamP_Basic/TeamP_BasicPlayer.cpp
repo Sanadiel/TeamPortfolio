@@ -261,11 +261,19 @@ float ATeamP_BasicPlayer::TakeDamage(float DamageAmount, FDamageEvent const& Dam
 //총 발사 후 동작
 void ATeamP_BasicPlayer::OnFire()
 {
+
 	if (!bIsFire)
 	{
 		return;
 	}
-	if (!GetWorldTimerManager().IsTimerActive(*FireTimerHandle))
+
+	CheckCanFire();
+
+	if (bIsShotgun) {
+		bFireShotgun = true;
+	}
+
+	if (bCanFire) //bCanFire로 변경
 	{
 		bIsFireAnim = false;
 
@@ -456,11 +464,12 @@ void ATeamP_BasicPlayer::OnSpawnFire()
 
 void ATeamP_BasicPlayer::StartFire() //발사키 입력시 
 {
+
 	bIsFire = true;
 
 	OnFire();
 
-}
+} 
 
 void ATeamP_BasicPlayer::StopFire()
 {
@@ -475,9 +484,19 @@ void ATeamP_BasicPlayer::Reload()
 	bIsReload = true;
 }
 
-//삭제 요망
-void ATeamP_BasicPlayer::canfire()
+//발사가능체크.
+void ATeamP_BasicPlayer::CheckCanFire()
 {
+	//단발인 경우와 연발사격인 경우를 나눠서 만듬. 지금은 샷건인가 아닌가만 판별, 리로드중인것도 체크해줘야댐
+	
+	if (!(GetWorldTimerManager().IsTimerActive(*FireTimerHandle))&&!bIsReload) {
+		
+		bCanFire = true;
+		
+	}
+	else {
+		bCanFire = false;
+	}
 }
 
 
@@ -488,6 +507,7 @@ void ATeamP_BasicPlayer::canfire()
 void ATeamP_BasicPlayer::WeaponChange(int WeaponNumber)
 {
 	bIsFire = false;
+	bIsFireAnim = false;
 	switch (WeaponNumber)
 	{
 	case 1: WeaponNumber = 1;

@@ -118,14 +118,14 @@ public:
 		class USoundBase* WeaponSound;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Data")
-		class UMaterialInstance* NormalDecal;
+	class UMaterialInstance* NormalDecal;
 
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
-		uint64 bIsIronsight : 1;
+	uint64 bIsIronsight : 1;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status") //샷건임???
-		uint64 bIsShotgun : 1;
+	uint64 bIsShotgun : 1;
 
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
@@ -134,12 +134,11 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
 	uint64 bIsFire : 1;
 
-
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
 	uint64 bIsFireAnim : 1;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
-	uint64 bDoFire : 1;
+	uint64 bFireShotgun : 1;
 
 
 	void StartFire();
@@ -148,7 +147,12 @@ public:
 
 	void Reload();
 
-	void canfire();
+	//발사가능체크
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
+	uint64 bCanFire : 1;
+
+	void CheckCanFire();
+
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, category = "Data")
 	class UAnimMontage* ReloadMontage;

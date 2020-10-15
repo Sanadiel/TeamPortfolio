@@ -26,11 +26,15 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
 	uint64 bIsIronsight : 1;	
 	
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
-	uint64 bIsFire : 1;
-
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")//샷건임??
 	uint64 bIsShotgun : 1;
+
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")//총쏘는 애니메이션 중임?
+	uint64 bIsFireAnim : 1;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")//샷건쏘는애니메이션중임??
+	uint64 bFireShotgun : 1;
 
 
 
