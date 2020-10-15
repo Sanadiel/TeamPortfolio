@@ -2,15 +2,14 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "GameFramework/PlayerController.h"
+#include "../MainUI/UI_PC.h"
 #include "TeamP_BasicPC.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class TEAMPORTFOLIO_API ATeamP_BasicPC : public APlayerController
+class TEAMPORTFOLIO_API ATeamP_BasicPC : public AUI_PC
 {
 	GENERATED_BODY()
 	
