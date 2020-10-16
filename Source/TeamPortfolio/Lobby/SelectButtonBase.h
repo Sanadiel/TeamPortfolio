@@ -13,7 +13,7 @@ class TEAMPORTFOLIO_API ASelectButtonBase : public AActor
 #pragma region Public Member
 public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Base")
-	bool bIsPlayer1 = false;
+	bool bIsDefencePlayer = false;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Base")
 	bool bIsPush = false;

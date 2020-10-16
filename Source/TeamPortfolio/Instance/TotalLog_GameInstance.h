@@ -33,6 +33,9 @@ public:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Kill_Record")
 	TArray<int> Kill_Record;
 
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Player")
+	bool isDefencePlayer;
+
 #pragma endregion
 
 #pragma region Public Function

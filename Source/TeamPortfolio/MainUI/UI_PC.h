@@ -40,6 +40,9 @@ public:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Inven")
 	class UInventory* Inventory;
 
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Replicated, Category = "Player")
+	bool IsDefencePlayer = false;
+
 #pragma endregion
 
 
@@ -57,6 +60,12 @@ public:
 
 	void Toggle_EquipWidget();
 	void UnToggle_EquipWidget();
+
+	UFUNCTION(Client , Reliable)
+	void SettingisDefence();
+	void SettingisDefence_Implementation();
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 #pragma endregion
 };

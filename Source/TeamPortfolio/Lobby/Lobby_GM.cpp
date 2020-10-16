@@ -3,13 +3,30 @@
 
 #include "Lobby_GM.h"
 #include "Lobby_GS.h"
+#include "Lobby_PC.h"
 #include "Kismet/GameplayStatics.h"
 #include "SelectButtonBase.h"
+#include "Kismet/GameplayStatics.h"
+#include "../Instance/TotalLog_GameInstance.h"
 
 void ALobby_GM::StartGame()
 {
 	//()->ServerTravel(TEXT("UITest_Level")); 
-	GetWorld()->ServerTravel(TEXT("CrumblingRuins_Level"), true, true);
+
+	TArray<AActor*> OutActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ALobby_PC::StaticClass(), OutActors);
+	
+	UE_LOG(LogClass, Warning, TEXT("%d"), OutActors.Num());
+
+	for (int i = 0; i != OutActors.Num(); ++i)
+	{
+		ALobby_PC* PC = Cast<ALobby_PC>(OutActors[i]);
+		//UTotalLog_GameInstance* GI = GetGameInstance<UTotalLog_GameInstance>();
+		PC->S2C_SetGIbool(PC->IsDefencePlayer);
+		//GI->isDefencePlayer = PC->IsDefencePlayer;
+	}
+
+	GetWorld()->ServerTravel(TEXT("CrumblingRuins_Level"));
 }
 
 void ALobby_GM::BeginPlay()

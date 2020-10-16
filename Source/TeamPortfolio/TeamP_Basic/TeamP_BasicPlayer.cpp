@@ -67,12 +67,6 @@ void ATeamP_BasicPlayer::BeginPlay()
 void ATeamP_BasicPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	ATeamP_BasicPC* PC = GetController<ATeamP_BasicPC>();
-	if (IsValid(PC))
-	{
-		PC->GetMainUI()->UpdateHpBar(CurrentHP / MaxHP);
-	}
 }
 
 // 플레이어 입력
@@ -263,7 +257,10 @@ float ATeamP_BasicPlayer::TakeDamage(float DamageAmount, FDamageEvent const& Dam
 	ATeamP_BasicPC* PC = GetController<ATeamP_BasicPC>();
 	if (IsValid(PC))
 	{
-		PC->GetMainUI()->UpdateHpBar(CurrentHP / MaxHP);
+		if (IsValid(PC->GetMainUI()))
+		{
+			PC->GetMainUI()->UpdateHpBar(CurrentHP / MaxHP);
+		}		
 	}
 
 	return 0.0f;

@@ -17,7 +17,7 @@ class TEAMPORTFOLIO_API ALobby_GS : public AGameStateBase
 #pragma region Public Member
 public:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, ReplicatedUsing = "OnRep_LeftTime", Category = "Network")
-	int LeftTime = 10;
+	int LeftTime = 3;
 #pragma endregion
 
 

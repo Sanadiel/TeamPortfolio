@@ -3,6 +3,7 @@
 
 #include "Lobby_PC.h"
 #include "Lobby_WidgetBase.h"
+#include "../Instance/TotalLog_GameInstance.h"
 
 void ALobby_PC::BeginPlay()
 {
@@ -16,4 +17,18 @@ void ALobby_PC::BeginPlay()
 		bShowMouseCursor = false;
 		SetInputMode(FInputModeGameOnly());
 	}
+}
+
+void ALobby_PC::S2C_SetGIbool_Implementation(bool bValue)
+{
+	//if (IsLocalPlayerController())
+	//{
+		UTotalLog_GameInstance* GI = GetGameInstance<UTotalLog_GameInstance>();
+		if (GI)
+		{
+			UE_LOG(LogClass, Warning, TEXT("before : %d"), GI->isDefencePlayer);
+			GI->isDefencePlayer = bValue;
+			UE_LOG(LogClass, Warning, TEXT("after : %d"), GI->isDefencePlayer);
+		}		
+	//}
 }
