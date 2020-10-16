@@ -8,10 +8,22 @@
 #include "../Item/Inventory.h"
 #include "InventoryWidgetBase.h"
 #include "EquipmentBase.h"
+#include "../Instance/TotalLog_GameInstance.h"
+#include "Kismet/GameplayStatics.h"
+#include "Net/UnrealNetwork.h"
 
 AUI_PC::AUI_PC()
 {
 	Inventory = CreateDefaultSubobject<UInventory>(TEXT("Inventory"));
+	//UE_LOG(LogClass, Warning, TEXT("UI_PC : Construct : %s"), *GetName());
+	/*if (IsDefencePlayer == true)
+	{
+		Inventory = CreateDefaultSubobject<UInventory>(TEXT("Inventory"));
+	}
+	else
+	{
+		
+	}	*/
 }
 
 void AUI_PC::BeginPlay()
@@ -20,30 +32,48 @@ void AUI_PC::BeginPlay()
 
 	if (IsLocalPlayerController())
 	{
-		ResultWidgetObject = CreateWidget<UResultFadeOutBase>(this, ResultWidgetClass);
-		MainWidgetObject = CreateWidget<UMainUIBase>(this, MainWidgetClass);
+		UTotalLog_GameInstance* GI = GetGameInstance<UTotalLog_GameInstance>();
 
-		if (MainWidgetObject)
+		if (IsValid(GI))
 		{
-			MainWidgetObject->AddToViewport();
-			bShowMouseCursor = false;
-			SetInputMode(FInputModeGameOnly());
-			MainWidgetObject->Inventory->SetMainUIParent(MainWidgetObject);
-			MainWidgetObject->Inventory->SetSlotsParent();
-			MainWidgetObject->Inventory->UpdateInventory(Inventory->Inven);
-			MainWidgetObject->EquipWindow->SetMainUIParent(MainWidgetObject);
-			MainWidgetObject->EquipWindow->SetSlotsParent();
-			MainWidgetObject->EquipWindow->UpdateEquipment(Inventory->Equipment);
+			IsDefencePlayer = GI->isDefencePlayer;			
+		}
+
+		if (IsDefencePlayer == true)
+		{
+			//Inventory = NewObject<UInventory>(this, UInventory::StaticClass(), TEXT("Inventory"));
+
+			ResultWidgetObject = CreateWidget<UResultFadeOutBase>(this, ResultWidgetClass);
+			MainWidgetObject = CreateWidget<UMainUIBase>(this, MainWidgetClass);
+
+			if (MainWidgetObject)
+			{
+				MainWidgetObject->AddToViewport();
+				bShowMouseCursor = false;
+				SetInputMode(FInputModeGameOnly());
+				MainWidgetObject->Inventory->SetMainUIParent(MainWidgetObject);
+				MainWidgetObject->Inventory->SetSlotsParent();
+				MainWidgetObject->Inventory->UpdateInventory(Inventory->Inven);
+				MainWidgetObject->EquipWindow->SetMainUIParent(MainWidgetObject);
+				MainWidgetObject->EquipWindow->SetSlotsParent();
+				MainWidgetObject->EquipWindow->UpdateEquipment(Inventory->Equipment);
+			}
 		}
 	}
+	//else
+	//{
+	//	UE_LOG(LogClass, Warning, TEXT("%d"), UGameplayStatics::GetPlayerControllerID(this));
+	//}
 }
 
 void AUI_PC::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 
+	
 	InputComponent->BindAction(TEXT("InvenToggle"), IE_Pressed, this, &AUI_PC::Toggle_InvenWidget);
 	InputComponent->BindAction(TEXT("EquipToggle"), IE_Pressed, this, &AUI_PC::Toggle_EquipWidget);
+
 }
 
 UMainUIBase* AUI_PC::GetMainUI()
@@ -61,16 +91,19 @@ void AUI_PC::AddResultWidget()
 
 void AUI_PC::Toggle_InvenWidget()
 {	
-	if (bInvenToggle == false)
+	if (IsDefencePlayer == true)
 	{
-		MainWidgetObject->ToggleInventory(true);
-		bInvenToggle = true;
-		bShowMouseCursor = true;
-		SetInputMode(FInputModeGameAndUI());
-	}
-	else
-	{
-		UnToggle_InvenWidget();
+		if (bInvenToggle == false)
+		{
+			MainWidgetObject->ToggleInventory(true);
+			bInvenToggle = true;
+			bShowMouseCursor = true;
+			SetInputMode(FInputModeGameAndUI());
+		}
+		else
+		{
+			UnToggle_InvenWidget();
+		}
 	}	
 }
 
@@ -89,17 +122,20 @@ void AUI_PC::UnToggle_InvenWidget()
 
 void AUI_PC::Toggle_EquipWidget()
 {
-	if (bEquipToggle == false)
+	if (IsDefencePlayer == true)
 	{
-		MainWidgetObject->ToggleEquipWindow(true);
-		bEquipToggle = true;
-		bShowMouseCursor = true;
-		SetInputMode(FInputModeGameAndUI());
-	}
-	else
-	{
-		UnToggle_EquipWidget();
-	}
+		if (bEquipToggle == false)
+		{
+			MainWidgetObject->ToggleEquipWindow(true);
+			bEquipToggle = true;
+			bShowMouseCursor = true;
+			SetInputMode(FInputModeGameAndUI());
+		}
+		else
+		{
+			UnToggle_EquipWidget();
+		}
+	}	
 }
 
 void AUI_PC::UnToggle_EquipWidget()
@@ -112,4 +148,27 @@ void AUI_PC::UnToggle_EquipWidget()
 		bShowMouseCursor = false;
 		SetInputMode(FInputModeGameOnly());
 	}
+}
+
+void AUI_PC::SettingisDefence_Implementation()
+{
+	UTotalLog_GameInstance* GI = GetGameInstance<UTotalLog_GameInstance>();
+
+	if (IsLocalPlayerController())
+	{
+		if (GI)
+		{
+			UE_LOG(LogClass, Warning, TEXT("Currrent GI Bool : %d"), GI->isDefencePlayer);
+			IsDefencePlayer = GI->isDefencePlayer;
+		}
+	}
+
+	
+}
+
+void AUI_PC::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AUI_PC, IsDefencePlayer);
 }
