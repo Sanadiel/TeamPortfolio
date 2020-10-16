@@ -58,11 +58,8 @@ void AMasterItem::SettingByIndexWithoutWorld(int32 Index)
 	}
 }
 
-// Called when the game starts or when spawned
-void AMasterItem::BeginPlay()
+void AMasterItem::LoadingMesh()
 {
-	Super::BeginPlay();
-	
 	if (ItemIndex != CN_NullItemIndex)
 	{
 		SettingByIndex(ItemIndex, GetWorld());
@@ -70,6 +67,14 @@ void AMasterItem::BeginPlay()
 		FStreamableManager Loader;
 		StaticMesh->SetStaticMesh(Loader.LoadSynchronous<UStaticMesh>(ItemData.ItemMesh));
 	}
+}
+
+// Called when the game starts or when spawned
+void AMasterItem::BeginPlay()
+{
+	Super::BeginPlay();
+	
+	LoadingMesh();
 
 	Sphere->OnComponentBeginOverlap.AddDynamic(this, &AMasterItem::ProcessBeginOverlap);
 	Sphere->OnComponentEndOverlap.AddDynamic(this, &AMasterItem::ProcessEndOverlap);

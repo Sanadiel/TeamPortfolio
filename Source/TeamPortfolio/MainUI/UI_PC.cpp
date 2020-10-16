@@ -16,14 +16,6 @@ AUI_PC::AUI_PC()
 {
 	Inventory = CreateDefaultSubobject<UInventory>(TEXT("Inventory"));
 	//UE_LOG(LogClass, Warning, TEXT("UI_PC : Construct : %s"), *GetName());
-	/*if (IsDefencePlayer == true)
-	{
-		Inventory = CreateDefaultSubobject<UInventory>(TEXT("Inventory"));
-	}
-	else
-	{
-		
-	}	*/
 }
 
 void AUI_PC::BeginPlay()
@@ -41,8 +33,6 @@ void AUI_PC::BeginPlay()
 
 		if (IsDefencePlayer == true)
 		{
-			//Inventory = NewObject<UInventory>(this, UInventory::StaticClass(), TEXT("Inventory"));
-
 			ResultWidgetObject = CreateWidget<UResultFadeOutBase>(this, ResultWidgetClass);
 			MainWidgetObject = CreateWidget<UMainUIBase>(this, MainWidgetClass);
 
@@ -60,20 +50,14 @@ void AUI_PC::BeginPlay()
 			}
 		}
 	}
-	//else
-	//{
-	//	UE_LOG(LogClass, Warning, TEXT("%d"), UGameplayStatics::GetPlayerControllerID(this));
-	//}
 }
 
 void AUI_PC::SetupInputComponent()
 {
 	Super::SetupInputComponent();
-
 	
 	InputComponent->BindAction(TEXT("InvenToggle"), IE_Pressed, this, &AUI_PC::Toggle_InvenWidget);
 	InputComponent->BindAction(TEXT("EquipToggle"), IE_Pressed, this, &AUI_PC::Toggle_EquipWidget);
-
 }
 
 UMainUIBase* AUI_PC::GetMainUI()
@@ -161,9 +145,7 @@ void AUI_PC::SettingisDefence_Implementation()
 			UE_LOG(LogClass, Warning, TEXT("Currrent GI Bool : %d"), GI->isDefencePlayer);
 			IsDefencePlayer = GI->isDefencePlayer;
 		}
-	}
-
-	
+	}	
 }
 
 void AUI_PC::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

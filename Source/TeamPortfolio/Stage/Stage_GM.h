@@ -24,9 +24,8 @@ public:
 #pragma region Public Function
 public:
 	AStage_GM();
-	virtual void SwapPlayerControllers(APlayerController* OldPC, APlayerController* NewPC) override;
+	//virtual void SwapPlayerControllers(APlayerController* OldPC, APlayerController* NewPC) override;
 	virtual void PostLogin(APlayerController* NewPlayer) override;
-	virtual void BeginPlay() override;
 
 	
 #pragma endregion
