@@ -6,7 +6,7 @@
 #include "Components/SphereComponent.h"
 #include "Components/SkeletalMeshcomponent.h"
 #include "NavigationSystem.h"
-
+#include "Net/UnrealNetwork.h"
 // Sets default values
 ABossProjectileBase::ABossProjectileBase()
 {
@@ -139,5 +139,13 @@ void ABossProjectileBase::ProjectileTask_Implementation(const FHitResult & Hit)
 void ABossProjectileBase::StartFunction_Implementation(const FHitResult & Hit)
 {
 	UE_LOG(LogClass, Warning, TEXT("ABossProjectileBase::StartFunction. It is a Base Function. You Must Override it."));
+}
+
+void ABossProjectileBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ABossProjectileBase, bActivated);
+
 }
 

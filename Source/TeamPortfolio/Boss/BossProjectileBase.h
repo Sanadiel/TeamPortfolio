@@ -34,7 +34,7 @@ public:
 		USkeletalMeshComponent* Mesh;
 
 	//true Means Activate OK.
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Info")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Replicated, Category = "Info")
 		bool bActivated;
 
 	//Info Has What Do you Want to Spawn.
@@ -66,4 +66,7 @@ public:
 	UFUNCTION(BlueprintNativeEvent)
 		void StartFunction(const FHitResult& Hit);
 		virtual void StartFunction_Implementation(const FHitResult& Hit);
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 };
