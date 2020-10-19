@@ -35,7 +35,11 @@ public:
 	virtual void NativeConstruct() override;
 	void UpdateInventory(TArray<class AMasterItem*> Inventory);
 	virtual void UpdateInventoryWithIndex(TArray<class AMasterItem*> Inventory, int32 FirstIndex);
+
+	UFUNCTION(BlueprintCallable)
 	int GetEmptySlot();
+
+	
 	virtual void SetSlot(int Index, class AMasterItem* Item);
 	virtual void SetSlotsParent();
 	void SetMainUIParent(class UMainUIBase* MainUI);
@@ -49,6 +53,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SwapSlot(int32 FrontslotIndex, int32 OtherSlotIndex);
+
+
 
 	UFUNCTION()
 	void OnExitButton();

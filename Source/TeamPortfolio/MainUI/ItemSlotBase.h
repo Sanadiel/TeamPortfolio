@@ -56,6 +56,15 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetisDraging(bool bValue);
 
+	UFUNCTION(BlueprintCallable)
+	void AddItemOnInventory(int Index, class AMasterItem* Item);
+
+	UFUNCTION(BlueprintCallable)
+	void SwapInvenWithEquip(int InvenslotIndex, int EquipslotIndex);
+
+	UFUNCTION(BlueprintCallable)
+	void RemoveEquipAddInven(int InvenslotIndex, int EquipslotIndex);
+
 	virtual void NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 	virtual void NativeOnMouseLeave(const FPointerEvent& InMouseEvent) override;
 	virtual FReply NativeOnMouseMove(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;

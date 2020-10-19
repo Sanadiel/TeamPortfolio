@@ -29,8 +29,11 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void SwapSlot(int32 Slot, int32 OtherSlot);
+
+	UFUNCTION(BlueprintCallable)
+	void SwapSlotInvenwithEquip(int32 InvenSlot, int32 EquipSlot);
 
 	UFUNCTION()
 	FItemDataTable GetItemData(int32 InvenIndex);

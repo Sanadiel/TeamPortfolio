@@ -42,6 +42,13 @@ void UInventory::SwapSlot(int32 Slot, int32 OtherSlot)
 	Inven.Swap(Slot, OtherSlot);
 }
 
+void UInventory::SwapSlotInvenwithEquip(int32 InvenSlot, int32 EquipSlot)
+{
+	AMasterItem* SwapItem = Inven[InvenSlot];
+	Inven[InvenSlot] = Equipment[EquipSlot];
+	Equipment[EquipSlot] = SwapItem;
+}
+
 FItemDataTable UInventory::GetItemData(int32 InvenIndex)
 {
 	return Inven[InvenIndex]->ItemData;

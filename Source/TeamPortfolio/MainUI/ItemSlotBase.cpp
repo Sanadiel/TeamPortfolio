@@ -186,3 +186,25 @@ FReply UItemSlotBase::NativeOnMouseButtonDown(const FGeometry & InGeometry, cons
 	return Reply.NativeReply;
 }
 
+void UItemSlotBase::AddItemOnInventory(int Index, AMasterItem * Item)
+{
+	AUI_PC* PC = GetOwningPlayer<AUI_PC>();
+	PC->Inventory->Inven[Index] = Item;
+
+	PC->GetMainUI()->Inventory->SetSlot(Index, PC->Inventory->Inven[Index]);
+}
+
+void UItemSlotBase::SwapInvenWithEquip(int InvenslotIndex, int EquipslotIndex)
+{
+	AUI_PC* PC = GetOwningPlayer<AUI_PC>();
+	PC->Inventory->SwapSlotInvenwithEquip(InvenslotIndex, EquipslotIndex);
+
+	PC->GetMainUI()->Inventory->SetSlot(InvenslotIndex, PC->Inventory->Inven[InvenslotIndex]);
+	PC->GetMainUI()->EquipWindow->SetSlot(EquipslotIndex, PC->Inventory->Equipment[EquipslotIndex]);
+}
+
+void UItemSlotBase::RemoveEquipAddInven(int InvenslotIndex, int EquipslotIndex)
+{
+	AUI_PC* PC = GetOwningPlayer<AUI_PC>();
+	
+}
