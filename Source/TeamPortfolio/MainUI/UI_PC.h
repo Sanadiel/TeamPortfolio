@@ -37,12 +37,17 @@ public:
 
 #pragma endregion
 
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Inven")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Inven")
 	class UInventory* Inventory;
 
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Replicated, Category = "Player")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Replicated, Category = "Player")
 	bool IsDefencePlayer = false;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Player")
+	bool UITestMode = false;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Boss")
+	TSubclassOf<class ABossCharacter> Boss;
 #pragma endregion
 
 
@@ -53,6 +58,11 @@ public:
 	virtual void SetupInputComponent() override;
 	class UMainUIBase* GetMainUI();
 
+	void SettingUI();
+
+	UFUNCTION(BlueprintCallable)
+	void SettingUI_TEST();
+
 	void AddResultWidget();
 
 	void Toggle_InvenWidget();
@@ -62,8 +72,12 @@ public:
 	void UnToggle_EquipWidget();
 
 	UFUNCTION(Client , Reliable)
-	void SettingisDefence();
-	void SettingisDefence_Implementation();
+	void S2C_SettingisDefence();
+	void S2C_SettingisDefence_Implementation();
+
+	UFUNCTION(Server, Reliable)
+	void C2S_SpawnandPossess();
+	void C2S_SpawnandPossess_Implementation();
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 

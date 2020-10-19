@@ -31,11 +31,6 @@ void UInventoryWidgetBase::UpdateInventory(TArray<class AMasterItem*> Inventory)
 	for (int i = 0; i < Inventory.Num(); ++i)
 	{
 		SetSlot(i, Inventory[i]);
-		/*int FindIndex = GetEmptySlot();
-		if (FindIndex > -1)
-		{
-			SetSlot(FindIndex, Inventory[i]);
-		}*/
 	}
 }
 

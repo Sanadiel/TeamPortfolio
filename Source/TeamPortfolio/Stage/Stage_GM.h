@@ -27,6 +27,11 @@ public:
 	//virtual void SwapPlayerControllers(APlayerController* OldPC, APlayerController* NewPC) override;
 	virtual void PostLogin(APlayerController* NewPlayer) override;
 
+	/*APawn* SpawnDefaultPawnFor(AController* NewPlayer, AActor* StartSpot);
+	APawn* SpawnDefaultPawnFor_Implementation(AController* NewPlayer, AActor* StartSpot);
+
+	AActor* ChoosePlayerStart(AController* Player);*/
+
 	
 #pragma endregion
 };

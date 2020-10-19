@@ -11,6 +11,8 @@
 #include "../Instance/TotalLog_GameInstance.h"
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
+#include "../Stage/Stage_GM.h"
+#include "../Boss/BossCharacter.h"
 
 AUI_PC::AUI_PC()
 {
@@ -22,34 +24,7 @@ void AUI_PC::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (IsLocalPlayerController())
-	{
-		UTotalLog_GameInstance* GI = GetGameInstance<UTotalLog_GameInstance>();
-
-		if (IsValid(GI))
-		{
-			IsDefencePlayer = GI->isDefencePlayer;			
-		}
-
-		if (IsDefencePlayer == true)
-		{
-			ResultWidgetObject = CreateWidget<UResultFadeOutBase>(this, ResultWidgetClass);
-			MainWidgetObject = CreateWidget<UMainUIBase>(this, MainWidgetClass);
-
-			if (MainWidgetObject)
-			{
-				MainWidgetObject->AddToViewport();
-				bShowMouseCursor = false;
-				SetInputMode(FInputModeGameOnly());
-				MainWidgetObject->Inventory->SetMainUIParent(MainWidgetObject);
-				MainWidgetObject->Inventory->SetSlotsParent();
-				MainWidgetObject->Inventory->UpdateInventory(Inventory->Inven);
-				MainWidgetObject->EquipWindow->SetMainUIParent(MainWidgetObject);
-				MainWidgetObject->EquipWindow->SetSlotsParent();
-				MainWidgetObject->EquipWindow->UpdateEquipment(Inventory->Equipment);
-			}
-		}
-	}
+	SettingUI();
 }
 
 void AUI_PC::SetupInputComponent()
@@ -63,6 +38,73 @@ void AUI_PC::SetupInputComponent()
 UMainUIBase* AUI_PC::GetMainUI()
 {
 	return MainWidgetObject;
+}
+
+void AUI_PC::SettingUI()
+{
+	if (UITestMode == true)
+	{
+		UE_LOG(LogClass, Warning, TEXT("-----------PC is Test Mode-----------"))
+		return;
+	}		
+
+	if (IsLocalPlayerController())
+	{
+		UTotalLog_GameInstance* GI = GetGameInstance<UTotalLog_GameInstance>();
+
+		if (IsValid(GI))
+		{
+			IsDefencePlayer = GI->isDefencePlayer;
+		}		
+
+		if (IsDefencePlayer == true)
+		{
+			ResultWidgetObject = CreateWidget<UResultFadeOutBase>(this, ResultWidgetClass);
+			MainWidgetObject = CreateWidget<UMainUIBase>(this, MainWidgetClass);
+
+			if (MainWidgetObject)
+			{
+				Inventory->DataLoading();
+
+				MainWidgetObject->AddToViewport();
+				bShowMouseCursor = false;
+				SetInputMode(FInputModeGameOnly());
+				MainWidgetObject->Inventory->SetMainUIParent(MainWidgetObject);
+				MainWidgetObject->Inventory->SetSlotsParent();
+				MainWidgetObject->Inventory->UpdateInventory(Inventory->Inven);
+				MainWidgetObject->EquipWindow->SetMainUIParent(MainWidgetObject);
+				MainWidgetObject->EquipWindow->SetSlotsParent();
+				MainWidgetObject->EquipWindow->UpdateEquipment(Inventory->Equipment);
+			}
+		}
+		else
+		{
+			C2S_SpawnandPossess();
+		}
+	}
+}
+
+void AUI_PC::SettingUI_TEST()
+{
+	IsDefencePlayer = true;
+
+	ResultWidgetObject = CreateWidget<UResultFadeOutBase>(this, ResultWidgetClass);
+	MainWidgetObject = CreateWidget<UMainUIBase>(this, MainWidgetClass);
+
+	if (MainWidgetObject)
+	{
+		Inventory->DataLoading();
+
+		MainWidgetObject->AddToViewport();
+		bShowMouseCursor = false;
+		SetInputMode(FInputModeGameOnly());
+		MainWidgetObject->Inventory->SetMainUIParent(MainWidgetObject);
+		MainWidgetObject->Inventory->SetSlotsParent();
+		MainWidgetObject->Inventory->UpdateInventory(Inventory->Inven);
+		MainWidgetObject->EquipWindow->SetMainUIParent(MainWidgetObject);
+		MainWidgetObject->EquipWindow->SetSlotsParent();
+		MainWidgetObject->EquipWindow->UpdateEquipment(Inventory->Equipment);
+	}
 }
 
 void AUI_PC::AddResultWidget()
@@ -95,7 +137,6 @@ void AUI_PC::UnToggle_InvenWidget()
 {
 	MainWidgetObject->ToggleInventory(false);
 	bInvenToggle = false;
-	
 
 	if (bInvenToggle == false && bEquipToggle == false)
 	{
@@ -134,7 +175,7 @@ void AUI_PC::UnToggle_EquipWidget()
 	}
 }
 
-void AUI_PC::SettingisDefence_Implementation()
+void AUI_PC::S2C_SettingisDefence_Implementation()
 {
 	UTotalLog_GameInstance* GI = GetGameInstance<UTotalLog_GameInstance>();
 
@@ -146,6 +187,15 @@ void AUI_PC::SettingisDefence_Implementation()
 			IsDefencePlayer = GI->isDefencePlayer;
 		}
 	}	
+}
+
+void AUI_PC::C2S_SpawnandPossess_Implementation()
+{
+	ABossCharacter* BossCharacter = GetWorld()->SpawnActor<ABossCharacter>(Boss, StartSpot->GetTransform());
+	APawn* pawn = GetPawn();
+	UnPossess();
+	Possess(BossCharacter);
+	pawn->Destroy();
 }
 
 void AUI_PC::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

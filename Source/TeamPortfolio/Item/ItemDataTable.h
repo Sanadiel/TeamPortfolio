@@ -23,6 +23,7 @@ enum class ESlotType : uint8
 	Body = 1		UMETA(Display = "Body"),
 	Grove = 2		UMETA(Display = "Grove"),
 	Weapon = 3		UMETA(Display = "Weapon"),
+	NoneMax = 4		UMETA(Display = "NoneMax"),
 };
 /**
  *

@@ -13,23 +13,7 @@ UInventory::UInventory()
 
 void UInventory::BeginPlay()
 {
-	Super::BeginPlay();
-
-	for (int i = 0; i != CN_InventoryMaxChild; ++i)
-	{
-		AMasterItem* MasterItem = NewObject<AMasterItem>();
-		MasterItem->SettingByIndex(FMath::RandRange(0, 6), GetWorld());
-		Inven.Add(MasterItem);
-		MasterItem->ConditionalBeginDestroy();
-	}
-
-	for (int i = 0; i != CN_EquipMaxChild; ++i)
-	{
-		AMasterItem* MasterItem = NewObject<AMasterItem>();
-		MasterItem->SettingByIndex(CN_NullItemIndex, GetWorld());
-		Equipment.Add(MasterItem);
-		MasterItem->ConditionalBeginDestroy();
-	}
+	Super::BeginPlay();	
 }
 
 void UInventory::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -56,7 +40,21 @@ FItemDataTable UInventory::GetItemData(int32 InvenIndex)
 
 void UInventory::DataLoading()
 {
-	
+	for (int i = 0; i != CN_InventoryMaxChild; ++i)
+	{
+		AMasterItem* MasterItem = NewObject<AMasterItem>();
+		MasterItem->SettingByIndex(FMath::RandRange(0, 6), GetWorld());
+		Inven.Add(MasterItem);
+		MasterItem->ConditionalBeginDestroy();
+	}
+
+	for (int i = 0; i != CN_EquipMaxChild; ++i)
+	{
+		AMasterItem* MasterItem = NewObject<AMasterItem>();
+		MasterItem->SettingByIndex(CN_NullItemIndex, GetWorld());
+		Equipment.Add(MasterItem);
+		MasterItem->ConditionalBeginDestroy();
+	}
 }
 
 bool UInventory::isNull(int32 Index)

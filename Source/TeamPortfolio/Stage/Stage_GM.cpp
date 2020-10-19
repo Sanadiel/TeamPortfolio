@@ -32,18 +32,27 @@ void AStage_GM::PostLogin(APlayerController* NewPlayer)
 
 	if (IsValid(PC))
 	{
-		PC->SettingisDefence();
-
-		if (HasAuthority())
-		{
-			if (PC->IsDefencePlayer == false)
-			{
-				ABossCharacter* BossCharacter = GetWorld()->SpawnActor<ABossCharacter>(Boss, PC->GetPawn()->GetTransform());
-				APawn* pawn = PC->GetPawn();
-				PC->UnPossess();
-				PC->Possess(BossCharacter);
-				pawn->Destroy();
-			}
-		}
+		PC->S2C_SettingisDefence();
 	}
 }
+
+
+//APawn * AStage_GM::SpawnDefaultPawnFor_Implementation(AController* NewPlayer, AActor* StartSpot)
+//{
+//	Super::SpawnDefaultPawnFor(NewPlayer, StartSpot);
+//
+//	ABossCharacter* BossCharacter = GetWorld()->SpawnActor<ABossCharacter>(Boss, StartSpot->GetTransform());
+//	APawn* pawn = NewPlayer->GetPawn();
+//	NewPlayer->UnPossess();
+//	NewPlayer->Possess(BossCharacter);
+//	pawn->Destroy();
+//
+//	return nullptr;
+//}
+//
+//AActor * AStage_GM::ChoosePlayerStart(AController* Player)
+//{
+//	Super::ChoosePlayerStart(Player);
+//
+//	return nullptr;
+//}
