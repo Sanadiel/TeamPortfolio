@@ -97,8 +97,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UMG")
 		TSubclassOf<UBossWidgetBase> BossWidgetClass;
 
-	//Hold Projectile Actor.
-	UFUNCTION(Server, Reliable)
+	//Hold Projectile Actor. Call From "SearchHold"
+	UFUNCTION(NetMulticast, Reliable)
 		void HoldSpawnProjectile(ABossProjectileBase* ProjectileObject);
 		void HoldSpawnProjectile_Implementation(ABossProjectileBase* ProjectileObject);
 
@@ -112,4 +112,19 @@ public:
 
 	//Return Current GrabbedComponent.
 	UPrimitiveComponent* GetGrabbedComponent() const;
+
+	//Search Hold, And Hold.
+	UFUNCTION(Server, Reliable)
+		void SearchHold(FVector TraceStart, FVector TraceEnd);
+	void SearchHold_Implementation(FVector TraceStart, FVector TraceEnd);
+
+	//Release Will do at Server Only.
+	UFUNCTION(Server, Reliable)
+		void ReleaseHold(AActor* Holding);
+	void ReleaseHold_Implementation(AActor* Holding);
+
+	//ReleaseFunction for Server And Client. Call From "ReleaseHold"
+	UFUNCTION(NetMulticast, Reliable)
+		void ReleasePhysicsHandle();
+	void ReleasePhysicsHandle_Implementation();
 };

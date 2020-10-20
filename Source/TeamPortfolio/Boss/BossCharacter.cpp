@@ -161,18 +161,6 @@ void ABossCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 //	}
 //}
 
-void ABossCharacter::SetProjectileClass(TSubclassOf<ABossProjectileBase> NewProjectileClass)
-{
-	if (NewProjectileClass)
-	{
-		BossProjectileClass = NewProjectileClass;
-	}
-	else
-	{
-		UE_LOG(LogClass, Warning, TEXT("You Don't Assign NewProjectileClass"))
-	}
-}
-
 void ABossCharacter::MoveForward(float Value)
 {
 
@@ -214,25 +202,20 @@ void ABossCharacter::HoldSpawnProjectile_Implementation(ABossProjectileBase* Pro
 	if (PhysicsHandle && ProjectileObject)
 	{
 		PhysicsHandle->GrabComponentAtLocation(ProjectileObject->Sphere, NAME_None, ProjectileObject->GetActorLocation());
-		//UE_LOG(LogClass, Warning, TEXT("Hold OK"));
+		UE_LOG(LogClass, Warning, TEXT("Hold OK"));
 	}
 }
 
 void ABossCharacter::HandAction()
 {
-	//when hold something
+	//when hold something. Release Grab.
 	if (PhysicsHandle->GetGrabbedComponent())
 	{
-		ABossProjectileBase* projectile =Cast<ABossProjectileBase>(PhysicsHandle->GetGrabbedComponent()->GetOwner());
-		if (projectile) //set Activate value to Spawn monsters. See AMonsterSpawnPRojectile's Onhit.
-		{		
-			projectile->bActivated = true;
-		} 
-
-		PhysicsHandle->ReleaseComponent();
+		ReleaseHold(PhysicsHandle->GetGrabbedComponent()->GetOwner());
 	}
 	else //when hold nothing.
 	{
+		UE_LOG(LogClass, Warning, TEXT("Nothing Hold"));
 
 		APlayerController* playerController = Cast<APlayerController>(GetController());
 		if (playerController)
@@ -251,51 +234,8 @@ void ABossCharacter::HandAction()
 			FVector traceStart = cameraLocation;
 			FVector traceEnd = traceStart + crosshairDirection * 100000.0f;
 
-			TArray<TEnumAsByte<EObjectTypeQuery>> objects;
+			SearchHold(traceStart, traceEnd);
 
-			//ObjectTypeQuery7 == Projectile(custom)
-			objects.Add(EObjectTypeQuery::ObjectTypeQuery7);
-
-			TArray<AActor*> ignores;
-			ignores.Add(this);
-
-			FHitResult hit;
-
-			bool result = UKismetSystemLibrary::LineTraceSingleForObjects(
-				GetWorld(),
-				traceStart,
-				traceEnd,
-				objects,
-				true,
-				ignores,
-
-				//EDrawDebugTrace::None, 
-				EDrawDebugTrace::ForDuration,
-
-				hit,
-				true,
-				FLinearColor::Red,
-				FLinearColor::Blue,
-				2.0f
-			);
-
-			if (result)
-			{
-				//check hit result actor is Projectile or not.
-				ABossProjectileBase * projectile = Cast<ABossProjectileBase>(hit.GetActor());
-				if (projectile)
-				{
-					HoldSpawnProjectile(projectile);
-				}
-				else
-				{
-					UE_LOG(LogClass, Warning, TEXT("You Can't Hold this."));
-				}
-			}
-			else
-			{
-				UE_LOG(LogClass, Warning, TEXT("failed."));
-			}
 		}
 
 	}
@@ -306,69 +246,18 @@ void ABossCharacter::LeftHandAction()
 	//when hold something
 	if (PhysicsHandle->GetGrabbedComponent())
 	{
-		ABossProjectileBase* projectile = Cast<ABossProjectileBase>(PhysicsHandle->GetGrabbedComponent()->GetOwner());
-		if (projectile) //set Activate value to Spawn monsters. See AMonsterSpawnPRojectile's Onhit.
-		{
-			projectile->bActivated = true;
-		}
-
-		PhysicsHandle->ReleaseComponent();
+		ReleaseHold(PhysicsHandle->GetGrabbedComponent()->GetOwner());
 	}
 	else //when hold nothing.
 	{
 
+		// I Don't Thick It Will Work Correctly ..?
 		if (VR_Left)
 		{
 			FVector traceStart = VR_Left->GetComponentLocation();
 			FVector traceEnd = traceStart + VR_Left->GetForwardVector() * 5000.0f;
 
-
-			TArray<TEnumAsByte<EObjectTypeQuery>> objects;
-
-			//explaination : ObjectTypeQuery7 == Projectile(custom)
-			objects.Add(EObjectTypeQuery::ObjectTypeQuery7);
-
-			TArray<AActor*> ignores;
-			ignores.Add(this);
-
-			FHitResult hit;
-
-			bool result = UKismetSystemLibrary::LineTraceSingleForObjects(
-				GetWorld(),
-				traceStart,
-				traceEnd,
-				objects,
-				true,
-				ignores,
-
-				//EDrawDebugTrace::None, 
-				EDrawDebugTrace::ForDuration,
-
-				hit,
-				true,
-				FLinearColor::Red,
-				FLinearColor::Blue,
-				2.0f
-			);
-
-			if (result)
-			{
-				//check hit result actor is Projectile or not.
-				ABossProjectileBase * projectile = Cast<ABossProjectileBase>(hit.GetActor());
-				if (projectile)
-				{
-					HoldSpawnProjectile(projectile);
-				}
-				else
-				{
-					UE_LOG(LogClass, Warning, TEXT("You Can't Hold this."));
-				}
-			}
-			else
-			{
-				UE_LOG(LogClass, Warning, TEXT("failed."));
-			}
-
+			SearchHold(traceStart, traceEnd);
 		}
 
 	}
@@ -396,4 +285,72 @@ void ABossCharacter::CreateUI()
 UPrimitiveComponent * ABossCharacter::GetGrabbedComponent() const
 {
 	return PhysicsHandle->GetGrabbedComponent();
+}
+
+void ABossCharacter::SearchHold_Implementation(FVector TraceStart, FVector TraceEnd)
+{
+	TArray<TEnumAsByte<EObjectTypeQuery>> objects;
+
+	//ObjectTypeQuery7 == Projectile(custom)
+	objects.Add(EObjectTypeQuery::ObjectTypeQuery7);
+
+	TArray<AActor*> ignores;
+	ignores.Add(this);
+
+	FHitResult hit;
+
+	bool result = UKismetSystemLibrary::LineTraceSingleForObjects(
+		GetWorld(),
+		TraceStart,
+		TraceEnd,
+		objects,
+		true,
+		ignores,
+
+		EDrawDebugTrace::None, 
+		//EDrawDebugTrace::ForDuration,
+
+		hit,
+		true,
+		FLinearColor::Red,
+		FLinearColor::Blue,
+		2.0f
+	);
+
+	if (result)
+	{
+		//check hit result actor is Projectile or not.
+		ABossProjectileBase * projectile = Cast<ABossProjectileBase>(hit.GetActor());
+		if (projectile)
+		{
+			HoldSpawnProjectile(projectile);
+		}
+		else
+		{
+			UE_LOG(LogClass, Warning, TEXT("You Can't Hold this."));
+		}
+	}
+	else
+	{
+		UE_LOG(LogClass, Warning, TEXT("failed."));
+	}
+}
+
+void ABossCharacter::ReleaseHold_Implementation(AActor* Holding)
+{
+
+	ABossProjectileBase* projectile = Cast<ABossProjectileBase>(Holding);
+	if (projectile) //set Activate value to Spawn monsters. See AMonsterSpawnPRojectile's Onhit.
+	{
+		projectile->bActivated = true;
+	}
+
+
+	ReleasePhysicsHandle();
+}
+
+void ABossCharacter::ReleasePhysicsHandle_Implementation()
+{
+	PhysicsHandle->ReleaseComponent();
+	UE_LOG(LogClass, Warning, TEXT("Released"));
 }
