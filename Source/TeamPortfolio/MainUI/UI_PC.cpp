@@ -195,6 +195,7 @@ void AUI_PC::C2S_SpawnandPossess_Implementation()
 	APawn* pawn = GetPawn();
 	UnPossess();
 	Possess(BossCharacter);
+	BossCharacter->CreateUI();
 	pawn->Destroy();
 }
 

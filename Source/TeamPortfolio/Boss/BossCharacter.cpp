@@ -84,14 +84,7 @@ void ABossCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	/*Boss UMG*/
-	if (BossWidgetClass)
-	{
-		UBossWidgetBase* bossWidget = CreateWidget<UBossWidgetBase>(Cast<APlayerController>(GetController()), BossWidgetClass);
-		if (bossWidget)
-		{
-			bossWidget->AddToViewport();
-		}
-	}
+	CreateUI();
 
 	///*Show Mouse Cursor*/
 	//APlayerController* pc = Cast<APlayerController>(GetController());
@@ -383,6 +376,21 @@ void ABossCharacter::LeftHandAction()
 
 void ABossCharacter::RightHandAction()
 {
+}
+
+void ABossCharacter::CreateUI()
+{
+	if (IsLocallyControlled())
+	{
+		if (BossWidgetClass)
+		{
+			UBossWidgetBase* bossWidget = CreateWidget<UBossWidgetBase>(Cast<APlayerController>(GetController()), BossWidgetClass);
+			if (bossWidget)
+			{
+				bossWidget->AddToViewport();
+			}
+		}
+	}
 }
 
 UPrimitiveComponent * ABossCharacter::GetGrabbedComponent() const

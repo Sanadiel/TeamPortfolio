@@ -108,6 +108,8 @@ public:
 	void LeftHandAction();
 	void RightHandAction();
 
+	void CreateUI();
+
 	//Return Current GrabbedComponent.
 	UPrimitiveComponent* GetGrabbedComponent() const;
 };
