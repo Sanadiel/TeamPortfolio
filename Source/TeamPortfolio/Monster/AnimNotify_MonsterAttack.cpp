@@ -18,10 +18,10 @@ void UAnimNotify_MonsterAttack::Notify(USkeletalMeshComponent* MeshComp, UAnimSe
 	UKismetSystemLibrary::PrintString(Monster->GetWorld(), TEXT("MonsterAttack"));
 
 	TArray<TEnumAsByte<EObjectTypeQuery>> ObjecTypes;
-	ObjecTypes.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_PhysicsBody));
+	ObjecTypes.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_GameTraceChannel3));
 
 	TArray<AActor*> IgnoreActors;
-	IgnoreActors.Add(Monster);
+	//IgnoreActors.Add(Monster);
 	
 	TArray<AActor*>OutActors;
 
@@ -36,6 +36,8 @@ void UAnimNotify_MonsterAttack::Notify(USkeletalMeshComponent* MeshComp, UAnimSe
 
 	);
 
+	//UE_LOG(LogClass, Warning, TEXT("%s"), OutActors[0]);
+
 	if (bResult)
 	{
 		UGameplayStatics::ApplyDamage(OutActors[0],
@@ -43,7 +45,7 @@ void UAnimNotify_MonsterAttack::Notify(USkeletalMeshComponent* MeshComp, UAnimSe
 			nullptr,
 			Monster,
 			nullptr
-		);
+		);		
 	}
 
 }
