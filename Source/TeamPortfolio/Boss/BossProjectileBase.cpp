@@ -36,9 +36,10 @@ ABossProjectileBase::ABossProjectileBase()
 	Mesh->SetRelativeScale3D(FVector(0.25f, 0.25f, 0.25f));
 	Mesh->SetRelativeLocation(FVector(0.0f, 0.0f, -Sphere->GetScaledSphereRadius()));
 
+	//Replication
 	SetReplicates(true);
 	SetReplicateMovement(true);
-
+	bAlwaysRelevant = true;
 	/* Deprecated.
 	// Use a ProjectileMovementComponent to govern this projectile's movement
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileComp"));

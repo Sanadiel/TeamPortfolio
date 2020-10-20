@@ -91,16 +91,22 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Monster")
 		TSubclassOf<ABossProjectileBase> BossProjectileClass;
 
-	//Change Projectile Class --> Will Use In Boss UI Button.
-	void SetProjectileClass(TSubclassOf<ABossProjectileBase> NewProjectileClass);
-
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UMG")
 		TSubclassOf<UBossWidgetBase> BossWidgetClass;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Replicated, Category = "Grab")
+		bool bIsGrabbed;
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 	//Hold Projectile Actor. Call From "SearchHold"
-	UFUNCTION(NetMulticast, Reliable)
+	UFUNCTION(Server, Reliable)
 		void HoldSpawnProjectile(ABossProjectileBase* ProjectileObject);
 		void HoldSpawnProjectile_Implementation(ABossProjectileBase* ProjectileObject);
+
+	UFUNCTION(Client, Reliable)
+		void S2C_HoldSpawnProjectile(ABossProjectileBase* ProjectileObject);
+		void S2C_HoldSpawnProjectile_Implementation(ABossProjectileBase* ProjectileObject);
 
 	//Release when it is holding something, if not hold anything, find actor to hold.
 	void HandAction();
@@ -127,4 +133,14 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 		void ReleasePhysicsHandle();
 	void ReleasePhysicsHandle_Implementation();
+
+	//UI Using.
+	UFUNCTION(Server, Reliable)
+		void SpawnProjectile(int32 Index);
+	void SpawnProjectile_Implementation(int32 Index);
+
+	UFUNCTION(Server, Reliable)
+		void ResetCooldown(int32 Index);
+	void ResetCooldown_Implementation(int32 Index);
+
 };

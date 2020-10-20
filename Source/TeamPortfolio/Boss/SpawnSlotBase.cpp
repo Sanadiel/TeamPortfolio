@@ -66,7 +66,7 @@ void USpawnSlotBase::OnButtonClicked()
 	UE_LOG(LogClass, Warning, TEXT("%s's button Clicked."), *GetName());
 
 	APlayerController* pc = GetOwningPlayer();
-	if (pc)
+	if (pc &&pc->IsLocalPlayerController())
 	{
 		//Get BossPlayer so Can Access to SpawnClass.
 		ABossCharacter* boss = Cast<ABossCharacter>(pc->GetPawn());
@@ -88,22 +88,8 @@ void USpawnSlotBase::OnButtonClicked()
 					return;
 				}
 
-				//boss->SetProjectileClass(boss->SpawnClasses[index]);
-				FTransform transform;
-				transform.SetLocation(boss->HoldPosition->GetComponentLocation());
-				FActorSpawnParameters params;
-				params.Owner = boss;
-				
-				ABossProjectileBase* projectile = GetWorld()->SpawnActor<ABossProjectileBase>(boss->ProjectileClasses[index],transform,params);
-				if (projectile)
-				{
-					boss->HoldSpawnProjectile(projectile);
-					boss->SpawnCooldown[index] = 0.0f;
-				}
-				else
-				{
-					UE_LOG(LogClass, Warning, TEXT("Projectile Spawn Failed"));
-				}
+				boss->SpawnProjectile(index);
+
 			}
 			else
 			{

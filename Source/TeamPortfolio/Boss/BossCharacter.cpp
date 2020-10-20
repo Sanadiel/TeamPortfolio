@@ -15,6 +15,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Engine/EngineTypes.h" //EObjectTypeQuery
 #include "MotionControllerComponent.h" // Motion Controller.
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
 ABossCharacter::ABossCharacter()
@@ -37,6 +38,7 @@ ABossCharacter::ABossCharacter()
 
 	//PhysicsHandle Component.
 	PhysicsHandle  = CreateDefaultSubobject<UPhysicsHandleComponent>(TEXT("PhysicsHandle"));
+	PhysicsHandle->SetIsReplicated(true);
 	
 	//HoldPosition.
 	HoldPosition = CreateDefaultSubobject<USceneComponent>(TEXT("HoldPosition"));
@@ -197,21 +199,60 @@ void ABossCharacter::LookUp(float Value)
 	AddControllerPitchInput(Value);
 }
 
+void ABossCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+		//DOREPLIFETIME(ABossProjectileBase, bActivated);
+}
+
 void ABossCharacter::HoldSpawnProjectile_Implementation(ABossProjectileBase* ProjectileObject)
 {
 	if (PhysicsHandle && ProjectileObject)
 	{
 		PhysicsHandle->GrabComponentAtLocation(ProjectileObject->Sphere, NAME_None, ProjectileObject->GetActorLocation());
-		UE_LOG(LogClass, Warning, TEXT("Hold OK"));
+		UE_LOG(LogClass, Warning, TEXT("Server Hold OK"));
+
+		
+
+		S2C_HoldSpawnProjectile(ProjectileObject);
 	}
+	else if(!ProjectileObject)
+	{
+		UE_LOG(LogClass, Warning, TEXT("Hold Failed. object is nullptr"));
+	}
+	else if (!PhysicsHandle)
+	{
+		UE_LOG(LogClass, Warning, TEXT("Hold Failed. PhysicsHandle is nullptr"));
+	}
+}
+
+void ABossCharacter::S2C_HoldSpawnProjectile_Implementation(ABossProjectileBase * ProjectileObject)
+{
+	if (PhysicsHandle && ProjectileObject)
+	{
+		PhysicsHandle->GrabComponentAtLocation(ProjectileObject->Sphere, NAME_None, ProjectileObject->GetActorLocation());
+		UE_LOG(LogClass, Warning, TEXT("Client Hold OK"));
+	}
+	else if (!ProjectileObject)
+	{
+		UE_LOG(LogClass, Warning, TEXT("Client Hold Failed."));
+	}
+	else
+	{
+		UE_LOG(LogClass, Warning, TEXT("Why Failed?"));
+	}
+	
 }
 
 void ABossCharacter::HandAction()
 {
+	UE_LOG(LogClass, Warning, TEXT("%d"), IsValid(PhysicsHandle->GrabbedComponent));
+
 	//when hold something. Release Grab.
-	if (PhysicsHandle->GetGrabbedComponent())
+	if (PhysicsHandle->GrabbedComponent)
 	{
-		ReleaseHold(PhysicsHandle->GetGrabbedComponent()->GetOwner());
+		ReleaseHold(PhysicsHandle->GrabbedComponent->GetOwner());
 	}
 	else //when hold nothing.
 	{
@@ -353,4 +394,31 @@ void ABossCharacter::ReleasePhysicsHandle_Implementation()
 {
 	PhysicsHandle->ReleaseComponent();
 	UE_LOG(LogClass, Warning, TEXT("Released"));
+}
+
+void ABossCharacter::SpawnProjectile_Implementation(int32 Index)
+{
+	FTransform transform;
+	transform.SetLocation(HoldPosition->GetComponentLocation());
+
+	FActorSpawnParameters params;
+	params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+	//params.Owner = this;
+
+	ABossProjectileBase* projectile = GetWorld()->SpawnActor<ABossProjectileBase>(ProjectileClasses[Index], transform, params);
+	if (projectile)
+	{
+		UE_LOG(LogClass, Warning, TEXT("Spawn by UI is Success."));
+		HoldSpawnProjectile(projectile);
+		ResetCooldown(Index);
+	}
+	else
+	{
+		UE_LOG(LogClass, Warning, TEXT("Projectile Spawn Failed"));
+	}
+}
+
+void ABossCharacter::ResetCooldown_Implementation(int32 Index)
+{
+	SpawnCooldown[Index] = 0.0f;
 }
