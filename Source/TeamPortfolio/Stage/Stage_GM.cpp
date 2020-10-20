@@ -49,7 +49,7 @@ void AStage_GM::PostLogin(APlayerController* NewPlayer)
 //
 //	return nullptr;
 //}
-//
+
 //AActor * AStage_GM::ChoosePlayerStart(AController* Player)
 //{
 //	Super::ChoosePlayerStart(Player);

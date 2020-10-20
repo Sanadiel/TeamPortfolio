@@ -181,7 +181,9 @@ FReply UItemSlotBase::NativeOnMouseButtonDown(const FGeometry & InGeometry, cons
 			//	PC->MainWidgetObject->Inventory->SetSlot(EmptySlotNum, PC->Inventory->Inven[EmptySlotNum]);
 			//}
 		}
-	}	
+	}
+
+	TooltipVisible(false);
 
 	return Reply.NativeReply;
 }
