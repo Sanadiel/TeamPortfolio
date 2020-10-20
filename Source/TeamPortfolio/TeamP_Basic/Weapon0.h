@@ -16,10 +16,27 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, Category = "Mesh")
 	class USkeletalMeshComponent* WeaponMesh;
 
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
+	float WeaponDamage = 1.0f;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
+	float WeaponAttackSpeed = 0.05f;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
+	int MaxBullet = 30;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
+	int CurrentBullet = 0;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
+	int RemainedBullet=60;
+
+
+
 public:	
 	// Sets default values for this actor's properties
 	AWeapon0();
-
 
 protected:
 	// Called when the game starts or when spawned

@@ -20,6 +20,7 @@
 #include "../MainUI/MainUIBase.h"
 #include "../Item/Inventory.h"
 #include "../Item/MasterItem.h"
+#include "Weapon0.h"
 
 
 // Sets default values
@@ -45,12 +46,9 @@ ATeamP_BasicPlayer::ATeamP_BasicPlayer()
 	//무기 추가
 	Weapon1 = CreateDefaultSubobject<UWeaponComponent>(TEXT("Weapon1"));
 	Weapon1->SetupAttachment(GetMesh(), TEXT("WeaponSocket"));
-	Weapon2 = CreateDefaultSubobject<UWeaponComponent>(TEXT("Weapon2"));
-	Weapon2->SetupAttachment(GetMesh(), TEXT("WeaponSocket"));
-	Weapon3 = CreateDefaultSubobject<UWeaponComponent>(TEXT("Weapon3"));
-	Weapon3->SetupAttachment(GetMesh(), TEXT("WeaponSocket"));
-	Weapon4 = CreateDefaultSubobject<UWeaponComponent>(TEXT("Weapon4"));
-	Weapon4->SetupAttachment(GetMesh(), TEXT("WeaponSocket"));
+
+
+	Tags.Add(TEXT("Player"));
 
 
 }
@@ -59,7 +57,9 @@ ATeamP_BasicPlayer::ATeamP_BasicPlayer()
 void ATeamP_BasicPlayer::BeginPlay()
 {
 	Super::BeginPlay();
-	WeaponChange1();
+	WeaponChange(0);
+	Weapon1->SetHiddenInGame(true);
+	//CurrentWeapon->CurrentBullet = CurrentWeapon->MaxBullet;
 
 }
 
@@ -67,6 +67,12 @@ void ATeamP_BasicPlayer::BeginPlay()
 void ATeamP_BasicPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	//ATeamP_BasicPC* PC = GetController<ATeamP_BasicPC>();
+	//if (IsValid(PC))
+	//{
+	//	PC->GetMainUI()->UpdateHpBar(CurrentHP / MaxHP);
+	//}
 }
 
 // 플레이어 입력
@@ -99,10 +105,10 @@ void ATeamP_BasicPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 
 	//무기변경입력, 인벤토리 추가해서 인벤토리에서 무기바꿀시 삭제 or 변경
 
-	PlayerInputComponent->BindAction(TEXT("Weaponchange1"), IE_Pressed, this, &ATeamP_BasicPlayer::WeaponChange1);
-	PlayerInputComponent->BindAction(TEXT("Weaponchange2"), IE_Pressed, this, &ATeamP_BasicPlayer::WeaponChange2);
-	PlayerInputComponent->BindAction(TEXT("Weaponchange3"), IE_Pressed, this, &ATeamP_BasicPlayer::WeaponChange3);
-	PlayerInputComponent->BindAction(TEXT("Weaponchange4"), IE_Pressed, this, &ATeamP_BasicPlayer::WeaponChange4);
+	PlayerInputComponent->BindAction<FBindActionParamDelegate>(TEXT("Weaponchange1"), IE_Pressed, this, &ATeamP_BasicPlayer::WeaponChange,0);
+	PlayerInputComponent->BindAction<FBindActionParamDelegate>(TEXT("Weaponchange2"), IE_Pressed, this, &ATeamP_BasicPlayer::WeaponChange,1);
+	PlayerInputComponent->BindAction<FBindActionParamDelegate>(TEXT("Weaponchange3"), IE_Pressed, this, &ATeamP_BasicPlayer::WeaponChange,2);
+	PlayerInputComponent->BindAction<FBindActionParamDelegate>(TEXT("Weaponchange4"), IE_Pressed, this, &ATeamP_BasicPlayer::WeaponChange,3);
 
 
 }
@@ -257,10 +263,7 @@ float ATeamP_BasicPlayer::TakeDamage(float DamageAmount, FDamageEvent const& Dam
 	ATeamP_BasicPC* PC = GetController<ATeamP_BasicPC>();
 	if (IsValid(PC))
 	{
-		if (IsValid(PC->GetMainUI()))
-		{
-			PC->GetMainUI()->UpdateHpBar(CurrentHP / MaxHP);
-		}		
+		PC->GetMainUI()->UpdateHpBar(CurrentHP / MaxHP);
 	}
 
 	return 0.0f;
@@ -271,12 +274,17 @@ float ATeamP_BasicPlayer::TakeDamage(float DamageAmount, FDamageEvent const& Dam
 void ATeamP_BasicPlayer::OnFire()
 {
 
+
 	if (!bIsFire)
 	{
 		return;
 	}
 
-	CheckCanFire();
+	if (CurrentWeapon->CurrentBullet <= 0 )
+	{
+		bIsFireAnim = false;
+		return;
+	}
 
 	if (bIsShotgun) {
 		bFireShotgun = true;
@@ -284,8 +292,12 @@ void ATeamP_BasicPlayer::OnFire()
 
 	if (bCanFire) //bCanFire로 변경
 	{
+		
 		bIsFireAnim = false;
 
+		CurrentWeapon->CurrentBullet -= 1;
+
+		UE_LOG(LogClass,Warning,TEXT("Bullet = %d / %d"),CurrentWeapon->CurrentBullet,CurrentWeapon->MaxBullet)
 		ATeamP_BasicPC* PC = Cast<ATeamP_BasicPC>(GetController());
 
 		if (PC)
@@ -344,32 +356,7 @@ void ATeamP_BasicPlayer::OnFire()
 
 			if (Result)
 			{
-
-				if (UsingWeaponNumber == 3)
-				{
-					UE_LOG(LogClass, Warning, TEXT("UsingWeaponNumber3"));
-					if (ProjectileClass)
-					{
-						UE_LOG(LogClass, Warning, TEXT("Projectile"));
-						UWorld* const World = GetWorld();
-						if (World)
-						{
-							UE_LOG(LogClass, Warning, TEXT("Spawnstart"));
-							const FRotator SpawnRotation = GetControlRotation();
-							// MuzzleOffset is in camera space, so transform it to world space before offsetting from the character location to find the final muzzle position
-							//const FVector SpawnLocation = ((FP_MuzzleLocation != nullptr) ? FP_MuzzleLocation->GetComponentLocation() : GetActorLocation()) + SpawnRotation.RotateVector(GunOffset);
-
-							//Set Spawn Collision Handling Override
-							FActorSpawnParameters ActorSpawnParams;
-							ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
-
-							// spawn the projectile at the muzzle
-							World->SpawnActor<ASpawnTest>(ProjectileClass, Weapon1->GetComponentLocation(), SpawnRotation, ActorSpawnParams);
-
-						}
-					}
-				}
-				else {
+			
 					//all client spawn Hiteffect and Decal
 
 					//S2A_SpawnHitEffectAndDecal(OutHit);
@@ -403,7 +390,7 @@ void ATeamP_BasicPlayer::OnFire()
 
 					//Point Damage
 					UGameplayStatics::ApplyPointDamage(OutHit.GetActor(), //맞은놈
-						WeaponDamage,	//데미지
+						WeaponDamageC,	//데미지
 						-OutHit.ImpactNormal,	//데미지 방향
 						OutHit,	//데미지 충돌 정보
 						GetController(),	//때린 플레이어
@@ -413,14 +400,7 @@ void ATeamP_BasicPlayer::OnFire()
 
 					MakeNoise(1.0f, this, OutHit.ImpactPoint); //AI가 센서로 받을 수 있는 Noise를 생성한다.
 
-				}
-
-
-
-
-
-
-
+				
 			}
 
 			//All Client Spawn Muzzleflash and Sound
@@ -431,7 +411,7 @@ void ATeamP_BasicPlayer::OnFire()
 			{
 				UGameplayStatics::SpawnSoundAtLocation(GetWorld(),
 					WeaponSound,
-					Weapon1->GetComponentLocation()
+					CurrentWeapon->WeaponMesh->GetComponentLocation()
 				);
 			}
 
@@ -439,7 +419,7 @@ void ATeamP_BasicPlayer::OnFire()
 			{
 				UGameplayStatics::SpawnEmitterAtLocation(GetWorld(),
 					MuzzleFlash,
-					Weapon1->GetSocketTransform(TEXT("Muzzle"))
+					CurrentWeapon->WeaponMesh->GetSocketTransform(TEXT("Muzzle"))
 				);
 			}
 		}
@@ -474,6 +454,12 @@ void ATeamP_BasicPlayer::OnSpawnFire()
 void ATeamP_BasicPlayer::StartFire() //발사키 입력시 
 {
 
+	CheckCanFire();
+	if (!bCanFire)
+	{
+		return;
+	}
+
 	bIsFire = true;
 
 	OnFire();
@@ -490,21 +476,41 @@ void ATeamP_BasicPlayer::StopFire()
 
 void ATeamP_BasicPlayer::Reload()
 {
+	if (CurrentWeapon->RemainedBullet == 0) {
+		return;
+	}
 	bIsReload = true;
+
+	if(!CurrentWeapon->RemainedBullet == 0){
+		if ((CurrentWeapon->RemainedBullet + CurrentWeapon->CurrentBullet) >= CurrentWeapon->MaxBullet) {//남은총알+현재총알이 탄창보다 많을경우 
+
+			CurrentWeapon->RemainedBullet -= (CurrentWeapon->MaxBullet - CurrentWeapon->CurrentBullet);// 남은총알 = 남은총알-(최대총알-현재총알(충전된총알))
+
+			CurrentWeapon->CurrentBullet = CurrentWeapon->MaxBullet;//현재총알 = 최대총알
+
+		}else{																					//남은총알이 30개 이하일  경우
+		
+			CurrentWeapon->CurrentBullet += CurrentWeapon->RemainedBullet;
+
+			CurrentWeapon->RemainedBullet = 0;
+			
+		}
+	}
+	UE_LOG(LogClass, Warning, TEXT("CurrentBullet = %d,MaxBullet = %d, RemainedBullet = %d"), CurrentWeapon->CurrentBullet, CurrentWeapon->MaxBullet, CurrentWeapon->RemainedBullet);
 }
 
 //발사가능체크.
 void ATeamP_BasicPlayer::CheckCanFire()
 {
-	//단발인 경우와 연발사격인 경우를 나눠서 만듬. 지금은 샷건인가 아닌가만 판별, 리로드중인것도 체크해줘야댐
+	// 리로드중인것도 체크해줘야댐
 	
-	if (!(GetWorldTimerManager().IsTimerActive(*FireTimerHandle))&&!bIsReload) {
+	if ((GetWorldTimerManager().IsTimerActive(*FireTimerHandle)) || bIsReload || CurrentWeapon->CurrentBullet <= 0) {
 		
-		bCanFire = true;
+		bCanFire = false;
 		
 	}
 	else {
-		bCanFire = false;
+		bCanFire = true;
 	}
 }
 
@@ -515,9 +521,48 @@ void ATeamP_BasicPlayer::CheckCanFire()
 
 void ATeamP_BasicPlayer::WeaponChange(int WeaponNumber)
 {
+	
 	bIsFire = false;
 	bIsFireAnim = false;
-	switch (WeaponNumber)
+
+	FActorSpawnParameters params;
+	params.Owner = GetOwner();
+	//transform.SetLocation(GetActorLocation());
+
+		AWeapon0* SpawnWeapon = GetWorld()->SpawnActor<AWeapon0>(WeaponClasses[WeaponNumber], params);
+
+		if (SpawnWeapon)
+		{
+			UE_LOG(LogClass, Warning, TEXT("SpawnWeapon %d"), WeaponNumber);
+			SpawnWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("WeaponSocket"));//소켓은 스켈레탈메시에 있음.따라서 parent는 GetMesh()해준것.
+			if (CurrentWeapon)
+			{
+				CurrentWeapon->Destroy();
+			}
+			CurrentWeapon = SpawnWeapon;
+		}
+		WeaponAttackSpeed = CurrentWeapon->WeaponAttackSpeed;
+		WeaponDamageC = CurrentWeapon->WeaponDamage;
+		bIsShotgun = false;
+	
+		UE_LOG(LogClass, Warning, TEXT("WeaponNumber : %d  MaxBullet : %d  Bullet : %d / %d"), WeaponNumber, CurrentWeapon->MaxBullet, CurrentWeapon->CurrentBullet, CurrentWeapon->RemainedBullet);
+
+
+	//GetWorld()->GetTimeSeconds();
+
+	////header
+	//TArray<float> Cooldown;
+
+	//Cooldown->Add(0.0f);
+
+	//tick()
+	//	for ()
+	//		Cooldown[i] += deltasecond;
+
+	FireTimerHandle = &Weapon1_FireTimerHande;
+	FireTimerHandle2 = &Weapon1_FireTimerHande2;
+
+	/*switch (WeaponNumber)
 	{
 	case 1: WeaponNumber = 1;
 		Weapon1->SetHiddenInGame(false);
@@ -543,88 +588,40 @@ void ATeamP_BasicPlayer::WeaponChange(int WeaponNumber)
 		Weapon3->SetHiddenInGame(true);
 		Weapon4->SetHiddenInGame(false);
 		break;
-	}
+	}*/
 }
 
 
 //무기 옵션들 
 
-void ATeamP_BasicPlayer::WeaponChange1()
-{
-	UsingWeaponNumber = 1;
-	WeaponChange(UsingWeaponNumber);
-	WeaponAttackSpeed = 0.05f;
-	WeaponDamage = 1.0f;
-	bIsShotgun = false;
-
-	FireTimerHandle = &Weapon1_FireTimerHande;
-	FireTimerHandle2 = &Weapon1_FireTimerHande2;
-}
-
-void ATeamP_BasicPlayer::WeaponChange2()
-{
-	UsingWeaponNumber = 2;
-	WeaponChange(UsingWeaponNumber);
-	WeaponAttackSpeed = 0.2f;
-	WeaponDamage = 8.0f;
-	bIsShotgun = false;
 
 
-	FireTimerHandle = &Weapon2_FireTimerHande;
-	FireTimerHandle2 = &Weapon2_FireTimerHande2;
-}
-
-void ATeamP_BasicPlayer::WeaponChange3()//타이머루다가 애니메이션 한번만 돌아가도록 or 전용 장전 애니메이션 추가 or 둘다
-{
-	UsingWeaponNumber = 3;
-	WeaponChange(UsingWeaponNumber);
-	WeaponAttackSpeed = 2.f;
-	WeaponDamage = 75.0f;
-	bIsShotgun = true;
-
-	FireTimerHandle = &Weapon3_FireTimerHande;
-	FireTimerHandle2 = &Weapon3_FireTimerHande2;
-}
-
-void ATeamP_BasicPlayer::WeaponChange4()
-{
-	UsingWeaponNumber = 4;
-	WeaponChange(UsingWeaponNumber);
-	WeaponAttackSpeed = 2.f;
-	WeaponDamage = 75.0f;
-	bIsShotgun = false;
-
-
-	FireTimerHandle = &Weapon4_FireTimerHande;
-	FireTimerHandle2 = &Weapon4_FireTimerHande2;
-
-
-
-}
 
 void ATeamP_BasicPlayer::LoadWeapon(int Index)
 {
-	ATeamP_BasicPC* PC = GetController<ATeamP_BasicPC>();
-	if (IsValid(PC))
-	{
-		switch (Index)
-		{
-		case 1:
-			WeaponChange1();
-			break;
-		case 2:
-			WeaponChange2();
-			break;
-		case 3:
-			WeaponChange3();
-			break;
-		case 4:
-			WeaponChange4();
-			break;
-		}	
-		
-		//PC->Inventory->Equipment[Index]->ItemData.;
-		
-		//PC->Inventory->Equipment[Index]->StaticMesh;//StaticMesh
-	}
+	//ATeamP_BasicPC* PC = GetController<ATeamP_BasicPC>();
+	//if (IsValid(PC))
+	//{
+	//	switch (Index)
+	//	{
+	//	case 1:
+
+	//		break;
+	//	case 2:
+
+	//		break;
+	//	case 3:
+
+	//		break;
+	//	case 4:
+
+	//		break;
+	//	default:
+	//		break;
+	//	}	
+	//	
+	//	//PC->Inventory->Equipment[Index]->ItemData.;
+	//	
+	//	//PC->Inventory->Equipment[Index]->StaticMesh;//StaticMesh
+	//}
 }

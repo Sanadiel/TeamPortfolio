@@ -6,6 +6,8 @@
 #include "GameFramework/Character.h"
 #include "TeamP_BasicPlayer.generated.h"
 
+DECLARE_DELEGATE_OneParam(FBindActionParamDelegate, int32);
+
 UCLASS()
 class TEAMPORTFOLIO_API ATeamP_BasicPlayer : public ACharacter
 {
@@ -37,14 +39,6 @@ public:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	class UWeaponComponent* Weapon1;
 
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-	class UWeaponComponent* Weapon2;
-
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-	class UWeaponComponent* Weapon3;
-
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-	class UWeaponComponent* Weapon4;
 
 
 
@@ -57,6 +51,10 @@ public:
 	void Sprint();
 	void StopSprint();
 
+	void WeaponChange1();
+	void WeaponChange2();
+	void WeaponChange3();
+	void WeaponChange4();
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 		float WalkSpeed = 300.0f;
@@ -97,12 +95,7 @@ public:
 
 	FTimerHandle Weapon1_FireTimerHande;
 	FTimerHandle Weapon1_FireTimerHande2;
-	FTimerHandle Weapon2_FireTimerHande;
-	FTimerHandle Weapon2_FireTimerHande2;
-	FTimerHandle Weapon3_FireTimerHande;
-	FTimerHandle Weapon3_FireTimerHande2;
-	FTimerHandle Weapon4_FireTimerHande;
-	FTimerHandle Weapon4_FireTimerHande2;
+	
 
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Data")
@@ -169,14 +162,12 @@ public:
 
 	//무기 변경 
 	void WeaponChange(int WeaponNumber);
-	void WeaponChange1();
-	void WeaponChange2();
-	void WeaponChange3();
-	void WeaponChange4();
-	
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
-	float WeaponDamage = 1.0f;
+
+
+	UPROPERTY(BlueprintReadOnly)
+		float WeaponDamageC = 1.0f;
+	
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
 	float WeaponAttackSpeed = 0.05f;
@@ -184,11 +175,17 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = Projectile)
 	TSubclassOf<class ASpawnTest> ProjectileClass;
 
-	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<class AWeapon0> Weapon;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
+	class AWeapon0* CurrentWeapon;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
+	TArray<TSubclassOf<class AWeapon0>> WeaponClasses;
+
 
 	int UsingWeaponNumber;
 
 	void LoadWeapon(int Index);
+
 
 };
