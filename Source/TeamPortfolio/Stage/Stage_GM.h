@@ -18,19 +18,36 @@ public:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Boss")
 	TSubclassOf<class ABossCharacter> Boss;
 
+	//Time
+	FTimerHandle GameTimer;
+
 #pragma endregion
 	
 
 #pragma region Public Function
 public:
-	AStage_GM();
+	AStage_GM();	
+
+	UFUNCTION(BlueprintCallable)
+	void StartCountDown();
+
+	UFUNCTION()
+	void DecreaseTime();
+
+	UFUNCTION()
+	void Travel_MasterLobby();
+
+
 	//virtual void SwapPlayerControllers(APlayerController* OldPC, APlayerController* NewPC) override;
 	virtual void PostLogin(APlayerController* NewPlayer) override;
+	virtual void BeginPlay() override;
 
 	/*APawn* SpawnDefaultPawnFor(AController* NewPlayer, AActor* StartSpot);
-	APawn* SpawnDefaultPawnFor_Implementation(AController* NewPlayer, AActor* StartSpot);
+	APawn* SpawnDefaultPawnFor_Implementation(AController* NewPlayer, AActor* StartSpot);*/
 
-	AActor* ChoosePlayerStart(AController* Player);*/
+	virtual AActor* ChoosePlayerStart_Implementation(AController* Player) override;
+
+	virtual AActor* FindPlayerStart_Implementation(AController* Player, const FString& IncomingName = TEXT("")) override;
 
 	
 #pragma endregion

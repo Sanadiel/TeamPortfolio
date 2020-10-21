@@ -24,7 +24,7 @@ public:
 #pragma region Public Member
 public:
 	virtual void NativeConstruct() override;
-	void SetMessage(int LeftTime);
+	void SetMessage(int LeftTime, bool isLobby = true);
 
 #pragma endregion
 };

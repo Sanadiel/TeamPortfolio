@@ -12,13 +12,36 @@ void ULobby_WidgetBase::NativeConstruct()
 	TimeLeftMessage->SetVisibility(ESlateVisibility::Collapsed);
 }
 
-void ULobby_WidgetBase::SetMessage(int LeftTime)
+void ULobby_WidgetBase::SetMessage(int LeftTime, bool isLobby)
 {
-	FString Temp = FString::Printf(TEXT("%d초 후에 게임이 시작됩니다."), LeftTime);
-	if (TimeLeftMessage)
+	FString Message;
+
+	if (isLobby == true)
 	{
-		TimeLeftMessage->SetText(FText::FromString(Temp));
+		Message = FString::Printf(TEXT("%d초 후에 게임이 시작됩니다."), LeftTime);
+		if (TimeLeftMessage)
+		{
+			TimeLeftMessage->SetText(FText::FromString(Message));
+		}
+	}
+	else
+	{
+		int minute = LeftTime / 60;
+		int second = LeftTime % 60;
+
+		if (minute == 0)
+		{
+			Message = FString::Printf(TEXT("%d"), LeftTime);
+		}
+		else
+		{
+			Message = FString::Printf(TEXT("%d : %d"), minute, second);
+		}		
 	}
 
-	TimeLeftMessage->SetVisibility(ESlateVisibility::Visible);
+	if (TimeLeftMessage)
+	{
+		TimeLeftMessage->SetText(FText::FromString(Message));
+		TimeLeftMessage->SetVisibility(ESlateVisibility::Visible);
+	}	
 }

@@ -14,10 +14,10 @@ class TEAMPORTFOLIO_API ALobby_GM : public AGameModeBase
 {
 	GENERATED_BODY()
 #pragma region Public Member
-		TArray<AActor*> Buttons;
+public:
+	TArray<AActor*> Buttons;
 
 #pragma endregion
-
 
 #pragma region Public Function
 public:
@@ -25,7 +25,6 @@ public:
 	void StartGame();
 
 	virtual void BeginPlay() override;
-
 
 	//CheckButton
 	FTimerHandle ButtonTimer;

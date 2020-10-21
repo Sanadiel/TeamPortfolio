@@ -13,6 +13,7 @@
 #include "Net/UnrealNetwork.h"
 #include "../Stage/Stage_GM.h"
 #include "../Boss/BossCharacter.h"
+#include "../Lobby/Lobby_WidgetBase.h"
 
 AUI_PC::AUI_PC()
 {
@@ -112,6 +113,16 @@ void AUI_PC::AddResultWidget()
 	if (ResultWidgetObject)
 	{
 		ResultWidgetObject->AddToViewport();
+	}
+}
+
+void AUI_PC::AddTimeWidget()
+{
+	LobbyWidgetObject = CreateWidget<ULobby_WidgetBase>(this, LobbyWidgetClass);
+
+	if (LobbyWidgetObject)
+	{
+		LobbyWidgetObject->AddToViewport();
 	}
 }
 

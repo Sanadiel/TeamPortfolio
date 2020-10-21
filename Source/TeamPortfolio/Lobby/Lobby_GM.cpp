@@ -6,13 +6,10 @@
 #include "Lobby_PC.h"
 #include "Kismet/GameplayStatics.h"
 #include "SelectButtonBase.h"
-#include "Kismet/GameplayStatics.h"
 #include "../Instance/TotalLog_GameInstance.h"
 
 void ALobby_GM::StartGame()
 {
-	//()->ServerTravel(TEXT("UITest_Level")); 
-
 	TArray<AActor*> OutActors;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ALobby_PC::StaticClass(), OutActors);
 	
@@ -21,9 +18,7 @@ void ALobby_GM::StartGame()
 	for (int i = 0; i != OutActors.Num(); ++i)
 	{
 		ALobby_PC* PC = Cast<ALobby_PC>(OutActors[i]);
-		//UTotalLog_GameInstance* GI = GetGameInstance<UTotalLog_GameInstance>();
 		PC->S2C_SetGIbool(PC->IsDefencePlayer);
-		//GI->isDefencePlayer = PC->IsDefencePlayer;
 	}
 
 	GetWorld()->ServerTravel(TEXT("CrumblingRuins_Level"));
@@ -60,7 +55,7 @@ void ALobby_GM::CheckButton()
 		if (button0 && button1)
 		{
 			GetWorldTimerManager().ClearTimer(ButtonTimer);
-			StartCountDown();			
+			StartCountDown();
 		}
 	}
 }
@@ -85,7 +80,7 @@ void ALobby_GM::DecreaseTime()
 		GS->LeftTime--;
 		GS->OnRep_LeftTime();		
 
-		if (GS->LeftTime < 0)
+		if (GS->LeftTime <= 0)
 		{
 			//게임 시작
 			GetWorldTimerManager().ClearTimer(LobbyTimer);

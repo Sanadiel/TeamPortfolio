@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/GameModeBase.h"
+#include "Lobby_GM.h"
 #include "MasterLobby_GM.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class TEAMPORTFOLIO_API AMasterLobby_GM : public AGameModeBase
+class TEAMPORTFOLIO_API AMasterLobby_GM : public ALobby_GM
 {
 	GENERATED_BODY()
 	

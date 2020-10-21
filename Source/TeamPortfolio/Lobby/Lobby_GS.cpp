@@ -22,5 +22,4 @@ void ALobby_GS::OnRep_LeftTime()
 	{
 		PC->LobbyWidgetObject->SetMessage(LeftTime);
 	}
-
 }
