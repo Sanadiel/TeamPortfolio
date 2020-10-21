@@ -39,7 +39,7 @@ ABossProjectileBase::ABossProjectileBase()
 	//Replication
 	SetReplicates(true);
 	SetReplicateMovement(true);
-	bAlwaysRelevant = true;
+	MinNetUpdateFrequency = 30.0f;
 	/* Deprecated.
 	// Use a ProjectileMovementComponent to govern this projectile's movement
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileComp"));

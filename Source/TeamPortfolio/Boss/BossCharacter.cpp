@@ -28,7 +28,7 @@ ABossCharacter::ABossCharacter()
 	SpringArm->SetupAttachment(RootComponent);
 	SpringArm->bUsePawnControlRotation = true;
 	SpringArm->TargetArmLength = 300.0f;
-	SpringArm->SocketOffset = FVector(0.0f, 40.0f, 88.0f);
+	SpringArm->SocketOffset = FVector(0.0f, 0.0f, 88.0f);
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(SpringArm);
@@ -52,7 +52,7 @@ ABossCharacter::ABossCharacter()
 	GetCharacterMovement()->bUseControllerDesiredRotation = true;
 
 	//Boss Will Exist in Level. Normal Player will Spawn by GameMode.
-	AutoPossessPlayer = EAutoReceiveInput::Player0;
+	//AutoPossessPlayer = EAutoReceiveInput::Player0;
 
 	/* Deprecated. 
 	//Trajectory Param's Default Parameter. Not Needed when Throwing PlayMode
@@ -203,7 +203,7 @@ void ABossCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-		//DOREPLIFETIME(ABossProjectileBase, bActivated);
+		DOREPLIFETIME(ABossCharacter, bIsGrabbed);
 }
 
 void ABossCharacter::HoldSpawnProjectile_Implementation(ABossProjectileBase* ProjectileObject)
@@ -212,10 +212,8 @@ void ABossCharacter::HoldSpawnProjectile_Implementation(ABossProjectileBase* Pro
 	{
 		PhysicsHandle->GrabComponentAtLocation(ProjectileObject->Sphere, NAME_None, ProjectileObject->GetActorLocation());
 		UE_LOG(LogClass, Warning, TEXT("Server Hold OK"));
+		bIsGrabbed = true;
 
-		
-
-		S2C_HoldSpawnProjectile(ProjectileObject);
 	}
 	else if(!ProjectileObject)
 	{
@@ -227,32 +225,14 @@ void ABossCharacter::HoldSpawnProjectile_Implementation(ABossProjectileBase* Pro
 	}
 }
 
-void ABossCharacter::S2C_HoldSpawnProjectile_Implementation(ABossProjectileBase * ProjectileObject)
-{
-	if (PhysicsHandle && ProjectileObject)
-	{
-		PhysicsHandle->GrabComponentAtLocation(ProjectileObject->Sphere, NAME_None, ProjectileObject->GetActorLocation());
-		UE_LOG(LogClass, Warning, TEXT("Client Hold OK"));
-	}
-	else if (!ProjectileObject)
-	{
-		UE_LOG(LogClass, Warning, TEXT("Client Hold Failed."));
-	}
-	else
-	{
-		UE_LOG(LogClass, Warning, TEXT("Why Failed?"));
-	}
-	
-}
-
 void ABossCharacter::HandAction()
 {
 	UE_LOG(LogClass, Warning, TEXT("%d"), IsValid(PhysicsHandle->GrabbedComponent));
 
 	//when hold something. Release Grab.
-	if (PhysicsHandle->GrabbedComponent)
+	if(bIsGrabbed)//if (PhysicsHandle->GrabbedComponent)
 	{
-		ReleaseHold(PhysicsHandle->GrabbedComponent->GetOwner());
+		ReleaseHold();
 	}
 	else //when hold nothing.
 	{
@@ -287,7 +267,7 @@ void ABossCharacter::LeftHandAction()
 	//when hold something
 	if (PhysicsHandle->GetGrabbedComponent())
 	{
-		ReleaseHold(PhysicsHandle->GetGrabbedComponent()->GetOwner());
+		ReleaseHold();
 	}
 	else //when hold nothing.
 	{
@@ -348,8 +328,8 @@ void ABossCharacter::SearchHold_Implementation(FVector TraceStart, FVector Trace
 		true,
 		ignores,
 
-		EDrawDebugTrace::None, 
-		//EDrawDebugTrace::ForDuration,
+		//EDrawDebugTrace::None, 
+		EDrawDebugTrace::ForDuration,
 
 		hit,
 		true,
@@ -377,23 +357,18 @@ void ABossCharacter::SearchHold_Implementation(FVector TraceStart, FVector Trace
 	}
 }
 
-void ABossCharacter::ReleaseHold_Implementation(AActor* Holding)
+void ABossCharacter::ReleaseHold_Implementation()
 {
 
-	ABossProjectileBase* projectile = Cast<ABossProjectileBase>(Holding);
+	ABossProjectileBase* projectile = Cast<ABossProjectileBase>(PhysicsHandle->GrabbedComponent->GetOwner());
 	if (projectile) //set Activate value to Spawn monsters. See AMonsterSpawnPRojectile's Onhit.
 	{
 		projectile->bActivated = true;
 	}
-
-
-	ReleasePhysicsHandle();
-}
-
-void ABossCharacter::ReleasePhysicsHandle_Implementation()
-{
 	PhysicsHandle->ReleaseComponent();
 	UE_LOG(LogClass, Warning, TEXT("Released"));
+	bIsGrabbed = false;
+
 }
 
 void ABossCharacter::SpawnProjectile_Implementation(int32 Index)

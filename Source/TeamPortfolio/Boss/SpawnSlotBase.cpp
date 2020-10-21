@@ -56,8 +56,6 @@ void USpawnSlotBase::NativeTick(const FGeometry & MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry,InDeltaTime);
 
-	//UE_LOG(LogClass, Warning, TEXT("UserWidgetTick"));
-
 	UpdateCooldown();
 }
 
@@ -73,10 +71,10 @@ void USpawnSlotBase::OnButtonClicked()
 		if (boss)
 		{
 			int32 index = GetSlotNumber();
-			//UE_LOG(LogClass, Warning, TEXT("%s"),*number);
+
 			if (index < boss->ProjectileClasses.Num() && boss->ProjectileClasses[index])
 			{
-				if (boss->GetGrabbedComponent())
+				if (boss->bIsGrabbed)
 				{
 					UE_LOG(LogClass, Warning, TEXT("Projectile Spawn Failed. You Already Hold Something."));
 					return;
@@ -88,6 +86,7 @@ void USpawnSlotBase::OnButtonClicked()
 					return;
 				}
 
+				//Call from Server To Spawn a Projectile.
 				boss->SpawnProjectile(index);
 
 			}
