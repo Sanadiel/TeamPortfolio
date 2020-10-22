@@ -40,6 +40,9 @@ FItemDataTable UInventory::GetItemData(int32 InvenIndex)
 
 void UInventory::DataLoading()
 {
+	if (Inven.Num() != 0)
+		return;	
+
 	for (int i = 0; i != CN_InventoryMaxChild; ++i)
 	{
 		AMasterItem* MasterItem = NewObject<AMasterItem>();
@@ -55,6 +58,22 @@ void UInventory::DataLoading()
 		Equipment.Add(MasterItem);
 		MasterItem->ConditionalBeginDestroy();
 	}
+}
+
+void UInventory::PassData(TArray<class AMasterItem*> BeforeInven, TArray<class AMasterItem*> BeforeEquipment)
+{
+	/*for (int i = 0; i != CN_InventoryMaxChild; ++i)
+	{		
+		Inven.Add(BeforeInven[i]);
+	}
+
+	for (int i = 0; i != CN_EquipMaxChild; ++i)
+	{
+		Equipment.Add(BeforeEquipment[i]);
+	}*/
+
+	Inven = BeforeInven;
+	Equipment = BeforeEquipment;
 }
 
 bool UInventory::isNull(int32 Index)

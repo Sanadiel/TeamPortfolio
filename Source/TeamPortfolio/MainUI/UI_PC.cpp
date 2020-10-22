@@ -36,6 +36,33 @@ void AUI_PC::SetupInputComponent()
 	InputComponent->BindAction(TEXT("EquipToggle"), IE_Pressed, this, &AUI_PC::Toggle_EquipWidget);
 }
 
+void AUI_PC::Destroyed()
+{
+	if (IsValid(MainWidgetObject))
+	{
+		MainWidgetObject->RemoveFromParent();
+	}
+
+	if (IsValid(ResultWidgetObject))
+	{
+		ResultWidgetObject->RemoveFromParent();
+	}
+
+	if (IsValid(LobbyWidgetObject))
+	{
+		LobbyWidgetObject->RemoveFromParent();
+	}
+
+	UTotalLog_GameInstance* GI = GetGameInstance<UTotalLog_GameInstance>();
+	if (IsValid(GI))
+	{
+		GI->Inven = Inventory->Inven;
+		GI->Equip = Inventory->Equipment;
+	}
+
+	Super::Destroyed();
+}
+
 UMainUIBase* AUI_PC::GetMainUI()
 {
 	return MainWidgetObject;
@@ -65,7 +92,15 @@ void AUI_PC::SettingUI()
 
 			if (MainWidgetObject)
 			{
-				Inventory->DataLoading();
+				if (GI->Inven.Num() == 0)
+				{
+					Inventory->DataLoading();
+				}
+				else
+				{
+					Inventory->PassData(GI->Inven, GI->Equip);
+				}
+				
 
 				MainWidgetObject->AddToViewport();
 				bShowMouseCursor = false;

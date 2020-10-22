@@ -36,6 +36,12 @@ public:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Player")
 	bool isDefencePlayer;
 
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Player")
+	TArray<class AMasterItem*> Inven;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Player")
+	TArray<class AMasterItem*> Equip;
+
 #pragma endregion
 
 #pragma region Public Function

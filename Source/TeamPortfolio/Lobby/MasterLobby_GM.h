@@ -14,4 +14,6 @@ class TEAMPORTFOLIO_API AMasterLobby_GM : public ALobby_GM
 {
 	GENERATED_BODY()
 	
+
+
 };

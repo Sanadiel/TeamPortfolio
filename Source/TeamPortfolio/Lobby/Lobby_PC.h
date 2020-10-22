@@ -34,5 +34,8 @@ public:
 	void S2C_SetGIbool(bool bValue); 
 	void S2C_SetGIbool_Implementation(bool bValue);
 
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	virtual void Destroyed() override;
+
 #pragma endregion
 };

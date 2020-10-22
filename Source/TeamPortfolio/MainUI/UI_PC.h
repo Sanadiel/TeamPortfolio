@@ -62,6 +62,7 @@ public:
 	AUI_PC();
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
+	virtual void Destroyed() override;
 	class UMainUIBase* GetMainUI();
 
 	void SettingUI();
@@ -87,6 +88,8 @@ public:
 	void C2S_SpawnandPossess_Implementation();
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+	
 
 #pragma endregion
 };

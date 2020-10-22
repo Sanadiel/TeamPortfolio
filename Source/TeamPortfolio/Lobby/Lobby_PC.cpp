@@ -32,3 +32,18 @@ void ALobby_PC::S2C_SetGIbool_Implementation(bool bValue)
 		}		
 	//}
 }
+
+void ALobby_PC::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+}
+
+void ALobby_PC::Destroyed()
+{
+	if (IsValid(LobbyWidgetObject))
+	{
+		LobbyWidgetObject->RemoveFromParent();
+	}
+
+	Super::Destroyed();
+}

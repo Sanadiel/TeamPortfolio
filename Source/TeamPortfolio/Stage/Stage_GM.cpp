@@ -10,6 +10,7 @@
 #include "../Boss/BossCharacter.h"
 #include "../MainUI/UI_PC.h"
 #include "Stage_GS.h"
+#include "GameFramework/PlayerStart.h"
 
 AStage_GM::AStage_GM()
 {
@@ -18,9 +19,15 @@ AStage_GM::AStage_GM()
 
 //void AStage_GM::SwapPlayerControllers(APlayerController* OldPC, APlayerController* NewPC)
 //{
-//	ALobby_PC* Oldman = Cast<ALobby_PC>(OldPC);
+//	/*ALobby_PC* Oldman = Cast<ALobby_PC>(OldPC);
 //	ATeamP_BasicPC* NewGuy = Cast<ATeamP_BasicPC>(NewPC);
-//	NewGuy->IsDefencePlayer = Oldman->IsDefencePlayer;
+//	NewGuy->IsDefencePlayer = Oldman->IsDefencePlayer;*/
+//
+//	/*AUI_PC* PC = Cast<AUI_PC>(OldPC);
+//	if (IsValid(PC))
+//	{
+//		
+//	}*/
 //
 //	Super::SwapPlayerControllers(OldPC, NewPC);
 //}
@@ -91,12 +98,12 @@ void AStage_GM::Travel_MasterLobby()
 //	return nullptr;
 //}
 
-AActor* AStage_GM::ChoosePlayerStart_Implementation(AController* Player)
-{
-	return Super::ChoosePlayerStart(Player);
-}
-
-AActor * AStage_GM::FindPlayerStart_Implementation(AController* Player, const FString & IncomingName)
-{
-	return Super::FindPlayerStart(Player, IncomingName);
-}
+//AActor* AStage_GM::ChoosePlayerStart_Implementation(AController* Player)
+//{
+//	return Super::ChoosePlayerStart(Player);
+//}
+//
+//AActor * AStage_GM::FindPlayerStart_Implementation(AController* Player, const FString & IncomingName)
+//{
+//	return Super::FindPlayerStart(Player, IncomingName);
+//}

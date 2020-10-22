@@ -15,11 +15,12 @@ class TEAMPORTFOLIO_API AStage_GM : public AGameModeBase
 	GENERATED_BODY()
 #pragma region Public Member
 public:
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Boss")
-	TSubclassOf<class ABossCharacter> Boss;
-
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PlayerStart")
+	TArray<class APlayerStart*>  PlayerStartArray;
 	//Time
 	FTimerHandle GameTimer;
+
+	
 
 #pragma endregion
 	
@@ -45,9 +46,9 @@ public:
 	/*APawn* SpawnDefaultPawnFor(AController* NewPlayer, AActor* StartSpot);
 	APawn* SpawnDefaultPawnFor_Implementation(AController* NewPlayer, AActor* StartSpot);*/
 
-	virtual AActor* ChoosePlayerStart_Implementation(AController* Player) override;
+	/*virtual AActor* ChoosePlayerStart_Implementation(AController* Player) override;
 
-	virtual AActor* FindPlayerStart_Implementation(AController* Player, const FString& IncomingName = TEXT("")) override;
+	virtual AActor* FindPlayerStart_Implementation(AController* Player, const FString& IncomingName = TEXT("")) override;*/
 
 	
 #pragma endregion

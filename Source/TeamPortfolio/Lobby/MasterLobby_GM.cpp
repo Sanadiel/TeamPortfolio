@@ -2,4 +2,6 @@
 
 
 #include "MasterLobby_GM.h"
+#include "../MainUI/UI_PC.h"
+#include "../Item/Inventory.h"
 

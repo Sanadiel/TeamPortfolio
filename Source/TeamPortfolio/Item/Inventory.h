@@ -39,6 +39,7 @@ public:
 	FItemDataTable GetItemData(int32 InvenIndex);
 
 	void DataLoading();
+	void PassData(TArray<class AMasterItem*> BeforeInven, TArray<class AMasterItem*> BeforeEquipment);
 	bool isNull(int32 Index);
 
 #pragma endregion
