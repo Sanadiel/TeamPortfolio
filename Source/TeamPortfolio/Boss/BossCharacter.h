@@ -86,11 +86,6 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Monster")
 		TArray<float> MaxSpawnCooldown;
 
-
-	//Currently Selected Projectile Class.
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Monster")
-		TSubclassOf<ABossProjectileBase> BossProjectileClass;
-
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UMG")
 		TSubclassOf<UBossWidgetBase> BossWidgetClass;
 
@@ -111,9 +106,6 @@ public:
 	void RightHandAction();
 
 	void CreateUI();
-
-	//Return Current GrabbedComponent.
-	UPrimitiveComponent* GetGrabbedComponent() const;
 
 	//Search Hold, And Hold.
 	UFUNCTION(Server, Reliable)

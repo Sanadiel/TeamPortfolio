@@ -7,6 +7,11 @@
 #include "Components/SkeletalMeshcomponent.h"
 #include "NavigationSystem.h"
 #include "Net/UnrealNetwork.h"
+
+#include "NiagaraSystem.h"
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
+
 // Sets default values
 ABossProjectileBase::ABossProjectileBase()
 {
@@ -69,12 +74,16 @@ void ABossProjectileBase::BeginPlay()
 
 }
 
-//// Called every frame
-//void ABossProjectileBase::Tick(float DeltaTime)
-//{
-//	Super::Tick(DeltaTime);
-//
-//}
+// Called every frame
+void ABossProjectileBase::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+	if (CurrentTrailNiagara)
+	{
+		CurrentTrailNiagara->SetNiagaraVariableVec3(FString("ProjectileVelocity"), GetVelocity().GetSafeNormal(0.0001f));
+	}
+
+}
 
 void ABossProjectileBase::OnHit(UPrimitiveComponent * HitComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, FVector NormalImpulse, const FHitResult & Hit)
 {
@@ -140,6 +149,21 @@ void ABossProjectileBase::ProjectileTask_Implementation(const FHitResult & Hit)
 void ABossProjectileBase::StartFunction_Implementation(const FHitResult & Hit)
 {
 	UE_LOG(LogClass, Warning, TEXT("ABossProjectileBase::StartFunction. It is a Base Function. You Must Override it."));
+}
+
+void ABossProjectileBase::OnRep_bActivated()
+{
+
+	if (TrailNiagara && bActivated)
+	{
+		CurrentTrailNiagara =  UNiagaraFunctionLibrary::SpawnSystemAttached(TrailNiagara, RootComponent,FName("None"),FVector(0.0f,0.0f,0.0f),FRotator(0.0f,0.0f,0.0f),EAttachLocation::KeepRelativeOffset,true);
+		if (CurrentTrailNiagara)
+		{
+			UE_LOG(LogClass, Warning, TEXT("Niagara Success"));
+		}
+
+	}
+
 }
 
 void ABossProjectileBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

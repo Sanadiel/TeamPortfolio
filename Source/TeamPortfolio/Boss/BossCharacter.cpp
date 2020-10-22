@@ -51,9 +51,6 @@ ABossCharacter::ABossCharacter()
 	bUseControllerRotationRoll = false;
 	GetCharacterMovement()->bUseControllerDesiredRotation = true;
 
-	//Boss Will Exist in Level. Normal Player will Spawn by GameMode.
-	//AutoPossessPlayer = EAutoReceiveInput::Player0;
-
 	/* Deprecated. 
 	//Trajectory Param's Default Parameter. Not Needed when Throwing PlayMode
 	TArray<TEnumAsByte<EObjectTypeQuery>> objectTypes;
@@ -264,8 +261,8 @@ void ABossCharacter::HandAction()
 
 void ABossCharacter::LeftHandAction()
 {
-	//when hold something
-	if (PhysicsHandle->GetGrabbedComponent())
+	//when hold something. Release Grab.
+	if (bIsGrabbed)//if (PhysicsHandle->GrabbedComponent)
 	{
 		ReleaseHold();
 	}
@@ -286,6 +283,7 @@ void ABossCharacter::LeftHandAction()
 
 void ABossCharacter::RightHandAction()
 {
+	//What Will Do?
 }
 
 void ABossCharacter::CreateUI()
@@ -301,11 +299,6 @@ void ABossCharacter::CreateUI()
 			}
 		}
 	}
-}
-
-UPrimitiveComponent * ABossCharacter::GetGrabbedComponent() const
-{
-	return PhysicsHandle->GetGrabbedComponent();
 }
 
 void ABossCharacter::SearchHold_Implementation(FVector TraceStart, FVector TraceEnd)
@@ -364,6 +357,7 @@ void ABossCharacter::ReleaseHold_Implementation()
 	if (projectile) //set Activate value to Spawn monsters. See AMonsterSpawnPRojectile's Onhit.
 	{
 		projectile->bActivated = true;
+		projectile->OnRep_bActivated();// Server Call
 	}
 	PhysicsHandle->ReleaseComponent();
 	UE_LOG(LogClass, Warning, TEXT("Released"));

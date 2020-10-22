@@ -10,7 +10,8 @@
 class USphereComponent;
 class UProjectileMovementComponent;
 class USkeletalMeshComponent;
-
+class UNiagaraSystem;
+class UNiagaraComponent; 
 UCLASS()
 class TEAMPORTFOLIO_API ABossProjectileBase : public AActor
 {
@@ -34,20 +35,26 @@ public:
 		USkeletalMeshComponent* Mesh;
 
 	//true Means Activate OK.
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Replicated, Category = "Info")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Replicated, ReplicatedUsing = "OnRep_bActivated", Category = "Info")
 		bool bActivated;
 
 	//Info Has What Do you Want to Spawn.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Info")
 		FBossProjectileInfo ProjectileInfo;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect")
+		UNiagaraSystem* TrailNiagara;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Effect")
+		UNiagaraComponent* CurrentTrailNiagara;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 public:	
-	//// Called every frame
-	//virtual void Tick(float DeltaTime) override;
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
 
 	/** called when projectile hits something */
 	UFUNCTION()
@@ -66,6 +73,10 @@ public:
 	UFUNCTION(BlueprintNativeEvent)
 		void StartFunction(const FHitResult& Hit);
 		virtual void StartFunction_Implementation(const FHitResult& Hit);
+
+	UFUNCTION()
+		void OnRep_bActivated();
+
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
