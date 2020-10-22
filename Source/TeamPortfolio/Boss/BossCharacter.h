@@ -122,7 +122,7 @@ public:
 		void SpawnProjectile(int32 Index);
 	void SpawnProjectile_Implementation(int32 Index);
 
-	UFUNCTION(Server, Reliable)
+	UFUNCTION(NetMulticast, Reliable)
 		void ResetCooldown(int32 Index);
 	void ResetCooldown_Implementation(int32 Index);
 

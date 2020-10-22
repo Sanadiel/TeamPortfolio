@@ -255,7 +255,6 @@ void ABossCharacter::HandAction()
 			SearchHold(traceStart, traceEnd);
 
 		}
-
 	}
 }
 
