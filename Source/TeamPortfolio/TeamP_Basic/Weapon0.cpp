@@ -8,6 +8,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "Components/DecalComponent.h"
 #include "BulletDamageType.h"
+#include "../MainUI/MainUIBase.h"
+#include "../MainUI/WeaponInfoBase.h"
 
 void AWeapon0::OnFire()
 {
@@ -50,6 +52,8 @@ void AWeapon0::OnFire()
 			UE_LOG(LogClass, Warning, TEXT("Bullet = %d / %d"), Player->CurrentWeapon->CurrentBullet, Player->CurrentWeapon->MaxBullet);
 
 			ATeamP_BasicPC* PC = Cast<ATeamP_BasicPC>(Player->GetController());
+
+			PC->GetMainUI()->WeaponInfo->SetIBulletNum(Player->CurrentWeapon->CurrentBullet);
 
 			if (PC)
 			{
@@ -228,11 +232,14 @@ void AWeapon0::OnFireShotgun()												//¼¦°Ç
 
 				Player->bIsFireAnim = false;
 
-				Player->CurrentWeapon->CurrentBullet -= 1;
+				Player->CurrentWeapon->CurrentBullet -= 1; 
 
 				UE_LOG(LogClass, Warning, TEXT("Bullet = %d / %d"), Player->CurrentWeapon->CurrentBullet, Player->CurrentWeapon->MaxBullet);
 
 				ATeamP_BasicPC* PC = Cast<ATeamP_BasicPC>(Player->GetController());
+
+				PC->GetMainUI()->WeaponInfo->SetIBulletNum(Player->CurrentWeapon->CurrentBullet);
+
 
 				if (PC)
 				{

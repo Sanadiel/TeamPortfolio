@@ -10,6 +10,7 @@
 #include "ItemTooltipBase.h"
 #include "EquipmentBase.h"
 #include "ShopBase.h"
+#include"WeaponInfoBase.h"
 
 void UMainUIBase::NativeConstruct()
 {
@@ -24,6 +25,7 @@ void UMainUIBase::NativeConstruct()
 	HpBarParent = Cast<UCanvasPanel>(GetWidgetFromName(TEXT("HpBarParent")));
 	RootCanvas = Cast<UCanvasPanel>(GetWidgetFromName(TEXT("RootPanel")));
 	ItemHover = Cast<UItemTooltipBase>(GetWidgetFromName(TEXT("ItemTooltip")));
+	WeaponInfo = Cast<UWeaponInfoBase>(GetWidgetFromName(TEXT("WeaponInfo")));
 
 	ShopWindow->SetVisibility(ESlateVisibility::Collapsed);
 	Inventory->SetVisibility(ESlateVisibility::Collapsed);

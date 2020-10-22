@@ -43,6 +43,9 @@ public:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	class UCanvasPanel* RootCanvas;
 
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	class UWeaponInfoBase* WeaponInfo;
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Drag")
 	bool isDraging = false;
 	

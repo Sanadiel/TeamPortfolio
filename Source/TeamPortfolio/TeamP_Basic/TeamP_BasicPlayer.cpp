@@ -21,6 +21,7 @@
 #include "../Item/Inventory.h"
 #include "../Item/MasterItem.h"
 #include "Weapon0.h"
+#include "../MainUI/WeaponInfoBase.h"
 
 
 // Sets default values
@@ -329,6 +330,11 @@ void ATeamP_BasicPlayer::Reload()
 			
 		}
 	}
+
+	ATeamP_BasicPC* PC = GetController<ATeamP_BasicPC>();
+	PC->GetMainUI()->WeaponInfo->SetIBulletNum(CurrentWeapon->CurrentBullet);
+	PC->GetMainUI()->WeaponInfo->SetIBulletMaxNum(CurrentWeapon->RemainedBullet);
+
 	UE_LOG(LogClass, Warning, TEXT("CurrentBullet = %d,MaxBullet = %d, RemainedBullet = %d"), CurrentWeapon->CurrentBullet, CurrentWeapon->MaxBullet, CurrentWeapon->RemainedBullet);
 }
 
@@ -407,6 +413,16 @@ void ATeamP_BasicPlayer::WeaponChange(int WeaponNumber)
 		}
 		WeaponAttackSpeed = CurrentWeapon->WeaponAttackSpeed;
 		WeaponDamageC = CurrentWeapon->WeaponDamage;
+
+		ATeamP_BasicPC* PC = GetController<ATeamP_BasicPC>();
+
+		PC->GetMainUI()->WeaponInfo->SetIBulletNum(CurrentWeapon->CurrentBullet);	
+		PC->GetMainUI()->WeaponInfo->SetIBulletMaxNum(CurrentWeapon->RemainedBullet);
+		
+		FString newText = FString::Printf(TEXT("SpawnWeapon %d"), WeaponNumber);
+		PC->GetMainUI()->WeaponInfo->SetItemName(newText);
+		
+
 		
 	
 		UE_LOG(LogClass, Warning, TEXT("WeaponNumber : %d  MaxBullet : %d  Bullet : %d / %d"), WeaponNumber, CurrentWeapon->MaxBullet, CurrentWeapon->CurrentBullet, CurrentWeapon->RemainedBullet);
