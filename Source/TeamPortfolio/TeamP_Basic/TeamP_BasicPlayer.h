@@ -83,8 +83,8 @@ public:
 
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
-	UFUNCTION()
-	void OnFire();
+	//UFUNCTION()
+	//void OnFire();
 
 	UFUNCTION()
 	void OnSpawnFire();
@@ -114,10 +114,12 @@ public:
 	class UMaterialInstance* NormalDecal;
 
 
+	//애니메이션 관련
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
 	uint64 bIsIronsight : 1;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status") //샷건임???
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
 	uint64 bIsShotgun : 1;
 
 
@@ -133,6 +135,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
 	uint64 bFireShotgun : 1;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
+	uint64 bIsWeaponChange : 1;
+
 
 	void StartFire();
 
@@ -141,11 +146,16 @@ public:
 	void Reload();
 
 	//발사가능체크
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
+	
 	uint64 bCanFire : 1;
 
 	void CheckCanFire();
 
+	uint64 bCanAnimation : 1;
+
+	
+
+	void CheckCanAnimation();
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, category = "Data")
 	class UAnimMontage* ReloadMontage;

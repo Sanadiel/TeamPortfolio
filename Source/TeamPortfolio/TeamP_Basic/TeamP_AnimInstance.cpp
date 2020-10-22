@@ -26,27 +26,31 @@ void UTeamP_AnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 		bIsShotgun = Pawn->bIsShotgun;
 
+		bIsWeaponChange = Pawn->bIsWeaponChange;
+
 		//bFireShotgun = Pawn->bFireShotgun;
-
 		if (!bIsShotgun) {
-			bIsFireAnim = Pawn->bIsFireAnim; 
+			bIsFireAnim = Pawn->bIsFireAnim;
 		}
-
-		if (bIsShotgun) {
-			if (Pawn->bFireShotgun) {
-				bFireShotgun = Pawn->bFireShotgun;
-				bIsFireAnim = Pawn->bIsFireAnim;
-			}
-			else {
-				bIsFireAnim = false;
-				Pawn->bFireShotgun = false;
-			}
+		else { //샷건쏨?
+				bIsFireAnim = Pawn->bFireShotgun;//쐇으면 애니메이션 동작
 		}
-		
+			
 
 		FRotator AimRotation = Pawn->GetAimOffset();
 		AimYaw = AimRotation.Yaw;
 		AimPitch = AimRotation.Pitch;
+
+
+		if (Pawn->bIsWeaponChange && Pawn->ChangeWeaponMontage)
+		{
+			if (!Montage_IsPlaying(Pawn->ChangeWeaponMontage))
+			{
+				Pawn->PlayAnimMontage(Pawn->ChangeWeaponMontage);
+			}
+		}
+
+
 
 		if (Pawn->bIsReload && Pawn->ReloadMontage)
 		{

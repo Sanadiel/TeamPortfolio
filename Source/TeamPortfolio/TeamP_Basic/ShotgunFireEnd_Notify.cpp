@@ -3,18 +3,21 @@
 
 #include "ShotgunFireEnd_Notify.h"
 #include "TeamP_AnimInstance.h"
+#include "TeamP_BasicPlayer.h"
 
 void UShotgunFireEnd_Notify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation)
 {
 	Super::Notify(MeshComp, Animation);
-
-	UTeamP_AnimInstance* IM = Cast<UTeamP_AnimInstance>(MeshComp->GetAnimInstance());
-
-	if (IM)
+	
+	ATeamP_BasicPlayer* Player = Cast<ATeamP_BasicPlayer>(MeshComp->GetOwner());
+	
+	if (Player)
 	{
-		if (IM->bIsShotgun)
+		UE_LOG(LogClass,Warning,TEXT("Notify"))
+		if (Player->bIsShotgun)
 		{
-			IM->bFireShotgun = false;
+			Player->bFireShotgun = false;
 		}
+		Player->bIsWeaponChange = false;
 	}
 }

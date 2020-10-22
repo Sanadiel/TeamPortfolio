@@ -25,16 +25,19 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
 	uint64 bIsIronsight : 1;	
-	
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")//º¶∞«¿”??
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
 	uint64 bIsShotgun : 1;
 
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")//√—ΩÓ¥¬ æ÷¥œ∏ﬁ¿Ãº« ¡ﬂ¿”?
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
 	uint64 bIsFireAnim : 1;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")//º¶∞«ΩÓ¥¬æ÷¥œ∏ﬁ¿Ãº«¡ﬂ¿”??
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
 	uint64 bFireShotgun : 1;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
+	uint64 bIsWeaponChange : 1;
 
 
 

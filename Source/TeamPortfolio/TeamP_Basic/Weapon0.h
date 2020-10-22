@@ -32,6 +32,39 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
 	int RemainedBullet=60;
 
+	UFUNCTION()
+	void OnFire();
+
+	void OnFireShotgun();
+
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
+	int ShotgunBullet = 15;
+
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Data")
+		class UParticleSystem* HitEffect;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Data")
+		class UParticleSystem* BloodHitEffect;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Data")
+		class UParticleSystem* MuzzleFlash;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Data")
+		class USoundBase* WeaponSound;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Data")
+		class UMaterialInstance* NormalDecal;
+
+
+	FTimerHandle FireTimerHandle;
+
+	FTimerHandle FireTimerHandle2;
+
+	FTimerHandle Weapon1_FireTimerHande;
+	FTimerHandle Weapon1_FireTimerHande2;
+
 
 
 public:	
