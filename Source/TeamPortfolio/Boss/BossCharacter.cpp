@@ -320,8 +320,8 @@ void ABossCharacter::SearchHold_Implementation(FVector TraceStart, FVector Trace
 		true,
 		ignores,
 
-		//EDrawDebugTrace::None, 
-		EDrawDebugTrace::ForDuration,
+		EDrawDebugTrace::None, 
+		//EDrawDebugTrace::ForDuration,
 
 		hit,
 		true,
@@ -367,7 +367,7 @@ void ABossCharacter::ReleaseHold_Implementation()
 void ABossCharacter::SpawnProjectile_Implementation(int32 Index)
 {
 	FTransform transform;
-	transform.SetLocation(HoldPosition->GetComponentLocation());
+	transform.SetLocation(VR_Left->GetComponentLocation());
 
 	FActorSpawnParameters params;
 	params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;

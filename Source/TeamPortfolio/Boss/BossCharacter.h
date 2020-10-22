@@ -107,7 +107,7 @@ public:
 
 	void CreateUI();
 
-	//Search Hold, And Hold.
+	//Search that Want to Hold, And Hold that.
 	UFUNCTION(Server, Reliable)
 		void SearchHold(FVector TraceStart, FVector TraceEnd);
 	void SearchHold_Implementation(FVector TraceStart, FVector TraceEnd);
