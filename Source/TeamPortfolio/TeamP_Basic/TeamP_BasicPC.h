@@ -12,5 +12,8 @@ UCLASS()
 class TEAMPORTFOLIO_API ATeamP_BasicPC : public AUI_PC
 {
 	GENERATED_BODY()
-	
+
+public:
+	ATeamP_BasicPC();
+
 };

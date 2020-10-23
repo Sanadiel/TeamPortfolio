@@ -198,4 +198,12 @@ public:
 	void LoadWeapon(int Index);
 
 
+	//앉을때 카메라 위치 조정용
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "SpringArm")
+	FVector NormalSpringArmPosition;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "SpringArm")
+	FVector CrouchedSpringArmPosition;
+
 };

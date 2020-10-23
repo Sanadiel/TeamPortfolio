@@ -2,4 +2,9 @@
 
 
 #include "TeamP_BasicPC.h"
+#include "BasicPCM.h"
 
+ATeamP_BasicPC::ATeamP_BasicPC()
+{
+	PlayerCameraManagerClass = ABasicPCM::StaticClass();
+}

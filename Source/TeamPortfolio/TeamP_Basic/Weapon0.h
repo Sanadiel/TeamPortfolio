@@ -17,6 +17,7 @@ public:
 	class USkeletalMeshComponent* WeaponMesh;
 
 
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
 	float WeaponDamage = 1.0f;
 
@@ -32,11 +33,18 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
 	int RemainedBullet=60;
 
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status", Meta=(ClampMin = 0.0f, ClampMax = 1.5f))
+	float WeaponRecoil = 0.1f;
+
 	UFUNCTION()
 	void OnFire();
 
 	void OnFireShotgun();
 
+	float InterpPitch =0.0f;
+
+	void StartRecoil();
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
 	int ShotgunBullet = 15;

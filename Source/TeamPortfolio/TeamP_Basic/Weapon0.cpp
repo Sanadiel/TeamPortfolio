@@ -8,8 +8,9 @@
 #include "Kismet/GameplayStatics.h"
 #include "Components/DecalComponent.h"
 #include "BulletDamageType.h"
-#include "../MainUI/MainUIBase.h"
-#include "../MainUI/WeaponInfoBase.h"
+#include "Math/UnrealMathUtility.h"
+#include "BasicPCM.h"
+#include "GameFramework/Character.h"
 
 void AWeapon0::OnFire()
 {
@@ -17,6 +18,9 @@ void AWeapon0::OnFire()
 
 	UE_LOG(LogClass, Warning, TEXT("OnFire"))
 
+		ABasicPCM* PCM = Cast<ABasicPCM>(Player->GetController());
+
+	//ABasicPCM* PCM =  Cast<ABasicPCM>(Player->Camera->GetPlayerCameraManager());
 		
 	if (Player) {
 
@@ -25,7 +29,7 @@ void AWeapon0::OnFire()
 		if (!(Player->bIsFire)|| Player->bIsReload || Player->bIsWeaponChange)
 		{
 			UE_LOG(LogClass, Warning, TEXT("return onfire"))
-				Player->bIsFire = false;
+			Player->bIsFire = false;
 			Player->bIsFireAnim = false;
 			return;
 		}
@@ -51,9 +55,9 @@ void AWeapon0::OnFire()
 
 			UE_LOG(LogClass, Warning, TEXT("Bullet = %d / %d"), Player->CurrentWeapon->CurrentBullet, Player->CurrentWeapon->MaxBullet);
 
-			ATeamP_BasicPC* PC = Cast<ATeamP_BasicPC>(Player->GetController());
+			StartRecoil();
 
-			PC->GetMainUI()->WeaponInfo->SetIBulletNum(Player->CurrentWeapon->CurrentBullet);
+			ATeamP_BasicPC* PC = Cast<ATeamP_BasicPC>(Player->GetController());
 
 			if (PC)
 			{
@@ -69,15 +73,24 @@ void AWeapon0::OnFire()
 
 				PC->GetViewportSize(ScreenSizeX, ScreenSizeY);
 
+
+
 				int RandX = FMath::RandRange(1, 2);
 				int RandY = FMath::RandRange(1, 2);
 
 				PC->DeprojectScreenPositionToWorld(ScreenSizeX / 2 + RandX, ScreenSizeY / 2 + RandY, CrosshairWorldPosition, CrosshairWorldDirection);
 
 				PC->GetPlayerViewPoint(CameraLocation, CameraRotation);
-				FRotator PlayerRotation = Player->GetControlRotation();
-				PlayerRotation.Pitch += FMath::FRandRange(0.2f, 0.5f);
-				Player->GetController()->SetControlRotation(PlayerRotation);
+
+
+
+				//FRotator PlayerRotation = Player->GetControlRotation();
+				//PlayerRotation.Pitch += FMath::FRandRange(0.2f, 0.5f);
+				//Player->GetController()->SetControlRotation(PlayerRotation);
+
+
+
+
 
 				FVector TraceStart = CameraLocation;
 				FVector TraceEnd = TraceStart + (CrosshairWorldDirection * 99999.f);
@@ -232,14 +245,13 @@ void AWeapon0::OnFireShotgun()												//¼¦°Ç
 
 				Player->bIsFireAnim = false;
 
-				Player->CurrentWeapon->CurrentBullet -= 1; 
+				Player->CurrentWeapon->CurrentBullet -= 1;
 
 				UE_LOG(LogClass, Warning, TEXT("Bullet = %d / %d"), Player->CurrentWeapon->CurrentBullet, Player->CurrentWeapon->MaxBullet);
 
+				StartRecoil();
+
 				ATeamP_BasicPC* PC = Cast<ATeamP_BasicPC>(Player->GetController());
-
-				PC->GetMainUI()->WeaponInfo->SetIBulletNum(Player->CurrentWeapon->CurrentBullet);
-
 
 				if (PC)
 				{
@@ -264,9 +276,10 @@ void AWeapon0::OnFireShotgun()												//¼¦°Ç
 						PC->DeprojectScreenPositionToWorld(ScreenSizeX / 2 + RandX, ScreenSizeY / 2 + RandY, CrosshairWorldPosition, CrosshairWorldDirection);
 
 						PC->GetPlayerViewPoint(CameraLocation, CameraRotation);
-						FRotator PlayerRotation = Player->GetControlRotation();
-						PlayerRotation.Pitch += FMath::FRandRange(0.2f, 0.5f);
-						Player->GetController()->SetControlRotation(PlayerRotation);
+
+						//FRotator PlayerRotation = Player->GetControlRotation();
+						//PlayerRotation.Pitch += FMath::FRandRange(0.2f, 0.5f);
+						//Player->GetController()->SetControlRotation(PlayerRotation);
 
 						FVector TraceStart = CameraLocation;
 						FVector TraceEnd = TraceStart + (CrosshairWorldDirection * 99999.f);
@@ -396,6 +409,15 @@ void AWeapon0::OnFireShotgun()												//¼¦°Ç
 
 }
 
+void AWeapon0::StartRecoil()
+{
+
+	InterpPitch = -WeaponRecoil;
+
+	//FMath::FRandRange(WeaponRecoil-0.1f, WeaponRecoil+0.1f);
+	
+}
+
 
 
 
@@ -423,6 +445,15 @@ void AWeapon0::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-
+	ACharacter* player = Cast<ACharacter>(GetOwner());
+	if (player)
+	{
+		APlayerController* pc= player->GetController<APlayerController>();
+		if (pc)
+		{
+			InterpPitch = FMath::FInterpTo(InterpPitch, 0.0f, DeltaTime, 20.0f);
+			pc->AddPitchInput(InterpPitch);
+		}
+	}
 }
 
