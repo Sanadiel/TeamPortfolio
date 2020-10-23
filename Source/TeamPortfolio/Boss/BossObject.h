@@ -22,3 +22,11 @@ struct FBossProjectileInfo : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
 		float Cooldown;
 };
+
+UENUM(BlueprintType)
+enum class EHandState : uint8
+{
+	Open = 0		UMETA(Display = "Open"),
+	CanGrab = 1		UMETA(Display = "CanGrab"),
+	Grab = 2		UMETA(Display = "Grab"),
+};

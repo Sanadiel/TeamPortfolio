@@ -16,7 +16,7 @@
 #include "Engine/EngineTypes.h" //EObjectTypeQuery
 #include "MotionControllerComponent.h" // Motion Controller.
 #include "Net/UnrealNetwork.h"
-
+#include "HandMeshComponent.h"
 // Sets default values
 ABossCharacter::ABossCharacter()
 {
@@ -63,18 +63,28 @@ ABossCharacter::ABossCharacter()
 	*/
 
 	VR_Left = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("VR_Left"));
-	VR_Right = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("VR_Right"));
-
 	VR_Left->SetupAttachment(Camera);
-	VR_Right->SetupAttachment(Camera);
-
 	VR_Left->bDisplayDeviceModel = true;
-	VR_Right->bDisplayDeviceModel = true;
-
 	VR_Left->MotionSource = FName("Left");
-	VR_Right->MotionSource = FName("Right");
+	VR_Left->SetCollisionProfileName(FName("NoCollision"));
+	VR_Left->SetIsReplicated(true);
 
-	
+	VR_Right = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("VR_Right"));
+	VR_Right->SetupAttachment(Camera);
+	VR_Right->bDisplayDeviceModel = true;
+	VR_Right->MotionSource = FName("Right");
+	VR_Right->SetCollisionProfileName(FName("NoCollision"));
+	VR_Right->SetIsReplicated(true);
+
+
+	VR_LeftHand = CreateDefaultSubobject<UHandMeshComponent>(TEXT("VR_LeftHand"));
+	VR_LeftHand->SetupAttachment(VR_Left);
+	VR_LeftHand->SetRelativeScale3D(FVector(1.0f, -1.0f, 1.0f)); // Reverse Hand Mesh for Using Left
+	VR_LeftHand->SetIsReplicated(true);
+
+	VR_RightHand = CreateDefaultSubobject<UHandMeshComponent>(TEXT("VR_RightHand"));
+	VR_RightHand->SetupAttachment(VR_Right);
+	VR_RightHand->SetIsReplicated(true);
 }
 
 // Called when the game starts or when spawned
@@ -210,7 +220,7 @@ void ABossCharacter::HoldSpawnProjectile_Implementation(ABossProjectileBase* Pro
 		PhysicsHandle->GrabComponentAtLocation(ProjectileObject->Sphere, NAME_None, ProjectileObject->GetActorLocation());
 		UE_LOG(LogClass, Warning, TEXT("Server Hold OK"));
 		bIsGrabbed = true;
-
+		VR_LeftHand->HandState = EHandState::Grab;
 	}
 	else if(!ProjectileObject)
 	{
@@ -284,6 +294,7 @@ void ABossCharacter::RightHandAction()
 {
 	//What Will Do?
 }
+
 
 void ABossCharacter::CreateUI()
 {
@@ -361,7 +372,7 @@ void ABossCharacter::ReleaseHold_Implementation()
 	PhysicsHandle->ReleaseComponent();
 	UE_LOG(LogClass, Warning, TEXT("Released"));
 	bIsGrabbed = false;
-
+	VR_LeftHand->HandState = EHandState::Open;
 }
 
 void ABossCharacter::SpawnProjectile_Implementation(int32 Index)

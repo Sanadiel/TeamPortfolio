@@ -11,7 +11,8 @@ class USpringArmComponent;
 class UCameraComponent;
 
 class ABossProjectileBase;
-//class AMonsterSpawnProjectile;
+class USkeletalMeshComponent;
+class UHandMeshComponent;
 class UBossWidgetBase;
 class UPhysicsHandleComponent;
 class USceneComponent;
@@ -45,6 +46,12 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 		UMotionControllerComponent* VR_Right;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+		UHandMeshComponent* VR_LeftHand;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+		UHandMeshComponent* VR_RightHand;
 
 
 protected:
@@ -104,6 +111,7 @@ public:
 
 	void LeftHandAction();
 	void RightHandAction();
+
 
 	void CreateUI();
 
