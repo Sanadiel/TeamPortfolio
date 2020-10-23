@@ -69,4 +69,6 @@ public:
 	float MaxHP = 100.0f;
 
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+
+	virtual void Destroyed() override;
 };

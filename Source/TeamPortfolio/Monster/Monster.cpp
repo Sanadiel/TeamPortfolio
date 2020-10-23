@@ -6,6 +6,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Perception/PawnSensingComponent.h"
 #include "MonsterAIController.h"
+#include "../Instance/TotalLog_GameInstance.h"
 
 // Sets default values
 AMonster::AMonster()
@@ -105,5 +106,12 @@ float AMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, 
 	}
 
 	return 0.0f;
+}
+
+void AMonster::Destroyed()
+{
+	UTotalLog_GameInstance* GI = Cast< UTotalLog_GameInstance>(GetGameInstance());
+
+	Super::Destroyed();
 }
 
