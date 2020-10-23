@@ -30,8 +30,8 @@ public:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Data")
 	TArray<FItemDataTable> ItemDataArray;
 
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Kill_Record")
-	TArray<int> Kill_Record;
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Record")
+	TArray<int> Monster_Record;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Player")
 	bool isDefencePlayer;
@@ -54,6 +54,7 @@ public:
 
 	void SettingMonsterData();
 	void SettingItemData();
+	void SettingLogData();
 
 	virtual void Init() override;
 	virtual void PostLoad() override;

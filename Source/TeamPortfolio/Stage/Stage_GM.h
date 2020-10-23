@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/GameModeBase.h"
+#include "../Base/Base_GM.h"
 #include "Stage_GM.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class TEAMPORTFOLIO_API AStage_GM : public AGameModeBase
+class TEAMPORTFOLIO_API AStage_GM : public ABase_GM
 {
 	GENERATED_BODY()
 #pragma region Public Member
@@ -38,18 +38,8 @@ public:
 	UFUNCTION()
 	void Travel_MasterLobby();
 
-
-	//virtual void SwapPlayerControllers(APlayerController* OldPC, APlayerController* NewPC) override;
 	virtual void PostLogin(APlayerController* NewPlayer) override;
 	virtual void BeginPlay() override;
-
-	/*APawn* SpawnDefaultPawnFor(AController* NewPlayer, AActor* StartSpot);
-	APawn* SpawnDefaultPawnFor_Implementation(AController* NewPlayer, AActor* StartSpot);*/
-
-	/*virtual AActor* ChoosePlayerStart_Implementation(AController* Player) override;
-
-	virtual AActor* FindPlayerStart_Implementation(AController* Player, const FString& IncomingName = TEXT("")) override;*/
-
 	
 #pragma endregion
 };

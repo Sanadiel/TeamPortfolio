@@ -11,6 +11,8 @@
 #include "Math/UnrealMathUtility.h"
 #include "BasicPCM.h"
 #include "GameFramework/Character.h"
+#include "../MainUI/MainUIBase.h"
+#include "../MainUI/WeaponInfoBase.h"
 
 void AWeapon0::OnFire()
 {
@@ -58,6 +60,11 @@ void AWeapon0::OnFire()
 			StartRecoil();
 
 			ATeamP_BasicPC* PC = Cast<ATeamP_BasicPC>(Player->GetController());
+
+			if (IsValid(PC))
+			{
+				PC->GetMainUI()->WeaponInfo->SetIBulletNum(Player->CurrentWeapon->CurrentBullet);
+			}
 
 			if (PC)
 			{
@@ -252,6 +259,11 @@ void AWeapon0::OnFireShotgun()												//¼¦°Ç
 				StartRecoil();
 
 				ATeamP_BasicPC* PC = Cast<ATeamP_BasicPC>(Player->GetController());
+
+				if (IsValid(PC))
+				{
+					PC->GetMainUI()->WeaponInfo->SetIBulletNum(Player->CurrentWeapon->CurrentBullet);
+				}
 
 				if (PC)
 				{

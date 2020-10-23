@@ -18,10 +18,22 @@ FItemDataTable UTotalLog_GameInstance::GetItemData(int Index) const
 
 void UTotalLog_GameInstance::SettingMonsterData()
 {
-	for (int Index = 0; Index != 6; ++Index)
+	for (int Index = 0; ; ++Index)
+	{
+		FMonsterDataTable* Data = MonsterDataTable->FindRow<FMonsterDataTable>(*FString::FromInt(Index), TEXT("MonsterID"));
+		
+		if (Data == nullptr)
+		{
+			break;
+		}
+
+		MonsterDataArray.Add(*Data);
+	}
+
+	/*for (int Index = 0; Index != 6; ++Index)
 	{
 		MonsterDataArray.Add(*MonsterDataTable->FindRow<FMonsterDataTable>(*FString::FromInt(Index), TEXT("MonsterID")));
-	}
+	}*/
 }
 
 void UTotalLog_GameInstance::SettingItemData()
@@ -29,6 +41,7 @@ void UTotalLog_GameInstance::SettingItemData()
 	for(int Index = 0; ; ++Index)
 	{
 		FItemDataTable* Data = ItemDataTable->FindRow<FItemDataTable>(*FString::FromInt(Index), TEXT("ItemIndex"));
+		
 		if (Data == nullptr)
 		{
 			break;
@@ -38,17 +51,29 @@ void UTotalLog_GameInstance::SettingItemData()
 	}
 }
 
+void UTotalLog_GameInstance::SettingLogData()
+{
+	Monster_Record.Reserve(MonsterDataArray.Num());
+
+	for (int Index = 0; Index != MonsterDataArray.Num(); ++Index)
+	{
+		Monster_Record.Add(0);
+	}
+	
+}
+
 void UTotalLog_GameInstance::Init()
 {
 	Super::Init();
 
 	SettingMonsterData();
 	SettingItemData();
+	SettingLogData();
 }
 
 void UTotalLog_GameInstance::PostLoad()
 {
-	Super::PostLoad();	
+	Super::PostLoad();
 }
 
 FMonsterDataTable UTotalLog_GameInstance::GetMonsterData(int Index) const

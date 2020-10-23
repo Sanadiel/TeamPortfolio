@@ -73,9 +73,14 @@ void AStage_GM::DecreaseTime()
 
 		if (GS->LeftTime <= 0)
 		{
-			//게임 시작
-			GetWorldTimerManager().ClearTimer(GameTimer);
-			Travel_MasterLobby();
+			//게임 시작			
+			GS->CreateResultUI_Implementation();
+
+			if (GS->CanGotoNext)
+			{
+				GetWorldTimerManager().ClearTimer(GameTimer);
+				Travel_MasterLobby();
+			}
 		}
 	}
 }
@@ -84,26 +89,3 @@ void AStage_GM::Travel_MasterLobby()
 {
 	GetWorld()->ServerTravel(TEXT("MasterLobby"));
 }
-
-//APawn * AStage_GM::SpawnDefaultPawnFor_Implementation(AController* NewPlayer, AActor* StartSpot)
-//{
-//	Super::SpawnDefaultPawnFor(NewPlayer, StartSpot);
-//
-//	ABossCharacter* BossCharacter = GetWorld()->SpawnActor<ABossCharacter>(Boss, StartSpot->GetTransform());
-//	APawn* pawn = NewPlayer->GetPawn();
-//	NewPlayer->UnPossess();
-//	NewPlayer->Possess(BossCharacter);
-//	pawn->Destroy();
-//
-//	return nullptr;
-//}
-
-//AActor* AStage_GM::ChoosePlayerStart_Implementation(AController* Player)
-//{
-//	return Super::ChoosePlayerStart(Player);
-//}
-//
-//AActor * AStage_GM::FindPlayerStart_Implementation(AController* Player, const FString & IncomingName)
-//{
-//	return Super::FindPlayerStart(Player, IncomingName);
-//}

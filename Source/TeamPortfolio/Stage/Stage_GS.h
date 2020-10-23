@@ -19,11 +19,15 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, ReplicatedUsing = "OnRep_LeftTime", Category = "Network")
 	int LeftTime = 120;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Replicated, Category = "Network")
+	bool CanGotoNext = false;
+
 #pragma endregion
 
 #pragma region Public Function
 public:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	void SetGotoNext(bool bValue);
 
 	UFUNCTION()
 	void OnRep_LeftTime();
@@ -31,6 +35,10 @@ public:
 	UFUNCTION(Client, Reliable)
 	void CreateTimeUI();
 	void CreateTimeUI_Implementation();
+
+	UFUNCTION(Client, Reliable)
+	void CreateResultUI();
+	void CreateResultUI_Implementation();
 
 #pragma endregion
 };

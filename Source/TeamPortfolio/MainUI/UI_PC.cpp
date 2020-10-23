@@ -14,6 +14,7 @@
 #include "../Stage/Stage_GM.h"
 #include "../Boss/BossCharacter.h"
 #include "../Lobby/Lobby_WidgetBase.h"
+#include "../Base/Base_GM.h"
 
 AUI_PC::AUI_PC()
 {
@@ -79,16 +80,17 @@ void AUI_PC::SettingUI()
 	if (IsLocalPlayerController())
 	{
 		UTotalLog_GameInstance* GI = GetGameInstance<UTotalLog_GameInstance>();
+		ABase_GM* GM = Cast<ABase_GM>(UGameplayStatics::GetGameMode(GetWorld()));
 
 		if (IsValid(GI))
 		{
 			IsDefencePlayer = GI->isDefencePlayer;
-		}		
+		}
 
 		if (IsDefencePlayer == true)
-		{
-			ResultWidgetObject = CreateWidget<UResultFadeOutBase>(this, ResultWidgetClass);
+		{			
 			MainWidgetObject = CreateWidget<UMainUIBase>(this, MainWidgetClass);
+			Tags.Add(TEXT("Defence"));
 
 			if (MainWidgetObject)
 			{
@@ -99,8 +101,7 @@ void AUI_PC::SettingUI()
 				else
 				{
 					Inventory->PassData(GI->Inven, GI->Equip);
-				}
-				
+				}				
 
 				MainWidgetObject->AddToViewport();
 				bShowMouseCursor = false;
@@ -116,6 +117,12 @@ void AUI_PC::SettingUI()
 		else
 		{
 			C2S_SpawnandPossess();
+			Tags.Add(TEXT("Offence"));
+		}
+
+		if (IsValid(GM))
+		{
+			GM->Replace_Player(this);
 		}
 	}
 }
@@ -124,8 +131,9 @@ void AUI_PC::SettingUI_TEST()
 {
 	IsDefencePlayer = true;
 
-	ResultWidgetObject = CreateWidget<UResultFadeOutBase>(this, ResultWidgetClass);
+	//ResultWidgetObject = CreateWidget<UResultFadeOutBase>(this, ResultWidgetClass);
 	MainWidgetObject = CreateWidget<UMainUIBase>(this, MainWidgetClass);
+	Tags.Add(TEXT("Defence"));
 
 	if (MainWidgetObject)
 	{
@@ -145,6 +153,11 @@ void AUI_PC::SettingUI_TEST()
 
 void AUI_PC::AddResultWidget()
 {
+	if (IsValid(ResultWidgetObject))
+		return;
+
+	ResultWidgetObject = CreateWidget<UResultFadeOutBase>(this, ResultWidgetClass);
+
 	if (ResultWidgetObject)
 	{
 		ResultWidgetObject->AddToViewport();
@@ -170,7 +183,7 @@ void AUI_PC::Toggle_InvenWidget()
 			MainWidgetObject->ToggleInventory(true);
 			bInvenToggle = true;
 			bShowMouseCursor = true;
-			SetInputMode(FInputModeGameAndUI());
+			SetInputMode(FInputModeUIOnly());
 		}
 		else
 		{
@@ -200,7 +213,7 @@ void AUI_PC::Toggle_EquipWidget()
 			MainWidgetObject->ToggleEquipWindow(true);
 			bEquipToggle = true;
 			bShowMouseCursor = true;
-			SetInputMode(FInputModeGameAndUI());
+			SetInputMode(FInputModeUIOnly());
 		}
 		else
 		{

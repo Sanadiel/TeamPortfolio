@@ -13,6 +13,12 @@ void AStage_GS::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetim
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AStage_GS, LeftTime);
+	DOREPLIFETIME(AStage_GS, CanGotoNext);
+}
+
+void AStage_GS::SetGotoNext(bool bValue)
+{
+	CanGotoNext = bValue;
 }
 
 void AStage_GS::OnRep_LeftTime()
@@ -38,5 +44,14 @@ void AStage_GS::CreateTimeUI_Implementation()
 	{
 		PC->AddTimeWidget();
 		PC->LobbyWidgetObject->SetMessage(LeftTime, false);
+	}
+}
+
+void AStage_GS::CreateResultUI_Implementation()
+{
+	AUI_PC* PC = Cast<AUI_PC>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	if (PC)
+	{
+		PC->AddResultWidget();
 	}
 }

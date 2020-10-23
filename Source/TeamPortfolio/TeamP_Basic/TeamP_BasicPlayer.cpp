@@ -21,6 +21,7 @@
 #include "../Item/Inventory.h"
 #include "../Item/MasterItem.h"
 #include "Weapon0.h"
+#include "../MainUI/WeaponInfoBase.h"
 
 
 // Sets default values
@@ -335,6 +336,14 @@ void ATeamP_BasicPlayer::Reload()
 			
 		}
 	}
+
+	ATeamP_BasicPC* PC = GetController<ATeamP_BasicPC>();
+	if (IsValid(PC))
+	{
+		PC->GetMainUI()->WeaponInfo->SetIBulletNum(CurrentWeapon->CurrentBullet);
+		PC->GetMainUI()->WeaponInfo->SetIBulletMaxNum(CurrentWeapon->RemainedBullet);
+	}
+
 	UE_LOG(LogClass, Warning, TEXT("CurrentBullet = %d,MaxBullet = %d, RemainedBullet = %d"), CurrentWeapon->CurrentBullet, CurrentWeapon->MaxBullet, CurrentWeapon->RemainedBullet);
 }
 
@@ -399,23 +408,33 @@ void ATeamP_BasicPlayer::WeaponChange(int WeaponNumber)
 	params.Owner = this;
 	//transform.SetLocation(GetActorLocation());
 
-		AWeapon0* SpawnWeapon = GetWorld()->SpawnActor<AWeapon0>(WeaponClasses[WeaponNumber], params);
+	AWeapon0* SpawnWeapon = GetWorld()->SpawnActor<AWeapon0>(WeaponClasses[WeaponNumber], params);
 
-		if (SpawnWeapon)
+	if (SpawnWeapon)
+	{
+		UE_LOG(LogClass, Warning, TEXT("SpawnWeapon %d"), WeaponNumber);
+		SpawnWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("WeaponSocket"));//소켓은 스켈레탈메시에 있음.따라서 parent는 GetMesh()해준것.
+		if (CurrentWeapon)
 		{
-			UE_LOG(LogClass, Warning, TEXT("SpawnWeapon %d"), WeaponNumber);
-			SpawnWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("WeaponSocket"));//소켓은 스켈레탈메시에 있음.따라서 parent는 GetMesh()해준것.
-			if (CurrentWeapon)
-			{
-				CurrentWeapon->Destroy();
-			}
-			CurrentWeapon = SpawnWeapon;
+			CurrentWeapon->Destroy();
 		}
-		WeaponAttackSpeed = CurrentWeapon->WeaponAttackSpeed;
-		WeaponDamageC = CurrentWeapon->WeaponDamage;
-		
+		CurrentWeapon = SpawnWeapon;
+	}
+	WeaponAttackSpeed = CurrentWeapon->WeaponAttackSpeed;
+	WeaponDamageC = CurrentWeapon->WeaponDamage;
+
+	ATeamP_BasicPC* PC = GetController<ATeamP_BasicPC>();
+
+	if (IsValid(PC) && IsValid(PC->GetMainUI()) && IsValid(PC->GetMainUI()->WeaponInfo))
+	{
+		PC->GetMainUI()->WeaponInfo->SetIBulletNum(CurrentWeapon->CurrentBullet);
+		PC->GetMainUI()->WeaponInfo->SetIBulletMaxNum(CurrentWeapon->RemainedBullet);
+
+		FString newText = FString::Printf(TEXT("SpawnWeapon %d"), WeaponNumber);
+		PC->GetMainUI()->WeaponInfo->SetItemName(newText);
+	}		
 	
-		UE_LOG(LogClass, Warning, TEXT("WeaponNumber : %d  MaxBullet : %d  Bullet : %d / %d"), WeaponNumber, CurrentWeapon->MaxBullet, CurrentWeapon->CurrentBullet, CurrentWeapon->RemainedBullet);
+	UE_LOG(LogClass, Warning, TEXT("WeaponNumber : %d  MaxBullet : %d  Bullet : %d / %d"), WeaponNumber, CurrentWeapon->MaxBullet, CurrentWeapon->CurrentBullet, CurrentWeapon->RemainedBullet);
 
 
 	//GetWorld()->GetTimeSeconds();

@@ -5,6 +5,7 @@
 #include "Components/EditableTextBox.h"
 #include "Components/TextBlock.h"
 #include "../Instance/TotalLog_GameInstance.h"
+#include "../MainUI/UI_PC.h"
 
 void UResultFadeOutBase::NativeConstruct()
 {
@@ -27,9 +28,7 @@ void UResultFadeOutBase::SettingText()
 	for (int i = 0; i != TextBoxArray_Max; ++i)
 	{
 		FString strText = GI->GetMonsterData(i).MonsterName;
-		//FString strText = TextBoxArray[i]->GetText().ToString();
-		//GI->Kill_Record[i];
-		strText += FString::Printf(TEXT(" : %d"), i);
+		strText += FString::Printf(TEXT(" : %d"), GI->Monster_Record[i]);
 		TextBoxArray[i]->SetText(FText::FromString(strText));
 	}
 }
