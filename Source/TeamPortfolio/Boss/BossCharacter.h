@@ -17,6 +17,9 @@ class UBossWidgetBase;
 class UPhysicsHandleComponent;
 class USceneComponent;
 class UMotionControllerComponent;
+class USplineComponent;
+class USplineMeshComponent;
+
 
 UCLASS()
 class TEAMPORTFOLIO_API ABossCharacter : public ACharacter
@@ -52,6 +55,12 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 		UHandMeshComponent* VR_RightHand;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+		USplineComponent* Spline;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+		TArray<USplineMeshComponent*> SplineMeshArray;
 
 
 protected:
@@ -134,4 +143,9 @@ public:
 		void ResetCooldown(int32 Index);
 	void ResetCooldown_Implementation(int32 Index);
 
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spline")
+		UStaticMesh* MeshForSpline;
+
+	void DrawTrajectoryLine();
 };

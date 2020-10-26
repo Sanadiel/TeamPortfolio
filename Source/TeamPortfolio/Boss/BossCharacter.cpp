@@ -17,6 +17,9 @@
 #include "MotionControllerComponent.h" // Motion Controller.
 #include "Net/UnrealNetwork.h"
 #include "HandMeshComponent.h"
+#include "Components/SplineComponent.h"
+#include "Components/SplineMeshComponent.h"
+
 // Sets default values
 ABossCharacter::ABossCharacter()
 {
@@ -85,6 +88,12 @@ ABossCharacter::ABossCharacter()
 	VR_RightHand = CreateDefaultSubobject<UHandMeshComponent>(TEXT("VR_RightHand"));
 	VR_RightHand->SetupAttachment(VR_Right);
 	VR_RightHand->SetIsReplicated(true);
+
+
+	Spline = CreateDefaultSubobject<USplineComponent>(TEXT("Spline"));
+	Spline->SetupAttachment(RootComponent);
+
+
 }
 
 // Called when the game starts or when spawned
@@ -130,6 +139,9 @@ void ABossCharacter::Tick(float DeltaTime)
 		//Update Hold Location at Left.
 		PhysicsHandle->SetTargetLocation(VR_Left->GetComponentLocation());
 	}
+
+	DrawTrajectoryLine();
+
 }
 
 // Called to bind functionality to input
@@ -400,4 +412,77 @@ void ABossCharacter::SpawnProjectile_Implementation(int32 Index)
 void ABossCharacter::ResetCooldown_Implementation(int32 Index)
 {
 	SpawnCooldown[Index] = 0.0f;
+}
+void ABossCharacter::DrawTrajectoryLine()
+{
+	if (!MeshForSpline)
+	{
+		UE_LOG(LogClass, Warning, TEXT("You Must Apply Mesh for Spline."));
+		return;
+	}
+
+	for (int32 i = 0; i < SplineMeshArray.Num(); i++)
+	{
+		SplineMeshArray[i]->DestroyComponent();
+	}
+	SplineMeshArray.Reset();
+
+	FPredictProjectilePathParams predict;
+	FPredictProjectilePathResult result;
+
+	predict.StartLocation = GetActorLocation() + GetActorForwardVector() * 100.0f;
+	predict.LaunchVelocity = GetActorForwardVector() * 750.0f + GetActorUpVector()*600.0f;
+	predict.bTraceWithCollision = true;
+	predict.ProjectileRadius = 5.0f;
+	predict.MaxSimTime = 5.0f;
+	predict.bTraceWithChannel = true;
+	predict.TraceChannel = ECollisionChannel::ECC_WorldStatic;
+	predict.SimFrequency = 10.0f;
+	//predict.DrawDebugType = EDrawDebugTrace::ForOneFrame;
+	//predict.DrawDebugTime = 2.0f;
+	UGameplayStatics::Blueprint_PredictProjectilePath_Advanced(GetWorld(), predict, result);
+
+	TArray<FPredictProjectilePathPointData> points =
+		result.PathData;
+
+	TArray<FVector> splineLocations;
+
+	for (int32 i = 0; i < points.Num(); i++)
+	{
+		splineLocations.Add(points[i].Location);
+	}
+	
+	Spline->SetSplinePoints(splineLocations, ESplineCoordinateSpace::World);
+
+	for (int32 i = 0; i<Spline->GetNumberOfSplinePoints() - 1; i++)
+	{
+		Spline->SetSplinePointType(i, ESplinePointType::CurveClamped);
+	}
+
+	for (int32 i = 0;i< Spline->GetNumberOfSplinePoints() - 2; i++)
+	{
+		USplineMeshComponent* splineMeshComp = NewObject<USplineMeshComponent>(this, USplineMeshComponent::StaticClass());
+
+		splineMeshComp->SetupAttachment(RootComponent);
+		splineMeshComp->SetMobility(EComponentMobility::Movable);
+		splineMeshComp->SetStaticMesh(MeshForSpline);
+		splineMeshComp->RegisterComponent();
+
+		SplineMeshArray.Add(splineMeshComp);
+		
+		FVector startPos;
+		FVector startTangent;
+		Spline->GetLocationAndTangentAtSplinePoint(i, startPos, startTangent, ESplineCoordinateSpace::Local);
+
+		FVector endPos;
+		FVector endTangent;
+		Spline->GetLocationAndTangentAtSplinePoint(i+1, endPos, endTangent, ESplineCoordinateSpace::Local);
+		
+		startPos += FVector(0.0f, 0.0f, 5.0f);
+		endPos += FVector(0.0f, 0.0f, 5.0f);
+
+		splineMeshComp->SetStartAndEnd(startPos,startTangent,endPos,endTangent);
+		UE_LOG(LogClass, Warning, TEXT("Draw"));
+	}
+	UE_LOG(LogClass, Warning, TEXT("Draw Success?"));
 }
