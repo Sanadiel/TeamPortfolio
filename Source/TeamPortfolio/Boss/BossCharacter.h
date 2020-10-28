@@ -148,4 +148,8 @@ public:
 		UStaticMesh* MeshForSpline;
 
 	void DrawTrajectoryLine();
+
+	UFUNCTION(Server, Reliable)
+	void TrajectoryLineTeleport();
+	void TrajectoryLineTeleport_Implementation();
 };

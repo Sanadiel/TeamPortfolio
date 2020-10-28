@@ -305,6 +305,9 @@ void ABossCharacter::LeftHandAction()
 void ABossCharacter::RightHandAction()
 {
 	//What Will Do?
+
+	TrajectoryLineTeleport();
+
 }
 
 
@@ -430,14 +433,16 @@ void ABossCharacter::DrawTrajectoryLine()
 	FPredictProjectilePathParams predict;
 	FPredictProjectilePathResult result;
 
-	predict.StartLocation = GetActorLocation() + GetActorForwardVector() * 100.0f;
-	predict.LaunchVelocity = GetActorForwardVector() * 750.0f + GetActorUpVector()*600.0f;
+	predict.StartLocation = VR_Right->GetComponentLocation() + VR_Right->GetForwardVector()* 20.0f;
+	predict.LaunchVelocity = VR_Right->GetForwardVector() * 750.0f + VR_Right->GetUpVector()*250.0f;
+
 	predict.bTraceWithCollision = true;
 	predict.ProjectileRadius = 5.0f;
-	predict.MaxSimTime = 5.0f;
+	predict.MaxSimTime = 2.0f;
 	predict.bTraceWithChannel = true;
 	predict.TraceChannel = ECollisionChannel::ECC_WorldStatic;
-	predict.SimFrequency = 10.0f;
+	predict.SimFrequency = 20.0f;
+	predict.OverrideGravityZ = -500.0f;
 	//predict.DrawDebugType = EDrawDebugTrace::ForOneFrame;
 	//predict.DrawDebugTime = 2.0f;
 	UGameplayStatics::Blueprint_PredictProjectilePath_Advanced(GetWorld(), predict, result);
@@ -459,7 +464,7 @@ void ABossCharacter::DrawTrajectoryLine()
 		Spline->SetSplinePointType(i, ESplinePointType::CurveClamped);
 	}
 
-	for (int32 i = 0;i< Spline->GetNumberOfSplinePoints() - 2; i++)
+	for (int32 i = 1;i< Spline->GetNumberOfSplinePoints() - 2; i++)
 	{
 		USplineMeshComponent* splineMeshComp = NewObject<USplineMeshComponent>(this, USplineMeshComponent::StaticClass());
 
@@ -482,7 +487,29 @@ void ABossCharacter::DrawTrajectoryLine()
 		endPos += FVector(0.0f, 0.0f, 5.0f);
 
 		splineMeshComp->SetStartAndEnd(startPos,startTangent,endPos,endTangent);
-		UE_LOG(LogClass, Warning, TEXT("Draw"));
+		UE_LOG(LogClass, Warning, TEXT(" start Tangent :%s || end tangent : %s"),*startTangent.ToString(), *endTangent.ToString());
 	}
 	UE_LOG(LogClass, Warning, TEXT("Draw Success?"));
+}
+
+void ABossCharacter::TrajectoryLineTeleport_Implementation()
+{
+
+	FPredictProjectilePathParams predict;
+	FPredictProjectilePathResult result;
+
+	predict.StartLocation = VR_Right->GetComponentLocation() + VR_Right->GetForwardVector()* 20.0f;
+	predict.LaunchVelocity = VR_Right->GetForwardVector() * 750.0f + VR_Right->GetUpVector()*250.0f;
+	predict.bTraceWithCollision = true;
+	predict.ProjectileRadius = 5.0f;
+	predict.MaxSimTime = 2.0f;
+	predict.bTraceWithChannel = true;
+	predict.TraceChannel = ECollisionChannel::ECC_WorldStatic;
+	predict.SimFrequency = 20.0f;
+	predict.OverrideGravityZ = -500.0f;
+	//predict.DrawDebugType = EDrawDebugTrace::ForOneFrame;
+	//predict.DrawDebugTime = 2.0f;
+	UGameplayStatics::Blueprint_PredictProjectilePath_Advanced(GetWorld(), predict, result);
+
+	TeleportTo(result.HitResult.Location, GetActorRotation());
 }
