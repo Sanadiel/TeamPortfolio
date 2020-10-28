@@ -28,6 +28,8 @@ void UTeamP_AnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 		bIsWeaponChange = Pawn->bIsWeaponChange;
 
+		bIsGranade = Pawn->bIsGranade;
+
 		//bFireShotgun = Pawn->bFireShotgun;
 		if (!bIsShotgun) {
 			bIsFireAnim = Pawn->bIsFireAnim;
@@ -35,7 +37,7 @@ void UTeamP_AnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		else { //샷건쏨?
 				bIsFireAnim = Pawn->bFireShotgun;//쐇으면 애니메이션 동작
 		}
-			
+		
 
 		FRotator AimRotation = Pawn->GetAimOffset();
 		AimYaw = AimRotation.Yaw;
@@ -70,5 +72,19 @@ void UTeamP_AnimInstance::Animnotify_ReloadEnd(UAnimNotify* Animnotify)
 	{
 		bIsReload = false;
 		Pawn->bIsReload = false;
+	}
+}
+
+void UTeamP_AnimInstance::Animnotify_Throw_Ready(UAnimNotify* Animnotify)
+{
+	UE_LOG(LogClass, Warning, TEXT("Ready"))
+		bThrowReady = true;
+}
+
+void UTeamP_AnimInstance::Animnotify_Throw_End(UAnimNotify* Animnotify)
+{
+	if (bThrowReady)
+	{
+		bThrowReady = false;
 	}
 }

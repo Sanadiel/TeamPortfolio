@@ -36,9 +36,13 @@ public:
 
 
 	// 무기 여기있음
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-	class UWeaponComponent* Weapon1;
+	//UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	//class UWeaponComponent* Weapon1;
 
+
+	TArray<int> CurrentWeaponBullet;
+
+	TArray<int> RemainedWeaponBullet;
 
 
 
@@ -51,10 +55,6 @@ public:
 	void Sprint();
 	void StopSprint();
 
-	void WeaponChange1();
-	void WeaponChange2();
-	void WeaponChange3();
-	void WeaponChange4();
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 		float WalkSpeed = 300.0f;
@@ -122,6 +122,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
 	uint64 bIsShotgun : 1;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
+	uint64 bIsGranade : 1;
+
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
 	uint64 bIsReload : 1;
@@ -169,6 +172,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, category = "Data")
 	class UAnimMontage* ChangeWeaponMontage;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, category = "Data")
+	class UAnimMontage* ThrowGranageMontage;
+
 
 	//무기 변경 
 	void WeaponChange(int WeaponNumber);
@@ -193,7 +199,7 @@ public:
 	TArray<TSubclassOf<class AWeapon0>> WeaponClasses;
 
 
-	int UsingWeaponNumber;
+	int UsingWeaponNumber = 0;
 
 	void LoadWeapon(int Index);
 
@@ -205,5 +211,14 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "SpringArm")
 	FVector CrouchedSpringArmPosition;
+
+	void ChangeGranade(int WeaponNumber);
+	void ThrowGranade_Start();
+	void ThrowGranade_End();
+
+
+	//수류탄 스폰
+	//UPROPERTY(EditDefaultsOnly, Category = Projectile)
+	//TSubclassOf<class ATeamPortfolioProjectile> Granade;
 
 };

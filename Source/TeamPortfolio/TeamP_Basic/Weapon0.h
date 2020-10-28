@@ -42,12 +42,18 @@ public:
 
 	void OnFireShotgun();
 
+	void OnFireGranade();
+
 	float InterpPitch =0.0f;
 
 	void StartRecoil();
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
 	int ShotgunBullet = 15;
+
+
+	//TArray<int> WeaponBullet;
+
 
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Data")

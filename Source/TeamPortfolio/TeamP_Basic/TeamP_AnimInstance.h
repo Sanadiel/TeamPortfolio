@@ -40,6 +40,10 @@ public:
 	uint64 bIsWeaponChange : 1;
 
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
+		uint64 bIsGranade : 1;
+
+
 
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, category = "Status")
@@ -60,4 +64,13 @@ public:
 	UFUNCTION()
 	void Animnotify_ReloadEnd(UAnimNotify* Animnotify);
 
+	UFUNCTION()
+	void Animnotify_Throw_Ready(UAnimNotify* Animnotify);
+
+	UFUNCTION()
+	void Animnotify_Throw_End(UAnimNotify* Animnotify);
+
+
+	uint64 bThrowReady : 1;
+	 
 };

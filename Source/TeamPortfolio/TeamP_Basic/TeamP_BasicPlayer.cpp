@@ -45,8 +45,8 @@ ATeamP_BasicPlayer::ATeamP_BasicPlayer()
 	Camera->SetupAttachment(SpringArm);
 
 	//무기 추가
-	Weapon1 = CreateDefaultSubobject<UWeaponComponent>(TEXT("Weapon1"));
-	Weapon1->SetupAttachment(GetMesh(), TEXT("WeaponSocket"));
+	//Weapon1 = CreateDefaultSubobject<UWeaponComponent>(TEXT("Weapon1"));
+	//Weapon1->SetupAttachment(GetMesh(), TEXT("WeaponSocket"));
 
 	GetCharacterMovement()->NavAgentProps.bCanCrouch = true;
 
@@ -63,10 +63,40 @@ ATeamP_BasicPlayer::ATeamP_BasicPlayer()
 // Called when the game starts or when spawned
 void ATeamP_BasicPlayer::BeginPlay()
 {
+
 	Super::BeginPlay();
+
+
+	//CurrentWeaponBullet.Init(4,0)
+
+	for (int i = 0; i < WeaponClasses.Num(); i++) {
+		
+		AWeapon0* WeaponBulletCount = Cast<AWeapon0>(WeaponClasses[i].GetDefaultObject());
+
+		//UE_LOG(LogClass, Warning, TEXT("BeginPlay [%d]"),i);
+
+		//UE_LOG(LogClass, Warning, TEXT("valid? : %d"), IsValid(WeaponBulletCount));
+
+		if (WeaponBulletCount)			//총알갯수 받아옴
+		{
+			CurrentWeaponBullet.Add( WeaponBulletCount->CurrentBullet);
+
+			RemainedWeaponBullet.Add(WeaponBulletCount->RemainedBullet);
+			//UE_LOG(LogClass,Warning,TEXT("CurrentWeaponBullet[%d] = %d,RemainedWeaponBullet[%d] = %d"),i, CurrentWeaponBullet[i],i, RemainedWeaponBullet[i])
+		}
+	}
+
 	WeaponChange(0);
-	Weapon1->SetHiddenInGame(true);
-	//CurrentWeapon->CurrentBullet = CurrentWeapon->MaxBullet;
+
+
+	//Weapon1->SetHiddenInGame(true);
+
+	
+
+
+	
+
+
 
 }
 
@@ -115,8 +145,9 @@ void ATeamP_BasicPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	PlayerInputComponent->BindAction<FBindActionParamDelegate>(TEXT("Weaponchange1"), IE_Pressed, this, &ATeamP_BasicPlayer::WeaponChange,0);
 	PlayerInputComponent->BindAction<FBindActionParamDelegate>(TEXT("Weaponchange2"), IE_Pressed, this, &ATeamP_BasicPlayer::WeaponChange,1);
 	PlayerInputComponent->BindAction<FBindActionParamDelegate>(TEXT("Weaponchange3"), IE_Pressed, this, &ATeamP_BasicPlayer::WeaponChange,2);
-	PlayerInputComponent->BindAction<FBindActionParamDelegate>(TEXT("Weaponchange4"), IE_Pressed, this, &ATeamP_BasicPlayer::WeaponChange,3);
+	PlayerInputComponent->BindAction<FBindActionParamDelegate>(TEXT("Weaponchange4"), IE_Pressed, this, &ATeamP_BasicPlayer::WeaponChange, 3);
 
+	PlayerInputComponent->BindAction<FBindActionParamDelegate>(TEXT("ChangeGranade"), IE_Pressed, this, &ATeamP_BasicPlayer::ChangeGranade, 4);
 
 }
 
@@ -291,6 +322,11 @@ void ATeamP_BasicPlayer::StartFire() //발사키 입력시
 		return;
 	}
 
+	if (bIsGranade) {
+		ThrowGranade_Start();
+		return;
+	}
+
 	bIsFire = true;
 	
 	if (bIsShotgun) {
@@ -308,6 +344,11 @@ void ATeamP_BasicPlayer::StartFire() //발사키 입력시
 
 void ATeamP_BasicPlayer::StopFire()
 {
+	if (bIsGranade)
+	{
+		ThrowGranade_End();
+		return;
+	}
 	bIsFire = false;
 	if (!bIsShotgun) {
 		bIsFireAnim = false;
@@ -316,12 +357,13 @@ void ATeamP_BasicPlayer::StopFire()
 
 void ATeamP_BasicPlayer::Reload()
 {
-	if ((CurrentWeapon->RemainedBullet == 0) || bIsWeaponChange||bFireShotgun) {
+	if ((CurrentWeapon->RemainedBullet == 0) ||CurrentWeapon->CurrentBullet == CurrentWeapon->MaxBullet|| bIsWeaponChange||bFireShotgun||bIsGranade) {
 		return;
 	}
 	bIsReload = true;
 
 	if(!CurrentWeapon->RemainedBullet == 0){
+
 		if ((CurrentWeapon->RemainedBullet + CurrentWeapon->CurrentBullet) >= CurrentWeapon->MaxBullet) {//남은총알+현재총알이 탄창보다 많을경우 
 
 			CurrentWeapon->RemainedBullet -= (CurrentWeapon->MaxBullet - CurrentWeapon->CurrentBullet);// 남은총알 = 남은총알-(최대총알-현재총알(충전된총알))
@@ -384,6 +426,16 @@ void ATeamP_BasicPlayer::WeaponChange(int WeaponNumber)
 	if (bIsReload || bIsWeaponChange || bFireShotgun||bIsFire) {
 		return;
 	}
+	//현재 UsingWeaponNumber 은 기존에 사용하고있던 UsingWeaponNumber
+	// 캐릭터가 저장한 총알 = 사용하고 있던 무기의 총알
+
+
+
+
+	bIsGranade = false;
+
+	UE_LOG(LogClass, Warning, TEXT("%d"), bIsGranade)
+
 	
 
 	bIsFire = false;
@@ -402,7 +454,9 @@ void ATeamP_BasicPlayer::WeaponChange(int WeaponNumber)
 		bIsShotgun = true;
 		UE_LOG(LogClass, Warning, TEXT("WeaponNumber %d"), WeaponNumber);
 	}
-	else { bIsShotgun = false; }
+	else {
+		bIsShotgun = false; 
+	}
 	
 	FActorSpawnParameters params;
 	params.Owner = this;
@@ -412,16 +466,35 @@ void ATeamP_BasicPlayer::WeaponChange(int WeaponNumber)
 
 	if (SpawnWeapon)
 	{
-		UE_LOG(LogClass, Warning, TEXT("SpawnWeapon %d"), WeaponNumber);
 		SpawnWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("WeaponSocket"));//소켓은 스켈레탈메시에 있음.따라서 parent는 GetMesh()해준것.
 		if (CurrentWeapon)
 		{
+
+			CurrentWeaponBullet[UsingWeaponNumber] = CurrentWeapon->CurrentBullet;
+
+			RemainedWeaponBullet[UsingWeaponNumber] = CurrentWeapon->RemainedBullet;
+
+			UsingWeaponNumber = WeaponNumber;
+
 			CurrentWeapon->Destroy();
 		}
 		CurrentWeapon = SpawnWeapon;
+
+		CurrentWeapon->CurrentBullet = CurrentWeaponBullet[UsingWeaponNumber];
+
+		CurrentWeapon->RemainedBullet = RemainedWeaponBullet[UsingWeaponNumber];
 	}
+
+
+
+
 	WeaponAttackSpeed = CurrentWeapon->WeaponAttackSpeed;
 	WeaponDamageC = CurrentWeapon->WeaponDamage;
+		////총알 바꾸기					//이제 사용할 무기의 총알 = 캐릭터가 저장해 놓은 총알
+
+
+
+
 
 	ATeamP_BasicPC* PC = GetController<ATeamP_BasicPC>();
 
@@ -513,4 +586,70 @@ void ATeamP_BasicPlayer::LoadWeapon(int Index)
 	//	
 	//	//PC->Inventory->Equipment[Index]->StaticMesh;//StaticMesh
 	//}
+}
+
+void ATeamP_BasicPlayer::ChangeGranade(int WeaponNumber)
+{
+	
+	bIsGranade = true;
+
+
+	UE_LOG(LogClass, Warning, TEXT("%d"), bIsGranade)
+
+	FActorSpawnParameters params;
+	params.Owner = this;
+	//transform.SetLocation(GetActorLocation());
+
+	AWeapon0* SpawnWeapon = GetWorld()->SpawnActor<AWeapon0>(WeaponClasses[WeaponNumber], params);
+
+	if (SpawnWeapon)
+	{
+		SpawnWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("WeaponSocket"));//소켓은 스켈레탈메시에 있음.따라서 parent는 GetMesh()해준것.
+		if (CurrentWeapon)
+		{
+
+			CurrentWeaponBullet[UsingWeaponNumber] = CurrentWeapon->CurrentBullet;
+
+			RemainedWeaponBullet[UsingWeaponNumber] = CurrentWeapon->RemainedBullet;
+
+			UsingWeaponNumber = WeaponNumber;
+
+			CurrentWeapon->Destroy();
+		}
+		CurrentWeapon = SpawnWeapon;
+
+		CurrentWeapon->CurrentBullet = CurrentWeaponBullet[UsingWeaponNumber];
+
+		CurrentWeapon->RemainedBullet = RemainedWeaponBullet[UsingWeaponNumber];
+	}
+
+
+
+
+	WeaponAttackSpeed = CurrentWeapon->WeaponAttackSpeed;
+	WeaponDamageC = CurrentWeapon->WeaponDamage;
+	
+}
+
+void ATeamP_BasicPlayer::ThrowGranade_Start()
+{
+	UE_LOG(LogClass, Warning, TEXT("ThrowStart"))
+	if (ThrowGranageMontage)
+	{
+		UE_LOG(LogClass, Warning, TEXT("ThrowStart_Montage"))
+
+		FString SectionName = FString::Printf(TEXT("Throw_1"));
+		PlayAnimMontage(ThrowGranageMontage, 1.0f, FName(SectionName));
+	}
+}
+
+void ATeamP_BasicPlayer::ThrowGranade_End()
+{
+	UE_LOG(LogClass,Warning,TEXT("ThrowEnd"))
+	if (ThrowGranageMontage)
+	{
+
+		FString SectionName = FString::Printf(TEXT("Throw_2"));
+		PlayAnimMontage(ThrowGranageMontage, 1.0f, FName(SectionName));
+	}
 }

@@ -44,10 +44,6 @@ void AWeapon0::OnFire()
 			return;
 		}
 
-		if (Player->bIsShotgun) {
-			Player->bFireShotgun = true;
-		}
-
 		if (Player->bCanFire) //bCanFire·Î º¯°æ
 		{
 
@@ -417,6 +413,20 @@ void AWeapon0::OnFireShotgun()												//¼¦°Ç
 					WeaponAttackSpeed / 4,
 					false);
 			}
+		}
+
+}
+
+void AWeapon0::OnFireGranade()
+{
+	ATeamP_BasicPlayer* Player = Cast<ATeamP_BasicPlayer>(GetOwner());//¹®Á¦ÀÕ¾î?
+
+	UE_LOG(LogClass, Warning, TEXT("OnFire"))
+	
+	if (Player->CurrentWeapon->CurrentBullet <= 0)
+		{
+			Player->bIsFireAnim = false;
+			return;
 		}
 
 }
