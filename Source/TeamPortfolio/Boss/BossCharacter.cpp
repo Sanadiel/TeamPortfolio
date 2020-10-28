@@ -487,9 +487,9 @@ void ABossCharacter::DrawTrajectoryLine()
 		endPos += FVector(0.0f, 0.0f, 5.0f);
 
 		splineMeshComp->SetStartAndEnd(startPos,startTangent,endPos,endTangent);
-		UE_LOG(LogClass, Warning, TEXT(" start Tangent :%s || end tangent : %s"),*startTangent.ToString(), *endTangent.ToString());
+		//UE_LOG(LogClass, Warning, TEXT(" start Tangent :%s || end tangent : %s"),*startTangent.ToString(), *endTangent.ToString());
 	}
-	UE_LOG(LogClass, Warning, TEXT("Draw Success?"));
+	//UE_LOG(LogClass, Warning, TEXT("Draw Success?"));
 }
 
 void ABossCharacter::TrajectoryLineTeleport_Implementation()
