@@ -38,7 +38,7 @@ ABossCharacter::ABossCharacter()
 
 	GetMesh()->SetRelativeLocation(FVector(0.0f, 0.0f, -GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight()));
 	GetMesh()->SetRelativeRotation(FRotator(0.0f, 270.0f, 0.0f));
-
+	GetMesh()->bOwnerNoSee = true;
 	//PhysicsHandle Component.
 	PhysicsHandle  = CreateDefaultSubobject<UPhysicsHandleComponent>(TEXT("PhysicsHandle"));
 	PhysicsHandle->SetIsReplicated(true);
@@ -424,8 +424,14 @@ void ABossCharacter::DrawTrajectoryLine()
 		return;
 	}
 
+	if (!IsLocallyControlled())
+	{
+		return;
+	}
+
 	for (int32 i = 0; i < SplineMeshArray.Num(); i++)
 	{
+		SplineMeshArray[i]->UnregisterComponent();
 		SplineMeshArray[i]->DestroyComponent();
 	}
 	SplineMeshArray.Reset();
@@ -441,11 +447,11 @@ void ABossCharacter::DrawTrajectoryLine()
 	predict.MaxSimTime = 2.0f;
 	predict.bTraceWithChannel = true;
 	predict.TraceChannel = ECollisionChannel::ECC_WorldStatic;
-	predict.SimFrequency = 20.0f;
+	predict.SimFrequency = 10.0f;
 	predict.OverrideGravityZ = -500.0f;
 	//predict.DrawDebugType = EDrawDebugTrace::ForOneFrame;
 	//predict.DrawDebugTime = 2.0f;
-	UGameplayStatics::Blueprint_PredictProjectilePath_Advanced(GetWorld(), predict, result);
+	bool bCanTeleport = UGameplayStatics::Blueprint_PredictProjectilePath_Advanced(GetWorld(), predict, result);
 
 	TArray<FPredictProjectilePathPointData> points =
 		result.PathData;
@@ -471,6 +477,17 @@ void ABossCharacter::DrawTrajectoryLine()
 		splineMeshComp->SetupAttachment(RootComponent);
 		splineMeshComp->SetMobility(EComponentMobility::Movable);
 		splineMeshComp->SetStaticMesh(MeshForSpline);
+		
+		if (!bCanTeleport) // if Can't Teleport, Line Color will be Set to red.
+		{
+			UMaterialInstanceDynamic* dynamicMaterial = splineMeshComp->CreateDynamicMaterialInstance(0);
+			if (dynamicMaterial)
+			{
+				dynamicMaterial->SetVectorParameterValue(FName("Color"), FLinearColor::Red);
+				splineMeshComp->SetMaterial(0, dynamicMaterial);
+			}
+		}
+		
 		splineMeshComp->RegisterComponent();
 
 		SplineMeshArray.Add(splineMeshComp);
@@ -483,8 +500,8 @@ void ABossCharacter::DrawTrajectoryLine()
 		FVector endTangent;
 		Spline->GetLocationAndTangentAtSplinePoint(i+1, endPos, endTangent, ESplineCoordinateSpace::Local);
 		
-		startPos += FVector(0.0f, 0.0f, 5.0f);
-		endPos += FVector(0.0f, 0.0f, 5.0f);
+		//startPos += FVector(0.0f, 0.0f, 5.0f);
+		//endPos += FVector(0.0f, 0.0f, 5.0f);
 
 		splineMeshComp->SetStartAndEnd(startPos,startTangent,endPos,endTangent);
 		//UE_LOG(LogClass, Warning, TEXT(" start Tangent :%s || end tangent : %s"),*startTangent.ToString(), *endTangent.ToString());
@@ -505,11 +522,18 @@ void ABossCharacter::TrajectoryLineTeleport_Implementation()
 	predict.MaxSimTime = 2.0f;
 	predict.bTraceWithChannel = true;
 	predict.TraceChannel = ECollisionChannel::ECC_WorldStatic;
-	predict.SimFrequency = 20.0f;
+	predict.SimFrequency = 10.0f;
 	predict.OverrideGravityZ = -500.0f;
 	//predict.DrawDebugType = EDrawDebugTrace::ForOneFrame;
 	//predict.DrawDebugTime = 2.0f;
-	UGameplayStatics::Blueprint_PredictProjectilePath_Advanced(GetWorld(), predict, result);
+	bool bCanTeleport= UGameplayStatics::Blueprint_PredictProjectilePath_Advanced(GetWorld(), predict, result);
 
-	TeleportTo(result.HitResult.Location, GetActorRotation());
+	if (bCanTeleport)
+	{
+		TeleportTo(result.HitResult.Location, GetActorRotation());
+	}
+	else
+	{
+		UE_LOG(LogClass, Warning, TEXT(" You Can't Teleport."));
+	}
 }
