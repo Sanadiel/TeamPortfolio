@@ -19,7 +19,7 @@ class USceneComponent;
 class UMotionControllerComponent;
 class USplineComponent;
 class USplineMeshComponent;
-
+class UNiagaraSystem;
 
 UCLASS()
 class TEAMPORTFOLIO_API ABossCharacter : public ACharacter
@@ -107,6 +107,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Replicated, Category = "Grab")
 		bool bIsGrabbed;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect")
+		UNiagaraSystem* PositionNiagara;
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 

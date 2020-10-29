@@ -19,6 +19,9 @@
 #include "HandMeshComponent.h"
 #include "Components/SplineComponent.h"
 #include "Components/SplineMeshComponent.h"
+#include "NiagaraSystem.h"
+#include "NiagaraFunctionLibrary.h"
+#include "TimerManager.h"
 
 // Sets default values
 ABossCharacter::ABossCharacter()
@@ -506,6 +509,14 @@ void ABossCharacter::DrawTrajectoryLine()
 		splineMeshComp->SetStartAndEnd(startPos,startTangent,endPos,endTangent);
 		//UE_LOG(LogClass, Warning, TEXT(" start Tangent :%s || end tangent : %s"),*startTangent.ToString(), *endTangent.ToString());
 	}
+
+	if (bCanTeleport)
+	{
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), PositionNiagara, result.HitResult.Location);
+		//UE_LOG(LogClass, Warning, TEXT("Niagara Success."));
+	}
+
+
 	//UE_LOG(LogClass, Warning, TEXT("Draw Success?"));
 }
 
