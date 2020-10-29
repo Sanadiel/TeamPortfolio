@@ -13,39 +13,45 @@ void UAnimNotify_MonsterAttack::Notify(USkeletalMeshComponent* MeshComp, UAnimSe
 {
 	Super::Notify(MeshComp, Animation);
 
+	 
 	AActor* Monster = MeshComp->GetOwner();
 
-	UKismetSystemLibrary::PrintString(Monster->GetWorld(), TEXT("MonsterAttack"));
-
-	TArray<TEnumAsByte<EObjectTypeQuery>> ObjecTypes;
-	ObjecTypes.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_GameTraceChannel3));
-
-	TArray<AActor*> IgnoreActors;
-	//IgnoreActors.Add(Monster);
-	
-	TArray<AActor*>OutActors;
-
-	bool bResult = UKismetSystemLibrary::SphereOverlapActors(
-		Monster->GetWorld(),
-		Monster->GetActorLocation(),
-		200.0f,
-		ObjecTypes,
-		AActor::StaticClass(),
-		IgnoreActors,
-		OutActors
-
-	);
-
-	//UE_LOG(LogClass, Warning, TEXT("%s"), OutActors[0]);
-
-	if (bResult)
+	if (Monster)
 	{
-		UGameplayStatics::ApplyDamage(OutActors[0],
-			30.0f,
-			nullptr,
-			Monster,
-			nullptr
-		);		
+		UKismetSystemLibrary::PrintString(Monster->GetWorld(), TEXT("MonsterAttack"));
+
+		TArray<TEnumAsByte<EObjectTypeQuery>> ObjecTypes;
+		ObjecTypes.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_GameTraceChannel3));
+
+		TArray<AActor*> IgnoreActors;
+		//IgnoreActors.Add(Monster);
+
+		TArray<AActor*>OutActors;
+
+		bool bResult = UKismetSystemLibrary::SphereOverlapActors(
+			Monster->GetWorld(),
+			Monster->GetActorLocation(),
+			200.0f,
+			ObjecTypes,
+			AActor::StaticClass(),
+			IgnoreActors,
+			OutActors
+
+		);
+		//UE_LOG(LogClass, Warning, TEXT("%s"), OutActors[0]);
+
+		if (bResult)
+		{
+			UGameplayStatics::ApplyDamage(OutActors[0],
+				30.0f,
+				nullptr,
+				Monster,
+				nullptr
+			);
+		}
 	}
+	
+
+
 
 }
