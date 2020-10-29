@@ -6,6 +6,7 @@
 #include "../MainUI/UI_PC.h"
 #include "Net/UnrealNetwork.h"
 #include "../Lobby/Lobby_WidgetBase.h"
+#include "../MainUI/ResultFadeOutBase.h"
 
 
 void AStage_GS::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -13,7 +14,8 @@ void AStage_GS::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetim
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AStage_GS, LeftTime);
-	DOREPLIFETIME(AStage_GS, CanGotoNext);
+	DOREPLIFETIME(AStage_GS, CanGotoNext); 
+	DOREPLIFETIME(AStage_GS, IsExistResultUI);
 }
 
 void AStage_GS::SetGotoNext(bool bValue)
@@ -33,6 +35,18 @@ void AStage_GS::OnRep_LeftTime()
 		else
 		{
 			PC->LobbyWidgetObject->SetMessage(LeftTime, false);
+		}
+	}
+}
+
+void AStage_GS::OnRep_ResultWG()
+{
+	AUI_PC* PC = Cast<AUI_PC>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	if (PC)
+	{
+		if (!IsValid(PC->ResultWidgetObject))
+		{
+			CreateResultUI_Implementation();
 		}
 	}
 }

@@ -87,6 +87,10 @@ public:
 	void C2S_SpawnandPossess();
 	void C2S_SpawnandPossess_Implementation();
 
+	UFUNCTION(Server, Reliable)
+	void C2S_ReplaceWorld(FName Tag);
+	void C2S_ReplaceWorld_Implementation(FName Tag);
+
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	

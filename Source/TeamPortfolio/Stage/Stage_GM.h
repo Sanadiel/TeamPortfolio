@@ -15,12 +15,9 @@ class TEAMPORTFOLIO_API AStage_GM : public ABase_GM
 	GENERATED_BODY()
 #pragma region Public Member
 public:
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PlayerStart")
-	TArray<class APlayerStart*>  PlayerStartArray;
-	//Time
-	FTimerHandle GameTimer;
 
-	
+	//Time
+	FTimerHandle GameTimer;	
 
 #pragma endregion
 	

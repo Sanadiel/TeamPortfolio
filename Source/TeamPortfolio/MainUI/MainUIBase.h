@@ -20,9 +20,6 @@ public:
 	class UHpBarBase* HpBar;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-	class UHpBarBase* StBar;
-
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	class UInventoryWidgetBase* Inventory;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
@@ -59,8 +56,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void UpdateHpBar(float Percent);
-	UFUNCTION(BlueprintCallable)
-	void UpdateStBar(float Percent);
 
 	void ToggleInventory(bool bValue);	
 	void ToggleEquipWindow(bool bValue);

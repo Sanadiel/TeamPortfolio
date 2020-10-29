@@ -19,6 +19,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, ReplicatedUsing = "OnRep_LeftTime", Category = "Network")
 	int LeftTime = 120;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, ReplicatedUsing = "OnRep_ResultWG", Category = "Network")
+	bool IsExistResultUI = false;
+	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Replicated, Category = "Network")
 	bool CanGotoNext = false;
 
@@ -31,6 +34,9 @@ public:
 
 	UFUNCTION()
 	void OnRep_LeftTime();
+
+	UFUNCTION()
+	void OnRep_ResultWG();
 
 	UFUNCTION(Client, Reliable)
 	void CreateTimeUI();

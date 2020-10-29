@@ -16,6 +16,12 @@ void ULobby_WidgetBase::SetMessage(int LeftTime, bool isLobby)
 {
 	FString Message;
 
+	if (LeftTime <= 0)
+	{
+		TimeLeftMessage->SetVisibility(ESlateVisibility::Collapsed);
+		return;
+	}
+
 	if (isLobby == true)
 	{
 		Message = FString::Printf(TEXT("%d초 후에 게임이 시작됩니다."), LeftTime);

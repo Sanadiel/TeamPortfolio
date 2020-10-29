@@ -19,13 +19,13 @@ class TEAMPORTFOLIO_API ABase_GM : public AGameModeBase
 public:
 	AActor* FindPlayerStart_Implementation(AController* Player, const FString& IncomingName = TEXT(""));
 
-	UFUNCTION(NetMulticast, Reliable)
+	UFUNCTION(NetMulticast, BlueprintCallable, Reliable)
 	void Replace_AllPlayers(); 
 	void Replace_AllPlayers_Implementation();
 
-	UFUNCTION(NetMulticast, Reliable)
-	void Replace_Player(AController* Player);
-	void Replace_Player_Implementation(AController* Player);
+	UFUNCTION(NetMulticast, BlueprintCallable, Reliable)
+	void Replace_Player(AController* Player, FName Tag);
+	void Replace_Player_Implementation(AController* Player, FName Tag);
 
 #pragma endregion
 };

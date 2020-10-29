@@ -55,8 +55,8 @@ void ABase_GM::Replace_AllPlayers_Implementation()
 	}
 }
 
-void ABase_GM::Replace_Player_Implementation(AController* Player)
+void ABase_GM::Replace_Player_Implementation(AController* Player, FName Tag)
 {
-	AActor* PS = FindPlayerStart_Implementation(Player, Player->Tags[0].ToString());
+	AActor* PS = FindPlayerStart_Implementation(Player, Tag.ToString());
 	Player->GetPawn()->SetActorTransform(PS->GetTransform());
 }

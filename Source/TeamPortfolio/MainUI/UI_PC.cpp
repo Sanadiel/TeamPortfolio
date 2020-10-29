@@ -19,7 +19,6 @@
 AUI_PC::AUI_PC()
 {
 	Inventory = CreateDefaultSubobject<UInventory>(TEXT("Inventory"));
-	//UE_LOG(LogClass, Warning, TEXT("UI_PC : Construct : %s"), *GetName());
 }
 
 void AUI_PC::BeginPlay()
@@ -120,10 +119,7 @@ void AUI_PC::SettingUI()
 			Tags.Add(TEXT("Offence"));
 		}
 
-		if (IsValid(GM))
-		{
-			GM->Replace_Player(this);
-		}
+		C2S_ReplaceWorld(Tags[0]);
 	}
 }
 
@@ -183,7 +179,7 @@ void AUI_PC::Toggle_InvenWidget()
 			MainWidgetObject->ToggleInventory(true);
 			bInvenToggle = true;
 			bShowMouseCursor = true;
-			SetInputMode(FInputModeUIOnly());
+			SetInputMode(FInputModeGameAndUI());
 		}
 		else
 		{
@@ -213,7 +209,7 @@ void AUI_PC::Toggle_EquipWidget()
 			MainWidgetObject->ToggleEquipWindow(true);
 			bEquipToggle = true;
 			bShowMouseCursor = true;
-			SetInputMode(FInputModeUIOnly());
+			SetInputMode(FInputModeGameAndUI());
 		}
 		else
 		{
@@ -255,7 +251,18 @@ void AUI_PC::C2S_SpawnandPossess_Implementation()
 	UnPossess();
 	Possess(BossCharacter);
 	BossCharacter->CreateUI();
+	pawn->SetActorHiddenInGame(true);
 	pawn->Destroy();
+}
+
+void AUI_PC::C2S_ReplaceWorld_Implementation(FName Tag)
+{
+	ABase_GM* GM = Cast<ABase_GM>(UGameplayStatics::GetGameMode(GetWorld()));
+
+	if (IsValid(GM))
+	{
+		GM->Replace_Player(this, Tag);
+	}
 }
 
 void AUI_PC::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

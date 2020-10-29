@@ -17,7 +17,6 @@ void UMainUIBase::NativeConstruct()
 	Super::NativeConstruct();
 
 	HpBar = Cast<UHpBarBase>(GetWidgetFromName(TEXT("HpBar_1")));
-	StBar = Cast<UHpBarBase>(GetWidgetFromName(TEXT("StaminaBar")));
 	Inventory = Cast<UInventoryWidgetBase>(GetWidgetFromName(TEXT("Inventory")));
 	EquipWindow = Cast<UEquipmentBase>(GetWidgetFromName(TEXT("Equipment")));
 	ShopWindow = Cast<UShopBase>(GetWidgetFromName(TEXT("Shop")));
@@ -31,7 +30,6 @@ void UMainUIBase::NativeConstruct()
 	Inventory->SetVisibility(ESlateVisibility::Collapsed);
 	EquipWindow->SetVisibility(ESlateVisibility::Collapsed);
 	HpBar->Fuc_DeleSingle_ThreeParam.BindUFunction(this, FName("ToggleHover"));
-	StBar->Fuc_DeleSingle_ThreeParam.BindUFunction(this, FName("ToggleHover"));
 	Hover->SetVisibility(ESlateVisibility::Collapsed);
 	Hover->RemoveFromViewport();
 	ItemHover->SetVisibility(ESlateVisibility::Collapsed);
@@ -43,14 +41,6 @@ void UMainUIBase::UpdateHpBar(float Percent)
 	if (HpBar)
 	{
 		HpBar->UpdateHpBar(Percent);
-	}
-}
-
-void UMainUIBase::UpdateStBar(float Percent)
-{
-	if (StBar)
-	{
-		StBar->UpdateHpBar(Percent);
 	}
 }
 

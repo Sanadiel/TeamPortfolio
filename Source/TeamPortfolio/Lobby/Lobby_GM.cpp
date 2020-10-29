@@ -36,12 +36,9 @@ void ALobby_GM::BeginPlay()
 void ALobby_GM::StartCheckButton()
 {
 	GetWorldTimerManager().SetTimer(
-		ButtonTimer,
-		this,
+		ButtonTimer, this,
 		&ALobby_GM::CheckButton,
-		1.0f,
-		true,
-		1.0f
+		1.0f, true, 1.0f
 	);
 }
 
@@ -63,12 +60,9 @@ void ALobby_GM::CheckButton()
 void ALobby_GM::StartCountDown()
 {
 	GetWorldTimerManager().SetTimer(
-		LobbyTimer,
-		this,
+		LobbyTimer, this,
 		&ALobby_GM::DecreaseTime,
-		1.0f,
-		true,
-		1.0f
+		1.0f, true, 1.0f
 	);
 }
 
@@ -82,7 +76,6 @@ void ALobby_GM::DecreaseTime()
 
 		if (GS->LeftTime <= 0)
 		{
-			//게임 시작
 			GetWorldTimerManager().ClearTimer(LobbyTimer);
 			StartGame();
 		}

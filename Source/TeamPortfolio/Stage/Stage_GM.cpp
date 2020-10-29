@@ -17,21 +17,6 @@ AStage_GM::AStage_GM()
 
 }
 
-//void AStage_GM::SwapPlayerControllers(APlayerController* OldPC, APlayerController* NewPC)
-//{
-//	/*ALobby_PC* Oldman = Cast<ALobby_PC>(OldPC);
-//	ATeamP_BasicPC* NewGuy = Cast<ATeamP_BasicPC>(NewPC);
-//	NewGuy->IsDefencePlayer = Oldman->IsDefencePlayer;*/
-//
-//	/*AUI_PC* PC = Cast<AUI_PC>(OldPC);
-//	if (IsValid(PC))
-//	{
-//		
-//	}*/
-//
-//	Super::SwapPlayerControllers(OldPC, NewPC);
-//}
-
 void AStage_GM::PostLogin(APlayerController* NewPlayer)
 {
 	Super::PostLogin(NewPlayer);
@@ -54,12 +39,9 @@ void AStage_GM::BeginPlay()
 void AStage_GM::StartCountDown()
 {
 	GetWorldTimerManager().SetTimer(
-		GameTimer,
-		this,
+		GameTimer, this,
 		&AStage_GM::DecreaseTime,
-		1.0f,
-		true,
-		1.0f
+		1.0f, true, 1.0f
 	);
 }
 
@@ -74,9 +56,10 @@ void AStage_GM::DecreaseTime()
 		if (GS->LeftTime <= 0)
 		{
 			//게임 시작			
-			GS->CreateResultUI_Implementation();
+			GS->IsExistResultUI = true;
+			GS->OnRep_ResultWG();
 
-			if (GS->CanGotoNext)
+			if (GS->CanGotoNext == true)
 			{
 				GetWorldTimerManager().ClearTimer(GameTimer);
 				Travel_MasterLobby();
