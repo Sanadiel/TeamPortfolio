@@ -9,13 +9,12 @@
 
 class USpringArmComponent;
 class UCameraComponent;
-
+class USceneComponent;
 class ABossProjectileBase;
 class USkeletalMeshComponent;
 class UHandMeshComponent;
 class UBossWidgetBase;
 class UPhysicsHandleComponent;
-class USceneComponent;
 class UMotionControllerComponent;
 class USplineComponent;
 class USplineMeshComponent;
@@ -43,6 +42,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 		USceneComponent* HoldPosition;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+		USceneComponent* VR_Root;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 		UMotionControllerComponent* VR_Left;
@@ -108,6 +110,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Replicated, Category = "Grab")
 		bool bIsGrabbed;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Replicated, Category = "Grab")
+		bool bCanSeeTrajectory;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect")
 		UNiagaraSystem* PositionNiagara;
 
@@ -122,8 +127,8 @@ public:
 	void HandAction();
 
 	void LeftHandAction();
-	void RightHandAction();
-
+	void RightHandPress();
+	void RightHandRelease();
 
 	void CreateUI();
 

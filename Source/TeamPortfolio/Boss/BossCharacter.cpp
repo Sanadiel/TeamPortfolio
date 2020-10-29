@@ -67,16 +67,19 @@ ABossCharacter::ABossCharacter()
 	TrajectoryParams.MaxSimTime = 2.0f;
 	TrajectoryParams.ProjectileRadius = 10.0f;
 	*/
+	VR_Root = CreateDefaultSubobject<USceneComponent>(TEXT("VR_Root"));
+	VR_Root->SetupAttachment(RootComponent);
+
 
 	VR_Left = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("VR_Left"));
-	VR_Left->SetupAttachment(Camera);
+	VR_Left->SetupAttachment(VR_Root);
 	VR_Left->bDisplayDeviceModel = true;
 	VR_Left->MotionSource = FName("Left");
 	VR_Left->SetCollisionProfileName(FName("NoCollision"));
 	VR_Left->SetIsReplicated(true);
 
 	VR_Right = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("VR_Right"));
-	VR_Right->SetupAttachment(Camera);
+	VR_Right->SetupAttachment(VR_Root);
 	VR_Right->bDisplayDeviceModel = true;
 	VR_Right->MotionSource = FName("Right");
 	VR_Right->SetCollisionProfileName(FName("NoCollision"));
@@ -96,7 +99,7 @@ ABossCharacter::ABossCharacter()
 	Spline = CreateDefaultSubobject<USplineComponent>(TEXT("Spline"));
 	Spline->SetupAttachment(RootComponent);
 
-
+	bCanSeeTrajectory = false;
 }
 
 // Called when the game starts or when spawned
@@ -154,7 +157,8 @@ void ABossCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &ABossCharacter::HandAction);
 	PlayerInputComponent->BindAction("OculusLeft", IE_Pressed, this, &ABossCharacter::LeftHandAction);
-	PlayerInputComponent->BindAction("OculusRight", IE_Pressed, this, &ABossCharacter::RightHandAction);
+	PlayerInputComponent->BindAction("OculusRight", IE_Pressed, this, &ABossCharacter::RightHandPress);
+	PlayerInputComponent->BindAction("OculusRight", IE_Released, this, &ABossCharacter::RightHandRelease);
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &ABossCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &ABossCharacter::MoveRight);
@@ -305,14 +309,19 @@ void ABossCharacter::LeftHandAction()
 	}
 }
 
-void ABossCharacter::RightHandAction()
+void ABossCharacter::RightHandPress()
 {
 	//What Will Do?
+	bCanSeeTrajectory = true;
 
+}
+void ABossCharacter::RightHandRelease()
+{
+	//What Will Do?
+	bCanSeeTrajectory = false;
 	TrajectoryLineTeleport();
 
 }
-
 
 void ABossCharacter::CreateUI()
 {
@@ -439,6 +448,11 @@ void ABossCharacter::DrawTrajectoryLine()
 	}
 	SplineMeshArray.Reset();
 
+	if (!bCanSeeTrajectory)
+	{
+		return;
+	}
+
 	FPredictProjectilePathParams predict;
 	FPredictProjectilePathResult result;
 
@@ -449,7 +463,7 @@ void ABossCharacter::DrawTrajectoryLine()
 	predict.ProjectileRadius = 5.0f;
 	predict.MaxSimTime = 2.0f;
 	predict.bTraceWithChannel = true;
-	predict.TraceChannel = ECollisionChannel::ECC_WorldStatic;
+	predict.TraceChannel = ECollisionChannel::ECC_Visibility;
 	predict.SimFrequency = 10.0f;
 	predict.OverrideGravityZ = -500.0f;
 	//predict.DrawDebugType = EDrawDebugTrace::ForOneFrame;
