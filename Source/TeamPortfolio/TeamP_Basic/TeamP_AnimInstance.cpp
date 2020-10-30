@@ -77,14 +77,24 @@ void UTeamP_AnimInstance::Animnotify_ReloadEnd(UAnimNotify* Animnotify)
 
 void UTeamP_AnimInstance::Animnotify_Throw_Ready(UAnimNotify* Animnotify)
 {
-	UE_LOG(LogClass, Warning, TEXT("Ready"))
+	if (!bThrowReady) {
+		UE_LOG(LogClass, Warning, TEXT("Ready"))
 		bThrowReady = true;
+	}
 }
+
 
 void UTeamP_AnimInstance::Animnotify_Throw_End(UAnimNotify* Animnotify)
 {
 	if (bThrowReady)
 	{
-		bThrowReady = false;
+		ATeamP_BasicPlayer* Pawn = Cast<ATeamP_BasicPlayer>(TryGetPawnOwner());
+		if (Pawn) {
+			Pawn->ThrowGranade();
+			bThrowReady = false;
+			UE_LOG(LogClass, Warning, TEXT("Throw"))
+
+		}
+
 	}
 }

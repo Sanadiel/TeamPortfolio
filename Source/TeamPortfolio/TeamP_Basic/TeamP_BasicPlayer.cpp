@@ -22,6 +22,7 @@
 #include "../Item/MasterItem.h"
 #include "Weapon0.h"
 #include "../MainUI/WeaponInfoBase.h"
+#include "Granade.h"
 
 
 // Sets default values
@@ -38,7 +39,7 @@ ATeamP_BasicPlayer::ATeamP_BasicPlayer()
 	SpringArm->SetupAttachment(RootComponent);
 
 	SpringArm->SocketOffset = FVector(0, 40.0f, 88.f);
-	SpringArm->TargetArmLength = 120.0f;
+	SpringArm->TargetArmLength = 240.0f;
 	SpringArm->bUsePawnControlRotation = true;
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
@@ -257,12 +258,14 @@ float ATeamP_BasicPlayer::TakeDamage(float DamageAmount, FDamageEvent const& Dam
 	{
 		FPointDamageEvent* PointDamageEvent = (FPointDamageEvent*)(&DamageEvent);
 
-		if (PointDamageEvent->HitInfo.BoneName.Compare(TEXT("head")) == 0)
+		if (PointDamageEvent->HitInfo.BoneName.Compare(TEXT("head")) == 0) //본 이름 head에 맞으면 사망 
 		{
 			CurrentHP = 0;
 		}
 		else
 		{
+			UE_LOG(LogClass, Warning, TEXT("Damage %f, HP : %f"), DamageAmount, CurrentHP);
+
 			CurrentHP -= DamageAmount;
 		}
 
@@ -290,10 +293,25 @@ float ATeamP_BasicPlayer::TakeDamage(float DamageAmount, FDamageEvent const& Dam
 	{
 		FRadialDamageEvent* RadialDamageEvent = (FRadialDamageEvent*)(&DamageEvent);
 
-		UE_LOG(LogClass, Warning, TEXT("Radial Damage %f"), DamageAmount);
+		CurrentHP -= DamageAmount;
+
+		UE_LOG(LogClass, Warning, TEXT("Radial Damage %f HP : %f"), DamageAmount, CurrentHP);
+		if (CurrentHP <= 0)
+		{
+			//사망애니메이션
+			if (DeadMontage)
+			{
+				FString SectionName = FString::Printf(TEXT("Death_%d"), FMath::RandRange(1, 3));
+				PlayAnimMontage(DeadMontage, 1.0f, FName(SectionName));
+			}
+
+			DisableInput(Cast<APlayerController>(GetController()));
+		}
 	}
 	else //모든 데미지 처리
 	{
+		UE_LOG(LogClass, Warning, TEXT("Damage %f, HP : %f"), DamageAmount, CurrentHP);
+
 		CurrentHP -= DamageAmount;
 	}
 
@@ -652,4 +670,32 @@ void ATeamP_BasicPlayer::ThrowGranade_End()
 		FString SectionName = FString::Printf(TEXT("Throw_2"));
 		PlayAnimMontage(ThrowGranageMontage, 1.0f, FName(SectionName));
 	}
+}
+
+void ATeamP_BasicPlayer::ThrowGranade()
+{
+	UE_LOG(LogClass, Warning, TEXT("ThrowGranade_ThrowGranade"))
+	// try and fire a projectile
+	if (GranadeClass != NULL)
+	{
+		UE_LOG(LogClass, Warning, TEXT("ThrowGranade_ProjectileClass"))
+
+		UWorld* const World = GetWorld();
+		if (World != NULL)
+		{
+				UE_LOG(LogClass,Warning,TEXT("ThrowGranade_World"))
+
+				const FRotator SpawnRotation = GetControlRotation();
+				// MuzzleOffset is in camera space, so transform it to world space before offsetting from the character location to find the final muzzle position
+				const FVector SpawnLocation = GetActorLocation();
+
+				//Set Spawn Collision Handling Override
+				FActorSpawnParameters ActorSpawnParams;
+				ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
+
+				// spawn the projectile at the muzzle
+				World->SpawnActor<AGranade>(GranadeClass, SpawnLocation, SpawnRotation, ActorSpawnParams);
+			}
+		}
+
 }
