@@ -26,6 +26,8 @@ public:
 
 	virtual void BeginPlay() override;
 
+	virtual void Setting();
+
 	//CheckButton
 	FTimerHandle ButtonTimer;
 

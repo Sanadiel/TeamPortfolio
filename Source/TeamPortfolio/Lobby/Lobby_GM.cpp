@@ -28,6 +28,11 @@ void ALobby_GM::BeginPlay()
 {
 	Super::BeginPlay();
 
+	Setting();
+}
+
+void ALobby_GM::Setting()
+{
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ASelectButtonBase::StaticClass(), Buttons);
 
 	StartCheckButton();

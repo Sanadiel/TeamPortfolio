@@ -35,6 +35,12 @@ public:
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "UI")
 	class ULobby_WidgetBase* LobbyWidgetObject;
 
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "UI")
+	TSubclassOf<class ULobby_ReadyWidget> ReadyWidgetClass;
+
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "UI")
+	class ULobby_ReadyWidget* ReadyWidgetObject;
+
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "UI")
 	bool bInvenToggle = false;
 
@@ -72,6 +78,7 @@ public:
 
 	void AddResultWidget();
 	void AddTimeWidget();
+	void AddReadyWidget();
 
 	void Toggle_InvenWidget();
 	void UnToggle_InvenWidget();

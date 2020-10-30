@@ -3,17 +3,26 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "../Base/Base_GM.h"
+#include "Lobby_GM.h"
 #include "MasterLobby_GM.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class TEAMPORTFOLIO_API AMasterLobby_GM : public ABase_GM
+class TEAMPORTFOLIO_API AMasterLobby_GM : public ALobby_GM
 {
 	GENERATED_BODY()
 	
+#pragma region Public Function
+public:
+	UFUNCTION()
+	void StartStage();
 
+	virtual void BeginPlay() override;
+
+	virtual void Setting() override;
+
+#pragma endregion 
 
 };
