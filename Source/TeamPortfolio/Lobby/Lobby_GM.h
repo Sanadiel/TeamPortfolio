@@ -32,10 +32,10 @@ public:
 	FTimerHandle ButtonTimer;
 
 	UFUNCTION(BlueprintCallable)
-	void StartCheckButton();
+	virtual void StartCheckButton();
 
 	UFUNCTION()
-	void CheckButton();
+	virtual void CheckButton();
 
 
 	//Time

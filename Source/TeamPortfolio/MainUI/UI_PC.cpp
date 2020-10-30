@@ -171,7 +171,7 @@ void AUI_PC::AddTimeWidget()
 	}
 }
 
-void AUI_PC::AddReadyWidget()
+void AUI_PC::AddReadyWidget_Implementation()
 {
 	ReadyWidgetObject = CreateWidget<ULobby_ReadyWidget>(this, ReadyWidgetClass);
 

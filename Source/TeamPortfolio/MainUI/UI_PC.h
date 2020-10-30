@@ -81,7 +81,10 @@ public:
 
 	void AddResultWidget();
 	void AddTimeWidget();
+
+	UFUNCTION(Client, Reliable)
 	void AddReadyWidget();
+	void AddReadyWidget_Implementation();
 
 	void Toggle_InvenWidget();
 	void UnToggle_InvenWidget();
