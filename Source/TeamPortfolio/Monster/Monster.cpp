@@ -112,6 +112,10 @@ void AMonster::Destroyed()
 {
 	UTotalLog_GameInstance* GI = Cast< UTotalLog_GameInstance>(GetGameInstance());
 
+	GI->Monster_Record[MonType] += 1;
+
+	UE_LOG(LogClass, Warning, TEXT("%d"), GI->Monster_Record[MonType]);
+
 	Super::Destroyed();
 }
 

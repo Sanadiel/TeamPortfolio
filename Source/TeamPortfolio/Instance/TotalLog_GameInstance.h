@@ -31,7 +31,7 @@ public:
 	TArray<FItemDataTable> ItemDataArray;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Record")
-	TArray<int> Monster_Record;
+	TMap<EMonsterType, int> Monster_Record;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Player")
 	bool isDefencePlayer;
