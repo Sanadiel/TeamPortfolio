@@ -19,6 +19,7 @@ class UMotionControllerComponent;
 class USplineComponent;
 class USplineMeshComponent;
 class UNiagaraSystem;
+class UWidgetComponent;
 
 UCLASS()
 class TEAMPORTFOLIO_API ABossCharacter : public ACharacter
@@ -64,6 +65,8 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 		TArray<USplineMeshComponent*> SplineMeshArray;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+		UWidgetComponent* Widget_3D;
 
 protected:
 	// Called when the game starts or when spawned

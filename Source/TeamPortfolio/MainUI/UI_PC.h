@@ -58,6 +58,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Player")
 	bool UITestMode = false;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Replicated, Category = "Lobby")
+	bool IsReady = false;
+
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Boss")
 	TSubclassOf<class ABossCharacter> Boss;
 #pragma endregion

@@ -22,7 +22,8 @@ void USpawnSlotBase::NativeConstruct()
 
 	if (SelectButton)
 	{
-		SelectButton->OnClicked.AddDynamic(this, &USpawnSlotBase::OnButtonClicked);
+		//SelectButton->OnClicked.AddDynamic(this, &USpawnSlotBase::OnButtonClicked);
+		SelectButton->OnReleased.AddDynamic(this, &USpawnSlotBase::OnButtonClicked);
 	}
 
 
@@ -61,7 +62,7 @@ void USpawnSlotBase::NativeTick(const FGeometry & MyGeometry, float InDeltaTime)
 
 void USpawnSlotBase::OnButtonClicked()
 {
-	UE_LOG(LogClass, Warning, TEXT("%s's button Clicked."), *GetName());
+	//UE_LOG(LogClass, Warning, TEXT("%s's button Clicked."), *GetName());
 
 	APlayerController* pc = GetOwningPlayer();
 	if (pc &&pc->IsLocalPlayerController())
