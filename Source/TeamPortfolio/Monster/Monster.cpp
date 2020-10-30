@@ -7,6 +7,9 @@
 #include "Perception/PawnSensingComponent.h"
 #include "MonsterAIController.h"
 #include "../Instance/TotalLog_GameInstance.h"
+#include "Net/UnrealNetwork.h"
+#include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AMonster::AMonster()
@@ -95,6 +98,13 @@ void AMonster::SetSpeed(float NewSpeed)
 	GetCharacterMovement()->MaxWalkSpeed = NewSpeed;
 }
 
+void AMonster::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AMonster, CurrentHP);
+}
+
 float AMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	CurrentHP -= DamageAmount;
@@ -119,3 +129,40 @@ void AMonster::Destroyed()
 	Super::Destroyed();
 }
 
+
+void AMonster::C2S_DamageProcess_Implementation()
+{
+	
+	UKismetSystemLibrary::PrintString(GetWorld(), TEXT("MonsterAttack"));
+
+	TArray<TEnumAsByte<EObjectTypeQuery>> ObjecTypes;
+	ObjecTypes.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_GameTraceChannel3));
+
+	TArray<AActor*> IgnoreActors;
+	//IgnoreActors.Add(Monster);
+
+	TArray<AActor*>OutActors;
+
+	bool bResult = UKismetSystemLibrary::SphereOverlapActors(
+		GetWorld(),
+		GetActorLocation(),
+		200.0f,
+		ObjecTypes,
+		AActor::StaticClass(),
+		IgnoreActors,
+		OutActors
+
+	);
+	//UE_LOG(LogClass, Warning, TEXT("%s"), OutActors[0]);
+
+	if (bResult)
+	{
+		UGameplayStatics::ApplyDamage(OutActors[0],
+			30.0f,
+			nullptr,
+			this,
+			nullptr
+		);
+	}
+	
+}

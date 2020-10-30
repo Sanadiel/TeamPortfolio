@@ -2,56 +2,20 @@
 
 
 #include "AnimNotify_MonsterAttack.h"
-#include "Kismet/KismetSystemLibrary.h"
 #include "GameFramework/Pawn.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/World.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "Monster.h"
 
 
 void UAnimNotify_MonsterAttack::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation)
 {
 	Super::Notify(MeshComp, Animation);
 
-	 
-	AActor* Monster = MeshComp->GetOwner();
 
-	if (Monster)
-	{
-		UKismetSystemLibrary::PrintString(Monster->GetWorld(), TEXT("MonsterAttack"));
+	//AActor* Monster = MeshComp->GetOwner();
+	AMonster* Monster = Cast<AMonster>(MeshComp->GetOwner());
 
-		TArray<TEnumAsByte<EObjectTypeQuery>> ObjecTypes;
-		ObjecTypes.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_GameTraceChannel3));
-
-		TArray<AActor*> IgnoreActors;
-		//IgnoreActors.Add(Monster);
-
-		TArray<AActor*>OutActors;
-
-		bool bResult = UKismetSystemLibrary::SphereOverlapActors(
-			Monster->GetWorld(),
-			Monster->GetActorLocation(),
-			200.0f,
-			ObjecTypes,
-			AActor::StaticClass(),
-			IgnoreActors,
-			OutActors
-
-		);
-		//UE_LOG(LogClass, Warning, TEXT("%s"), OutActors[0]);
-
-		if (bResult)
-		{
-			UGameplayStatics::ApplyDamage(OutActors[0],
-				30.0f,
-				nullptr,
-				Monster,
-				nullptr
-			);
-		}
-	}
-	
-
-
-
+	Monster->C2S_DamageProcess();
 }

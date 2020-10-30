@@ -36,6 +36,7 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	//S
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
 	EMonsterState CurrentState;
 
@@ -63,8 +64,10 @@ public:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Status")
 	class UBehaviorTree* MonsterBT;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "State")
+	//S
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Replicated, Category = "State")
 	float CurrentHP = 100.0f;
+
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "State")
 	float MaxHP = 100.0f;
@@ -72,9 +75,13 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
 	EMonsterType MonType;
 
-
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
 	virtual void Destroyed() override;
+
+	UFUNCTION(Server, Reliable)
+	void C2S_DamageProcess();
+	void C2S_DamageProcess_Implementation();
 };
