@@ -60,6 +60,8 @@ ABossProjectileBase::ABossProjectileBase()
 
 	bActivated = false;
 
+	
+	Sphere->SetAngularDamping(0.5f);
 
 }
 

@@ -22,6 +22,7 @@
 #include "NiagaraSystem.h"
 #include "NiagaraFunctionLibrary.h"
 #include "TimerManager.h"
+#include "Components/WidgetComponent.h"
 
 // Sets default values
 ABossCharacter::ABossCharacter()
@@ -100,6 +101,16 @@ ABossCharacter::ABossCharacter()
 	Spline->SetupAttachment(RootComponent);
 
 	bCanSeeTrajectory = false;
+
+	Widget_3D = CreateDefaultSubobject<UWidgetComponent>(TEXT("Widget_3D"));
+	Widget_3D->SetupAttachment(RootComponent);
+	Widget_3D->SetWidgetSpace(EWidgetSpace::World);
+	Widget_3D->SetDrawSize(FVector2D(1000.0f, 200.0f));
+	Widget_3D->SetRelativeLocation(FVector(200.0f, 0.0f, -50.0f));
+	Widget_3D->SetRelativeRotation(FRotator(15.0f, 180.0f, 0.0f));
+	Widget_3D->SetRelativeScale3D(FVector(0.25f));
+	Widget_3D->bOnlyOwnerSee = true;
+	
 }
 
 // Called when the game starts or when spawned
@@ -329,11 +340,12 @@ void ABossCharacter::CreateUI()
 	{
 		if (BossWidgetClass)
 		{
-			UBossWidgetBase* bossWidget = CreateWidget<UBossWidgetBase>(Cast<APlayerController>(GetController()), BossWidgetClass);
-			if (bossWidget)
-			{
-				bossWidget->AddToViewport();
-			}
+			//UBossWidgetBase* bossWidget = CreateWidget<UBossWidgetBase>(Cast<APlayerController>(GetController()), BossWidgetClass);
+			//if (bossWidget)
+			//{
+			//	bossWidget->AddToViewport();
+			//}
+			Widget_3D->SetWidgetClass(BossWidgetClass);
 		}
 	}
 }
@@ -414,13 +426,13 @@ void ABossCharacter::SpawnProjectile_Implementation(int32 Index)
 	ABossProjectileBase* projectile = GetWorld()->SpawnActor<ABossProjectileBase>(ProjectileClasses[Index], transform, params);
 	if (projectile)
 	{
-		UE_LOG(LogClass, Warning, TEXT("Spawn by UI is Success."));
+		//UE_LOG(LogClass, Warning, TEXT("Spawn by UI is Success."));
 		HoldSpawnProjectile(projectile);
 		ResetCooldown(Index);
 	}
 	else
 	{
-		UE_LOG(LogClass, Warning, TEXT("Projectile Spawn Failed"));
+		UE_LOG(LogClass, Warning, TEXT("Projectile Spawn by UI is Failed"));
 	}
 }
 
@@ -546,7 +558,7 @@ void ABossCharacter::TrajectoryLineTeleport_Implementation()
 	predict.ProjectileRadius = 5.0f;
 	predict.MaxSimTime = 2.0f;
 	predict.bTraceWithChannel = true;
-	predict.TraceChannel = ECollisionChannel::ECC_WorldStatic;
+	predict.TraceChannel = ECollisionChannel::ECC_Visibility;
 	predict.SimFrequency = 10.0f;
 	predict.OverrideGravityZ = -500.0f;
 	//predict.DrawDebugType = EDrawDebugTrace::ForOneFrame;
