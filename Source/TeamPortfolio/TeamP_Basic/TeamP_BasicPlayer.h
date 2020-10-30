@@ -215,10 +215,12 @@ public:
 	void ChangeGranade(int WeaponNumber);
 	void ThrowGranade_Start();
 	void ThrowGranade_End();
-
+	void ThrowGranade();
 
 	//수류탄 스폰
-	//UPROPERTY(EditDefaultsOnly, Category = Projectile)
-	//TSubclassOf<class ATeamPortfolioProjectile> Granade;
+	UPROPERTY(EditDefaultsOnly, Category = Projectile)
+	TSubclassOf<class AGranade> GranadeClass;
+
+	
 
 };

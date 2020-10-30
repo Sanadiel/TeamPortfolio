@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "../Data/MonsterDataTable.h"
 #include "Monster.generated.h"
 
 UENUM(BlueprintType)
@@ -67,6 +68,11 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "State")
 	float MaxHP = 100.0f;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
+	EMonsterType MonType;
+
+
 
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 

@@ -53,11 +53,11 @@ void UTotalLog_GameInstance::SettingItemData()
 
 void UTotalLog_GameInstance::SettingLogData()
 {
-	Monster_Record.Reserve(MonsterDataArray.Num());
+	//Monster_Record.Reserve(MonsterDataArray.Num());
 
-	for (int Index = 0; Index != MonsterDataArray.Num(); ++Index)
+	for (int Index = 0; Index != (int)EMonsterType::DataMax; ++Index)
 	{
-		Monster_Record.Add(0);
+		Monster_Record.Add(EMonsterType(Index), 0);
 	}
 	
 }

@@ -15,6 +15,7 @@
 #include "../Boss/BossCharacter.h"
 #include "../Lobby/Lobby_WidgetBase.h"
 #include "../Base/Base_GM.h"
+#include "../Lobby/Lobby_ReadyWidget.h"
 
 AUI_PC::AUI_PC()
 {
@@ -167,6 +168,16 @@ void AUI_PC::AddTimeWidget()
 	if (LobbyWidgetObject)
 	{
 		LobbyWidgetObject->AddToViewport();
+	}
+}
+
+void AUI_PC::AddReadyWidget()
+{
+	ReadyWidgetObject = CreateWidget<ULobby_ReadyWidget>(this, ReadyWidgetClass);
+
+	if (ReadyWidgetObject)
+	{
+		ReadyWidgetObject->AddToViewport();
 	}
 }
 

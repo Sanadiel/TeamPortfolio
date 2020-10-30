@@ -6,6 +6,7 @@
 #include "Components/TextBlock.h"
 #include "../Instance/TotalLog_GameInstance.h"
 #include "../MainUI/UI_PC.h"
+#include "../Data/MonsterDataTable.h"
 
 void UResultFadeOutBase::NativeConstruct()
 {
@@ -28,7 +29,7 @@ void UResultFadeOutBase::SettingText()
 	for (int i = 0; i != TextBoxArray_Max; ++i)
 	{
 		FString strText = GI->GetMonsterData(i).MonsterName;
-		strText += FString::Printf(TEXT(" : %d"), GI->Monster_Record[i]);
+		strText += FString::Printf(TEXT(" : %d"), GI->Monster_Record[EMonsterType(i)]);
 		TextBoxArray[i]->SetText(FText::FromString(strText));
 	}
 }
