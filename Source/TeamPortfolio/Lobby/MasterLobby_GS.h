@@ -14,16 +14,4 @@ class TEAMPORTFOLIO_API AMasterLobby_GS : public AGameStateBase
 {
 	GENERATED_BODY()
 	
-#pragma region Public Member
-public:
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Replicated, Category = "Network")
-	TArray<bool> ReadyButton;
-
-#pragma endregion
-
-#pragma region Public Function
-	AMasterLobby_GS();
-	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-
-#pragma endregion
 };

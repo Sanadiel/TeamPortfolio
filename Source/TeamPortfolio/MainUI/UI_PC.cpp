@@ -281,4 +281,5 @@ void AUI_PC::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimePr
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AUI_PC, IsDefencePlayer);
+	DOREPLIFETIME(AUI_PC, IsReady);
 }
