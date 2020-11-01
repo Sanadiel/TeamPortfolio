@@ -23,19 +23,19 @@ public:
 	
 #pragma region Public Function
 public:
-	UFUNCTION()
-	void StartStage();
+	virtual void StartGame() override;
 
 	virtual void BeginPlay() override;
 	virtual void PostLogin(APlayerController* NewPlayer) override;
 
 	virtual void Setting() override;
 
-	UFUNCTION(BlueprintCallable)
-	void StartCheck();
-
 	UFUNCTION()
+	void StartCheck();
 	void Check();
+
+	virtual void StartCountDown() override;
+	virtual void DecreaseTime() override;
 
 #pragma endregion 
 

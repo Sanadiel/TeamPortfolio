@@ -104,6 +104,10 @@ public:
 	void C2S_ReplaceWorld(FName Tag);
 	void C2S_ReplaceWorld_Implementation(FName Tag);
 
+	UFUNCTION(Server, Reliable)
+	void C2S_SetIsReady(bool bValue);
+	void C2S_SetIsReady_Implementation(bool bValue);
+
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	

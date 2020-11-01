@@ -173,12 +173,19 @@ void AUI_PC::AddTimeWidget()
 
 void AUI_PC::AddReadyWidget_Implementation()
 {
-	ReadyWidgetObject = CreateWidget<ULobby_ReadyWidget>(this, ReadyWidgetClass);
-
-	if (ReadyWidgetObject)
+	if (IsDefencePlayer == false)
 	{
-		ReadyWidgetObject->AddToViewport();
+		ReadyWidgetObject = CreateWidget<ULobby_ReadyWidget>(this, ReadyWidgetClass);
+
+		if (ReadyWidgetObject)
+		{
+			ReadyWidgetObject->AddToViewport();
+		}
 	}
+	else
+	{
+		GetMainUI()->ReadyWidget->SetVisibility(ESlateVisibility::Visible);
+	}	
 }
 
 void AUI_PC::Toggle_InvenWidget()
@@ -274,6 +281,11 @@ void AUI_PC::C2S_ReplaceWorld_Implementation(FName Tag)
 	{
 		GM->Replace_Player(this, Tag);
 	}
+}
+
+void AUI_PC::C2S_SetIsReady_Implementation(bool bValue)
+{
+	IsReady = bValue;
 }
 
 void AUI_PC::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

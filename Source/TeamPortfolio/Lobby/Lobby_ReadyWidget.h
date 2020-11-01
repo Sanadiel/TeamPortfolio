@@ -28,6 +28,12 @@ public:
 public:
 	virtual void NativeConstruct() override;
 
+	UFUNCTION()
+	void Ready();
+
+	UFUNCTION()
+	void UnReady();
+
 #pragma endregion
 
 };

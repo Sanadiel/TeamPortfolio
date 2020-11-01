@@ -7,17 +7,16 @@
 #include "Kismet/GameplayStatics.h"
 #include "../MainUI/UI_PC.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "MasterLobby_GS.h"
 
-void AMasterLobby_GM::StartStage()
+void AMasterLobby_GM::StartGame()
 {
-	GetWorld()->ServerTravel(TEXT("Snow_Level"));
+	GetWorld()->ServerTravel(TEXT("StageTestLevel"));
 }
 
 void AMasterLobby_GM::BeginPlay()
 {
 	Super::BeginPlay();
-
-	
 }
 
 void AMasterLobby_GM::PostLogin(APlayerController * NewPlayer)
@@ -38,6 +37,7 @@ void AMasterLobby_GM::Setting()
 	Info.UUID = 123;
 	Info.Linkage = 0;
 
+	UE_LOG(LogClass, Warning, TEXT("Call Delay"));
 	UKismetSystemLibrary::Delay(GetWorld(), 5.f, Info);
 }
 
@@ -62,20 +62,49 @@ void AMasterLobby_GM::Check()
 {
 	if (PC_Array.Num() == 2)
 	{
+		UE_LOG(LogClass, Warning, TEXT("%d, %d"), PC_Array[0]->IsReady, PC_Array[1]->IsReady);
 		if (PC_Array[0]->IsReady && PC_Array[1]->IsReady)
 		{
-			StartStage();
+			GetWorldTimerManager().ClearTimer(ButtonTimer);
+			StartCountDown();
 		}
 	}
 	else if (PC_Array.Num() == 1)
 	{
+		UE_LOG(LogClass, Warning, TEXT("%d"), PC_Array[0]->IsReady);
 		if (PC_Array[0]->IsReady)
 		{
-			StartStage();
+			GetWorldTimerManager().ClearTimer(ButtonTimer);
+			StartCountDown();
 		}
 	}
 	else
 	{
+		UE_LOG(LogClass, Warning, TEXT("??????"));
+	}
+}
 
+void AMasterLobby_GM::StartCountDown()
+{
+	GetWorldTimerManager().SetTimer(
+		LobbyTimer, this,
+		&AMasterLobby_GM::DecreaseTime,
+		1.0f, true, 1.0f
+	);
+}
+
+void AMasterLobby_GM::DecreaseTime()
+{
+	AMasterLobby_GS* GS = GetGameState<AMasterLobby_GS>();
+	if (GS)
+	{
+		GS->LeftTime--;
+		GS->OnRep_LeftTime();
+
+		if (GS->LeftTime <= 0)
+		{
+			GetWorldTimerManager().ClearTimer(LobbyTimer);
+			StartGame();
+		}
 	}
 }

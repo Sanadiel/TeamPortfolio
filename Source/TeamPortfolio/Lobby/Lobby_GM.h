@@ -21,8 +21,7 @@ public:
 
 #pragma region Public Function
 public:
-	UFUNCTION()
-	void StartGame();
+	virtual void StartGame();
 
 	virtual void BeginPlay() override;
 
@@ -31,21 +30,15 @@ public:
 	//CheckButton
 	FTimerHandle ButtonTimer;
 
-	UFUNCTION(BlueprintCallable)
 	virtual void StartCheckButton();
-
-	UFUNCTION()
 	virtual void CheckButton();
 
 
 	//Time
 	FTimerHandle LobbyTimer;
 
-	UFUNCTION(BlueprintCallable)
-	void StartCountDown();
-
-	UFUNCTION()
-	void DecreaseTime();
+	virtual void StartCountDown();
+	virtual void DecreaseTime();
 
 #pragma endregion
 	
