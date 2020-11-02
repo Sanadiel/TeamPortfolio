@@ -16,6 +16,6 @@ void UAnimNotify_MonsterAttack::Notify(USkeletalMeshComponent* MeshComp, UAnimSe
 
 	//AActor* Monster = MeshComp->GetOwner();
 	AMonster* Monster = Cast<AMonster>(MeshComp->GetOwner());
-
-	Monster->C2S_DamageProcess();
+	
+	Monster->DamageProcess();
 }

@@ -317,12 +317,7 @@ float ATeamP_BasicPlayer::TakeDamage(float DamageAmount, FDamageEvent const& Dam
 		CurrentHP -= DamageAmount;
 	}
 
-
-	ATeamP_BasicPC* PC = GetController<ATeamP_BasicPC>();
-	if (IsValid(PC))
-	{
-		PC->GetMainUI()->UpdateHpBar(CurrentHP / MaxHP);
-	}
+	UpdateHpUI();	
 
 	return 0.0f;
 }
@@ -417,6 +412,15 @@ void ATeamP_BasicPlayer::Reload_Implementation()
 	UpdateReloadUI();
 
 	UE_LOG(LogClass, Warning, TEXT("CurrentBullet = %d,MaxBullet = %d, RemainedBullet = %d"), CurrentWeapon->CurrentBullet, CurrentWeapon->MaxBullet, CurrentWeapon->RemainedBullet);
+}
+
+void ATeamP_BasicPlayer::UpdateHpUI_Implementation()
+{
+	ATeamP_BasicPC* PC = GetController<ATeamP_BasicPC>();
+	if (IsValid(PC))
+	{
+		PC->GetMainUI()->UpdateHpBar(CurrentHP / MaxHP);
+	}
 }
 
 void ATeamP_BasicPlayer::UpdateReloadUI_Implementation()

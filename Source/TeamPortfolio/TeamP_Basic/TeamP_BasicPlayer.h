@@ -164,6 +164,10 @@ public:
 	void Reload_Implementation();
 
 	UFUNCTION(Client, Reliable)
+	void UpdateHpUI();
+	void UpdateHpUI_Implementation();
+
+	UFUNCTION(Client, Reliable)
 	void UpdateReloadUI();
 	void UpdateReloadUI_Implementation();
 	//발사가능체크

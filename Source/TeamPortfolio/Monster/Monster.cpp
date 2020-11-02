@@ -81,10 +81,8 @@ void AMonster::ProcessHeardPawn(APawn* Pawn, const FVector& Location, float Volu
 	UE_LOG(LogClass, Warning, TEXT("Heard %s"), *Pawn->GetName());
 }
 
-void AMonster::SetCurrentState(EMonsterState NewState)
+void AMonster::SetCurrentState_Implementation(EMonsterState NewState)
 {
-	
-
 	AMonsterAIController* AIC = GetController<AMonsterAIController>();
 	if (AIC)
 	{
@@ -103,6 +101,7 @@ void AMonster::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetime
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AMonster, CurrentHP);
+	DOREPLIFETIME(AMonster, CurrentState);
 }
 
 float AMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
@@ -132,6 +131,14 @@ void AMonster::Destroyed()
 	Super::Destroyed();
 }
 
+void AMonster::DamageProcess()
+{
+	if (HasAuthority())
+	{
+		C2S_DamageProcess();
+	}
+}
+
 
 void AMonster::C2S_DamageProcess_Implementation()
 {	
@@ -158,7 +165,7 @@ void AMonster::C2S_DamageProcess_Implementation()
 
 	if (bResult)
 	{
-		UE_LOG(LogClass, Warning, TEXT("%s"), OutActors[0]);
+		UE_LOG(LogClass, Warning, TEXT("Monster Attack : %s"), OutActors[0]);
 
 		UGameplayStatics::ApplyDamage(OutActors[0],
 			30.0f,

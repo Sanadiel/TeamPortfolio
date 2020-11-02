@@ -37,7 +37,7 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	//S
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Replicated, Category = "Status")
 	EMonsterState CurrentState;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
@@ -49,8 +49,9 @@ public:
 	UFUNCTION()
 	void ProcessHeardPawn(APawn* Pawn, const FVector&Location, float Volume);
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void SetCurrentState(EMonsterState NewState);
+	void SetCurrentState_Implementation(EMonsterState NewState);
 
 	UFUNCTION(BlueprintCallable)
 	void SetSpeed(float Speed);
@@ -80,6 +81,8 @@ public:
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
 	virtual void Destroyed() override;
+
+	void DamageProcess();
 
 	UFUNCTION(Server, Reliable)
 	void C2S_DamageProcess();
