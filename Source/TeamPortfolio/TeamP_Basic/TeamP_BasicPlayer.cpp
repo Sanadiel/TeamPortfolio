@@ -738,4 +738,14 @@ void ATeamP_BasicPlayer::ThrowGranade_Implementation()
 
 }
 
+void ATeamP_BasicPlayer::Destroyed()
+{
+	Super::Destroyed();
+
+	if (IsValid(CurrentWeapon))
+	{
+		CurrentWeapon->Destroy();
+	}
+}
+
 

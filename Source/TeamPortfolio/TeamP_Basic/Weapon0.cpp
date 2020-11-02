@@ -189,8 +189,13 @@ void AWeapon0::OnCurrentBulletCheck_Implementation()
 	if (IsValid(PC))
 	{
 		//UE_LOG(LogClass, Warning, TEXT("OnCurrentBulletCheck .... Current Bullet : %d, RemainedBullet :%d"), CurrentBullet, RemainedBullet);
-		PC->GetMainUI()->WeaponInfo->SetIBulletNum(CurrentBullet);
-		PC->GetMainUI()->WeaponInfo->SetIBulletMaxNum(RemainedBullet);
+
+		if (IsValid(PC->MainWidgetObject))
+		{
+			PC->GetMainUI()->WeaponInfo->SetIBulletNum(CurrentBullet);
+			PC->GetMainUI()->WeaponInfo->SetIBulletMaxNum(RemainedBullet);
+		}
+		
 	}
 }
 
@@ -479,5 +484,10 @@ void AWeapon0::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetime
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(AWeapon0, CurrentBullet);
 	DOREPLIFETIME(AWeapon0, RemainedBullet);
+}
+
+void AWeapon0::OnRep_Owner()
+{
+	Super::OnRep_Owner();
 }
 

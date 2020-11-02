@@ -7,20 +7,20 @@
 
 AActor* ABase_GM::FindPlayerStart_Implementation(AController* Player, const FString& IncomingName)
 {
-	if (IncomingName == TEXT(""))
+	if (PlayerStartArray.Num() == 0)
 	{
-		TArray<AActor*> OutActors;
-		UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerStart::StaticClass(), OutActors);
-		return OutActors[0];
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerStart::StaticClass(), PlayerStartArray);
+	}
+
+	if (IncomingName == TEXT(""))
+	{		
+		return PlayerStartArray[0];
 	}
 	else
 	{
-		TArray<AActor*> OutActors;
-		UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerStart::StaticClass(), OutActors);
-
-		for (int Index = 0; Index != OutActors.Num(); ++Index)
+		for (int Index = 0; Index != PlayerStartArray.Num(); ++Index)
 		{
-			APlayerStart* PS = Cast< APlayerStart>(OutActors[Index]);
+			APlayerStart* PS = Cast<APlayerStart>(PlayerStartArray[Index]);
 
 			if (IncomingName == PS->PlayerStartTag.ToString())
 			{
@@ -29,7 +29,7 @@ AActor* ABase_GM::FindPlayerStart_Implementation(AController* Player, const FStr
 		}
 
 		//없는 경우
-		return OutActors[0];
+		return PlayerStartArray[0];
 	}
 }
 
@@ -58,5 +58,9 @@ void ABase_GM::Replace_AllPlayers_Implementation()
 void ABase_GM::Replace_Player_Implementation(AController* Player, FName Tag)
 {
 	AActor* PS = FindPlayerStart_Implementation(Player, Tag.ToString());
-	Player->GetPawn()->SetActorTransform(PS->GetTransform());
+
+	if (IsValid(Player->GetPawn()))
+	{
+		Player->GetPawn()->SetActorTransform(PS->GetTransform());
+	}
 }

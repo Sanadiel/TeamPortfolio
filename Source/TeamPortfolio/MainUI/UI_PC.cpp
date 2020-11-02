@@ -273,13 +273,12 @@ void AUI_PC::S2C_SettingisDefence_Implementation()
 
 void AUI_PC::C2S_SpawnandPossess_Implementation()
 {
-	ABossCharacter* BossCharacter = GetWorld()->SpawnActor<ABossCharacter>(Boss, StartSpot->GetTransform());
 	APawn* pawn = GetPawn();
 	UnPossess();
-	Possess(BossCharacter);
-	BossCharacter->CreateUI();
-	pawn->SetActorHiddenInGame(true);
+
+	ABossCharacter* BossCharacter = GetWorld()->SpawnActor<ABossCharacter>(Boss, pawn->GetTransform());	
 	pawn->Destroy();
+	Possess(BossCharacter);	
 }
 
 void AUI_PC::C2S_ReplaceWorld_Implementation(FName Tag)

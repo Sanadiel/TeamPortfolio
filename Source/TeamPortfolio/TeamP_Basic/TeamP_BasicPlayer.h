@@ -256,6 +256,6 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = Projectile)
 	TSubclassOf<class AGranade> GranadeClass;
 
-	
+	virtual void Destroyed() override;
 
 };

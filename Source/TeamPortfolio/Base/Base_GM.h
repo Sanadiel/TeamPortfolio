@@ -14,6 +14,12 @@ class TEAMPORTFOLIO_API ABase_GM : public AGameModeBase
 {
 	GENERATED_BODY()
 	
+#pragma region Public Member
+public:
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	TArray<AActor*> PlayerStartArray;
+
+#pragma endregion
 
 #pragma region Public Function
 public:
