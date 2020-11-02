@@ -62,6 +62,15 @@ void UTeamP_AnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 			}
 		}
 
+		if (Pawn->bIsDead && Pawn->DeadMontage)
+		{
+			if (!Montage_IsPlaying(Pawn->DeadMontage))
+			{
+				FString SectionName = FString::Printf(TEXT("Death_%d"), FMath::RandRange(1, 3));
+				Pawn->PlayAnimMontage(Pawn->DeadMontage, 1.0f, FName(SectionName));
+			}
+		}
+
 	}
 }
 

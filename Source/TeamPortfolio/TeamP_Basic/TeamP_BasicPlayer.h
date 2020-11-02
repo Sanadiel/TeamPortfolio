@@ -39,9 +39,9 @@ public:
 	//UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	//class UWeaponComponent* Weapon1;
 
-
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Replicated)
 	TArray<int> CurrentWeaponBullet;
-
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Replicated)
 	TArray<int> RemainedWeaponBullet;
 
 
@@ -124,11 +124,11 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
 	uint64 bIsShotgun : 1;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Replicated, Category = "Status")
 	uint64 bIsGranade : 1;
 
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere,Replicated, Category = "Status")
 	uint64 bIsReload : 1;
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
@@ -140,15 +140,19 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
 	uint64 bFireShotgun : 1;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Replicated, Category = "Status")
 	uint64 bIsWeaponChange : 1;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Replicated, Category = "Status")
+	uint64 bIsDead : 1;
 
 	UFUNCTION(Server, Reliable)
 	void StartFire();
 	void StartFire_Implementation();
 
+	UFUNCTION(Server, Reliable)
 	void StopFire();
-
+	void StopFire_Implementation();
 	void Reload();
 
 	//발사가능체크
@@ -176,7 +180,19 @@ public:
 	class UAnimMontage* ChangeWeaponMontage;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, category = "Data")
-	class UAnimMontage* ThrowGranageMontage;
+	class UAnimMontage* ThrowGranadeMontage;
+
+	//UFUNCTION(Server, Reliable)
+	//void StartFire();
+	//void StartFire_Implementation();
+
+	//UFUNCTION(Server, Reliable)
+	//void StartFire();
+	//void StartFire_Implementation();
+
+	//UFUNCTION(Server, Reliable)
+	//void StartFire();
+	//void StartFire_Implementation();
 
 
 	//무기 변경 
@@ -214,9 +230,16 @@ public:
 	FVector CrouchedSpringArmPosition;
 
 	void ChangeGranade(int WeaponNumber);
+	
+	UFUNCTION(NetMulticast, Reliable)
 	void ThrowGranade_Start();
+	void ThrowGranade_Start_Implementation();
+	UFUNCTION(NetMulticast, Reliable)
 	void ThrowGranade_End();
+	void ThrowGranade_End_Implementation();
+	UFUNCTION(Server, Reliable)
 	void ThrowGranade();
+	void ThrowGranade_Implementation();
 
 	//수류탄 스폰
 	UPROPERTY(EditDefaultsOnly, Category = Projectile)

@@ -39,9 +39,15 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
 	uint64 bIsWeaponChange : 1;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
+	uint64 bIsReload : 1;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
-		uint64 bIsGranade : 1;
+	uint64 bIsDead : 1;
+
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
+	uint64 bIsGranade : 1;
 
 
 
@@ -58,8 +64,7 @@ public:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Status")
 	float AimPitch;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
-	float bIsReload;
+
 
 	UFUNCTION()
 	void Animnotify_ReloadEnd(UAnimNotify* Animnotify);

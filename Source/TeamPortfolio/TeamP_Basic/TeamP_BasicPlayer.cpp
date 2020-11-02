@@ -70,22 +70,25 @@ void ATeamP_BasicPlayer::BeginPlay()
 
 	//CurrentWeaponBullet.Init(4,0)
 
-	for (int i = 0; i < WeaponClasses.Num(); i++) {
-		
-		AWeapon0* WeaponBulletCount = Cast<AWeapon0>(WeaponClasses[i].GetDefaultObject());
+	if (HasAuthority()) {
+		for (int i = 0; i < WeaponClasses.Num(); i++) {
 
-		//UE_LOG(LogClass, Warning, TEXT("BeginPlay [%d]"),i);
+			AWeapon0* WeaponBulletCount = Cast<AWeapon0>(WeaponClasses[i].GetDefaultObject());
 
-		//UE_LOG(LogClass, Warning, TEXT("valid? : %d"), IsValid(WeaponBulletCount));
+			//UE_LOG(LogClass, Warning, TEXT("BeginPlay [%d]"),i);
 
-		if (WeaponBulletCount)			//총알갯수 받아옴
-		{
-			CurrentWeaponBullet.Add( WeaponBulletCount->CurrentBullet);
+			//UE_LOG(LogClass, Warning, TEXT("valid? : %d"), IsValid(WeaponBulletCount));
 
-			RemainedWeaponBullet.Add(WeaponBulletCount->RemainedBullet);
-			//UE_LOG(LogClass,Warning,TEXT("CurrentWeaponBullet[%d] = %d,RemainedWeaponBullet[%d] = %d"),i, CurrentWeaponBullet[i],i, RemainedWeaponBullet[i])
+			if (WeaponBulletCount)			//총알갯수 받아옴
+			{
+				CurrentWeaponBullet.Add(WeaponBulletCount->CurrentBullet);
+
+				RemainedWeaponBullet.Add(WeaponBulletCount->RemainedBullet);
+				//UE_LOG(LogClass,Warning,TEXT("CurrentWeaponBullet[%d] = %d,RemainedWeaponBullet[%d] = %d"),i, CurrentWeaponBullet[i],i, RemainedWeaponBullet[i])
+			}
 		}
 	}
+
 
 	WeaponChange(0);
 
@@ -251,6 +254,12 @@ void ATeamP_BasicPlayer::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 
 	DOREPLIFETIME(ATeamP_BasicPlayer,CurrentHP);
 	DOREPLIFETIME(ATeamP_BasicPlayer, CurrentWeapon);
+	DOREPLIFETIME(ATeamP_BasicPlayer, CurrentWeaponBullet);
+	DOREPLIFETIME(ATeamP_BasicPlayer, RemainedWeaponBullet);
+	DOREPLIFETIME(ATeamP_BasicPlayer, bIsReload);
+	DOREPLIFETIME(ATeamP_BasicPlayer, bIsWeaponChange); 
+	DOREPLIFETIME(ATeamP_BasicPlayer, bIsGranade); 
+	DOREPLIFETIME(ATeamP_BasicPlayer, bIsDead);
 	
 }
 
@@ -286,12 +295,10 @@ float ATeamP_BasicPlayer::TakeDamage(float DamageAmount, FDamageEvent const& Dam
 
 		if (CurrentHP <= 0)
 		{
+
 			//사망애니메이션
-			if (DeadMontage)
-			{
-				FString SectionName = FString::Printf(TEXT("Death_%d"), FMath::RandRange(1, 3));
-				PlayAnimMontage(DeadMontage, 1.0f, FName(SectionName));
-			}
+			bIsDead = true;
+			
 
 			DisableInput(Cast<APlayerController>(GetController()));
 		}
@@ -308,12 +315,8 @@ float ATeamP_BasicPlayer::TakeDamage(float DamageAmount, FDamageEvent const& Dam
 		if (CurrentHP <= 0)
 		{
 			//사망애니메이션
-			if (DeadMontage)
-			{
-				FString SectionName = FString::Printf(TEXT("Death_%d"), FMath::RandRange(1, 3));
-				PlayAnimMontage(DeadMontage, 1.0f, FName(SectionName));
-			}
-
+			bIsDead = true;
+			
 			DisableInput(Cast<APlayerController>(GetController()));
 		}
 	}
@@ -369,7 +372,7 @@ void ATeamP_BasicPlayer::StartFire_Implementation() //발사키 입력시
 
 } 
 
-void ATeamP_BasicPlayer::StopFire()
+void ATeamP_BasicPlayer::StopFire_Implementation()
 {
 	if (bIsGranade)
 	{
@@ -448,6 +451,8 @@ void ATeamP_BasicPlayer::CheckCanAnimation()
 
 //선택한 무기 표시
 
+
+
 void ATeamP_BasicPlayer::WeaponChange(int WeaponNumber)
 {
 	if (bIsReload || bIsWeaponChange || bFireShotgun||bIsFire) {
@@ -486,12 +491,11 @@ void ATeamP_BasicPlayer::WeaponChange(int WeaponNumber)
 	}
 	
 
-	FActorSpawnParameters params;
-	params.Owner = this;
-
 	
 	if (HasAuthority())
 	{
+		FActorSpawnParameters params;
+		params.Owner = this;
 
 		AWeapon0* SpawnWeapon = GetWorld()->SpawnActor<AWeapon0>(WeaponClasses[WeaponNumber], params);
 
@@ -663,30 +667,30 @@ void ATeamP_BasicPlayer::ChangeGranade(int WeaponNumber)
 	
 }
 
-void ATeamP_BasicPlayer::ThrowGranade_Start()
+void ATeamP_BasicPlayer::ThrowGranade_Start_Implementation()
 {
 	UE_LOG(LogClass, Warning, TEXT("ThrowStart"))
-	if (ThrowGranageMontage)
+	if (ThrowGranadeMontage)
 	{
 		UE_LOG(LogClass, Warning, TEXT("ThrowStart_Montage"))
 
 		FString SectionName = FString::Printf(TEXT("Throw_1"));
-		PlayAnimMontage(ThrowGranageMontage, 1.0f, FName(SectionName));
+		PlayAnimMontage(ThrowGranadeMontage, 1.0f, FName(SectionName));
 	}
 }
 
-void ATeamP_BasicPlayer::ThrowGranade_End()
+void ATeamP_BasicPlayer::ThrowGranade_End_Implementation()
 {
 	UE_LOG(LogClass,Warning,TEXT("ThrowEnd"))
-	if (ThrowGranageMontage)
+	if (ThrowGranadeMontage)
 	{
 
 		FString SectionName = FString::Printf(TEXT("Throw_2"));
-		PlayAnimMontage(ThrowGranageMontage, 1.0f, FName(SectionName));
+		PlayAnimMontage(ThrowGranadeMontage, 1.0f, FName(SectionName));
 	}
 }
 
-void ATeamP_BasicPlayer::ThrowGranade()
+void ATeamP_BasicPlayer::ThrowGranade_Implementation()
 {
 	UE_LOG(LogClass, Warning, TEXT("ThrowGranade_ThrowGranade"))
 	// try and fire a projectile
@@ -713,3 +717,5 @@ void ATeamP_BasicPlayer::ThrowGranade()
 		}
 
 }
+
+

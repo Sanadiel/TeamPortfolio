@@ -41,15 +41,21 @@ public:
 	void OnFire();
 	void OnFire_Implementation();
 
+
+	UFUNCTION(Server, Reliable)
+	void OnFireShotgun();
+	void OnFireShotgun_Implementation();
+
+
 	UFUNCTION(NetMulticast, UnReliable)
-		void Effect1(FHitResult Hit);
+	void Effect1(FHitResult Hit);
 	void Effect1_Implementation(FHitResult Hit);
 
 	UFUNCTION(NetMulticast, UnReliable)
 	void Effect2();
 	void Effect2_Implementation();
 
-	void OnFireShotgun();
+	//void OnFireShotgun();
 
 	void OnFireGranade();
 
