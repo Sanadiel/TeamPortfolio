@@ -24,6 +24,10 @@ public:
 #pragma region Public Member
 public:
 
+	UFUNCTION(BlueprintNativeEvent)
+	void MakeChilren();
+	void MakeChilren_Implementation();
+
 
 #pragma endregion
 };

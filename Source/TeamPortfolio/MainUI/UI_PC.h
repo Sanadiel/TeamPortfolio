@@ -61,6 +61,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Replicated, Category = "Lobby")
 	bool IsReady = false;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Lobby")
+	bool IsMasterLobby = false;
+
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Boss")
 	TSubclassOf<class ABossCharacter> Boss;
 #pragma endregion
@@ -81,6 +84,7 @@ public:
 
 	void AddResultWidget();
 	void AddTimeWidget();
+	void SettingReadyWidget();
 
 	UFUNCTION(Client, Reliable)
 	void AddReadyWidget();

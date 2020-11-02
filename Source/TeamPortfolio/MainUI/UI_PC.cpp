@@ -121,6 +121,7 @@ void AUI_PC::SettingUI()
 		}
 
 		C2S_ReplaceWorld(Tags[0]);
+		SettingReadyWidget();
 	}
 }
 
@@ -173,19 +174,27 @@ void AUI_PC::AddTimeWidget()
 
 void AUI_PC::AddReadyWidget_Implementation()
 {
-	if (IsDefencePlayer == false)
-	{
-		ReadyWidgetObject = CreateWidget<ULobby_ReadyWidget>(this, ReadyWidgetClass);
+	IsMasterLobby = true;
+}
 
-		if (ReadyWidgetObject)
+void AUI_PC::SettingReadyWidget()
+{
+	if (IsMasterLobby == true)
+	{
+		if (IsDefencePlayer == false)
 		{
-			ReadyWidgetObject->AddToViewport();
+			ReadyWidgetObject = CreateWidget<ULobby_ReadyWidget>(this, ReadyWidgetClass);
+
+			if (ReadyWidgetObject)
+			{
+				ReadyWidgetObject->AddToViewport();
+			}
+		}
+		else
+		{
+			GetMainUI()->ReadyWidget->SetVisibility(ESlateVisibility::Visible);
 		}
 	}
-	else
-	{
-		GetMainUI()->ReadyWidget->SetVisibility(ESlateVisibility::Visible);
-	}	
 }
 
 void AUI_PC::Toggle_InvenWidget()

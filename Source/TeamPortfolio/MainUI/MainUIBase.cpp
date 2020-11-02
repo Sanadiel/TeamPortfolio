@@ -36,6 +36,7 @@ void UMainUIBase::NativeConstruct()
 	Hover->RemoveFromViewport();
 	ItemHover->SetVisibility(ESlateVisibility::Collapsed);
 	ItemHover->RemoveFromViewport();
+	ReadyWidget->SetVisibility(ESlateVisibility::Collapsed);
 }
 
 void UMainUIBase::UpdateHpBar(float Percent)

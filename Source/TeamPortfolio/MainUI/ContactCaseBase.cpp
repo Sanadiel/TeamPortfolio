@@ -3,3 +3,6 @@
 
 #include "ContactCaseBase.h"
 
+void UContactCaseBase::MakeChilren_Implementation()
+{
+}

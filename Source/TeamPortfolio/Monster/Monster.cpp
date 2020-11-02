@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Monster.h"
@@ -134,9 +134,8 @@ void AMonster::Destroyed()
 
 
 void AMonster::C2S_DamageProcess_Implementation()
-{
-	
-	UKismetSystemLibrary::PrintString(GetWorld(), TEXT("MonsterAttack"));
+{	
+	//UKismetSystemLibrary::PrintString(GetWorld(), TEXT("MonsterAttack"));
 
 	TArray<TEnumAsByte<EObjectTypeQuery>> ObjecTypes;
 	ObjecTypes.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_GameTraceChannel3));
@@ -156,10 +155,11 @@ void AMonster::C2S_DamageProcess_Implementation()
 		OutActors
 
 	);
-	//UE_LOG(LogClass, Warning, TEXT("%s"), OutActors[0]);
 
 	if (bResult)
 	{
+		UE_LOG(LogClass, Warning, TEXT("%s"), OutActors[0]);
+
 		UGameplayStatics::ApplyDamage(OutActors[0],
 			30.0f,
 			nullptr,

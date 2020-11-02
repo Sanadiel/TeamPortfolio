@@ -11,7 +11,8 @@
 
 void AMasterLobby_GM::StartGame()
 {
-	GetWorld()->ServerTravel(TEXT("StageTestLevel"));
+	//GetWorld()->ServerTravel(TEXT("StageTestLevel"));
+	GetWorld()->ServerTravel(TEXT("Snow_Level"));
 }
 
 void AMasterLobby_GM::BeginPlay()
@@ -80,7 +81,7 @@ void AMasterLobby_GM::Check()
 	}
 	else
 	{
-		UE_LOG(LogClass, Warning, TEXT("??????"));
+		UE_LOG(LogClass, Warning, TEXT("AMasterLobby_GM : PC_Array = 0"));
 	}
 }
 
