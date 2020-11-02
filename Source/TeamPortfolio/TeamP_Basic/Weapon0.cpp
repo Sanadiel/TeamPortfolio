@@ -13,24 +13,16 @@
 #include "GameFramework/Character.h"
 #include "../MainUI/MainUIBase.h"
 #include "../MainUI/WeaponInfoBase.h"
+#include "Net/UnrealNetwork.h"
 
 void AWeapon0::OnFire_Implementation()
 {
-	if (HasAuthority())
-	{
-		UE_LOG(LogClass, Warning, TEXT("Server OnFire"));
-	}
-	else
-	{
-		UE_LOG(LogClass, Warning, TEXT("Client OnFire"));
-	}
-
 
 	ATeamP_BasicPlayer* Player = Cast<ATeamP_BasicPlayer>(GetOwner());//¹®Á¦ÀÕ¾î?
 
 	UE_LOG(LogClass, Warning, TEXT("OnFire"))
 
-		ABasicPCM* PCM = Cast<ABasicPCM>(Player->GetController());
+	ABasicPCM* PCM = Cast<ABasicPCM>(Player->GetController());
 
 	//ABasicPCM* PCM =  Cast<ABasicPCM>(Player->Camera->GetPlayerCameraManager());
 		
@@ -56,21 +48,16 @@ void AWeapon0::OnFire_Implementation()
 
 		if (Player->bCanFire) //bCanFire·Î º¯°æ
 		{
-
 			Player->bIsFireAnim = false;
 
-			Player->CurrentWeapon->CurrentBullet -= 1;
+			CurrentBullet -= 1;
+			OnRep_CurrentBullet();
 
 			UE_LOG(LogClass, Warning, TEXT("Bullet = %d / %d"), Player->CurrentWeapon->CurrentBullet, Player->CurrentWeapon->MaxBullet);
 
 			StartRecoil();
 
 			ATeamP_BasicPC* PC = Cast<ATeamP_BasicPC>(Player->GetController());
-
-			if (IsValid(PC))
-			{
-				PC->GetMainUI()->WeaponInfo->SetIBulletNum(Player->CurrentWeapon->CurrentBullet);
-			}
 
 			if (PC)
 			{
@@ -194,6 +181,24 @@ void AWeapon0::OnFire_Implementation()
 	}
 }
 
+void AWeapon0::OnCurrentBulletCheck_Implementation()
+{
+	ATeamP_BasicPlayer* Player = Cast<ATeamP_BasicPlayer>(GetOwner());
+	ATeamP_BasicPC* PC = Cast<ATeamP_BasicPC>(Player->GetController());
+
+	if (IsValid(PC))
+	{
+		//UE_LOG(LogClass, Warning, TEXT("OnCurrentBulletCheck .... Current Bullet : %d, RemainedBullet :%d"), CurrentBullet, RemainedBullet);
+		PC->GetMainUI()->WeaponInfo->SetIBulletNum(CurrentBullet);
+		PC->GetMainUI()->WeaponInfo->SetIBulletMaxNum(RemainedBullet);
+	}
+}
+
+void AWeapon0::OnRep_CurrentBullet()
+{
+	OnCurrentBulletCheck();
+}
+
 void AWeapon0::Effect1_Implementation(FHitResult Hit)
 {
 
@@ -253,7 +258,7 @@ void AWeapon0::OnFireShotgun_Implementation()												//¼¦°Ç
 	UE_LOG(LogClass, Warning, TEXT("OnFireShotgun"))
 
 		if (Player) {
-
+			
 				if (!(Player->bIsFire))
 				{
 					return;
@@ -272,21 +277,16 @@ void AWeapon0::OnFireShotgun_Implementation()												//¼¦°Ç
 
 			if (Player->bCanFire) //bCanFire·Î º¯°æ
 			{
-
 				Player->bIsFireAnim = false;
 
-				Player->CurrentWeapon->CurrentBullet -= 1;
+				CurrentBullet -= 1;
+				OnRep_CurrentBullet();
 
 				UE_LOG(LogClass, Warning, TEXT("Bullet = %d / %d"), Player->CurrentWeapon->CurrentBullet, Player->CurrentWeapon->MaxBullet);
 
 				StartRecoil();
 
 				ATeamP_BasicPC* PC = Cast<ATeamP_BasicPC>(Player->GetController());
-
-				if (IsValid(PC))
-				{
-					PC->GetMainUI()->WeaponInfo->SetIBulletNum(Player->CurrentWeapon->CurrentBullet);
-				}
 
 				if (PC)
 				{
@@ -302,7 +302,7 @@ void AWeapon0::OnFireShotgun_Implementation()												//¼¦°Ç
 
 					FHitResult OutHit;
 
-					for (int i = 0; i <= ShotgunBullet;i++) {
+					for (int i = 0; i <= ShotgunCount;i++) {
 
 						int RandX = FMath::RandRange(1, 30);
 						int RandY = FMath::RandRange(1, 30);
@@ -454,6 +454,7 @@ void AWeapon0::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	OnCurrentBulletCheck();
 }
 
 // Called every frame
@@ -471,5 +472,12 @@ void AWeapon0::Tick(float DeltaTime)
 			pc->AddPitchInput(InterpPitch);
 		}
 	}
+}
+
+void AWeapon0::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(AWeapon0, CurrentBullet);
+	DOREPLIFETIME(AWeapon0, RemainedBullet);
 }
 

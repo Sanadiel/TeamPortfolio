@@ -71,6 +71,7 @@ void ATeamP_BasicPlayer::BeginPlay()
 	//CurrentWeaponBullet.Init(4,0)
 
 	if (HasAuthority()) {
+
 		for (int i = 0; i < WeaponClasses.Num(); i++) {
 
 			AWeapon0* WeaponBulletCount = Cast<AWeapon0>(WeaponClasses[i].GetDefaultObject());
@@ -82,26 +83,15 @@ void ATeamP_BasicPlayer::BeginPlay()
 			if (WeaponBulletCount)			//총알갯수 받아옴
 			{
 				CurrentWeaponBullet.Add(WeaponBulletCount->CurrentBullet);
-
 				RemainedWeaponBullet.Add(WeaponBulletCount->RemainedBullet);
-				//UE_LOG(LogClass,Warning,TEXT("CurrentWeaponBullet[%d] = %d,RemainedWeaponBullet[%d] = %d"),i, CurrentWeaponBullet[i],i, RemainedWeaponBullet[i])
+				UE_LOG(LogClass, Warning, TEXT("CurrentWeaponBullet[%d] = %d,RemainedWeaponBullet[%d] = %d"), i, CurrentWeaponBullet[i], i, RemainedWeaponBullet[i]);
+
 			}
 		}
+
 	}
 
-
 	WeaponChange(0);
-
-
-	//Weapon1->SetHiddenInGame(true);
-
-	
-
-
-	
-
-
-
 }
 
 // Called every frame
@@ -138,10 +128,10 @@ void ATeamP_BasicPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	PlayerInputComponent->BindAction(TEXT("Ironsight"), IE_Pressed, this, &ATeamP_BasicPlayer::StartIronsight);
 	PlayerInputComponent->BindAction(TEXT("Ironsight"), IE_Released, this, &ATeamP_BasicPlayer::StopIronsight);
 
-	PlayerInputComponent->BindAction(TEXT("Reload"), IE_Pressed, this, &ATeamP_BasicPlayer::Reload);
+	PlayerInputComponent->BindAction(TEXT("Reload"), IE_Pressed, this, &ATeamP_BasicPlayer::ReloadTrigger);
 
-	PlayerInputComponent->BindAction(TEXT("Fire"), IE_Pressed, this, &ATeamP_BasicPlayer::StartFire);
-	PlayerInputComponent->BindAction(TEXT("Fire"), IE_Released, this, &ATeamP_BasicPlayer::StopFire);
+	PlayerInputComponent->BindAction(TEXT("Fire"), IE_Pressed, this, &ATeamP_BasicPlayer::StartFireTrigger);
+	PlayerInputComponent->BindAction(TEXT("Fire"), IE_Released, this, &ATeamP_BasicPlayer::StopFireTrigger);
 
 
 	//무기변경입력, 인벤토리 추가해서 인벤토리에서 무기바꿀시 삭제 or 변경
@@ -342,6 +332,16 @@ void ATeamP_BasicPlayer::OnSpawnFire()
 {
 }
 
+void ATeamP_BasicPlayer::StartFireTrigger()
+{
+	StartFire();
+}
+
+void ATeamP_BasicPlayer::StopFireTrigger()
+{
+	StopFire();
+}
+
 void ATeamP_BasicPlayer::StartFire_Implementation() //발사키 입력시 
 {
 
@@ -385,7 +385,12 @@ void ATeamP_BasicPlayer::StopFire_Implementation()
 	}
 }
 
-void ATeamP_BasicPlayer::Reload()
+void ATeamP_BasicPlayer::ReloadTrigger()
+{
+	Reload();
+}
+
+void ATeamP_BasicPlayer::Reload_Implementation()
 {
 	if ((CurrentWeapon->RemainedBullet == 0) ||CurrentWeapon->CurrentBullet == CurrentWeapon->MaxBullet|| bIsWeaponChange||bFireShotgun||bIsGranade) {
 		return;
@@ -409,14 +414,44 @@ void ATeamP_BasicPlayer::Reload()
 		}
 	}
 
+	UpdateReloadUI();
+
+	UE_LOG(LogClass, Warning, TEXT("CurrentBullet = %d,MaxBullet = %d, RemainedBullet = %d"), CurrentWeapon->CurrentBullet, CurrentWeapon->MaxBullet, CurrentWeapon->RemainedBullet);
+}
+
+void ATeamP_BasicPlayer::UpdateReloadUI_Implementation()
+{
+	//ATeamP_BasicPC* PC = GetController<ATeamP_BasicPC>();
+
+	//if (IsValid(PC) && IsValid(PC->GetMainUI()) && IsValid(PC->GetMainUI()->WeaponInfo))
+	//{
+	//	PC->GetMainUI()->WeaponInfo->SetIBulletNum(CurrentWeapon->CurrentBullet);
+	//	PC->GetMainUI()->WeaponInfo->SetIBulletMaxNum(CurrentWeapon->RemainedBullet);
+
+	//	FString newText = FString::Printf(TEXT("SpawnWeapon %d"), WeaponNumber);
+	//	PC->GetMainUI()->WeaponInfo->SetItemName(newText);
+	//}
+
+	if (HasAuthority()) {
+		UE_LOG(LogClass, Warning, TEXT("Server"));
+
+	}
+	else {
+		UE_LOG(LogClass, Warning, TEXT("Client"));
+	}
+
 	ATeamP_BasicPC* PC = GetController<ATeamP_BasicPC>();
 	if (IsValid(PC))
 	{
+		UE_LOG(LogClass, Warning, TEXT("UI.....CurrentBullet = %d,MaxBullet = %d, RemainedBullet = %d"), CurrentWeapon->CurrentBullet, CurrentWeapon->MaxBullet, CurrentWeapon->RemainedBullet);
 		PC->GetMainUI()->WeaponInfo->SetIBulletNum(CurrentWeapon->CurrentBullet);
 		PC->GetMainUI()->WeaponInfo->SetIBulletMaxNum(CurrentWeapon->RemainedBullet);
 	}
+	else
+	{
+		UE_LOG(LogClass, Warning, TEXT("PC is Null"));
 
-	UE_LOG(LogClass, Warning, TEXT("CurrentBullet = %d,MaxBullet = %d, RemainedBullet = %d"), CurrentWeapon->CurrentBullet, CurrentWeapon->MaxBullet, CurrentWeapon->RemainedBullet);
+	}
 }
 
 //발사가능체크.
@@ -528,22 +563,7 @@ void ATeamP_BasicPlayer::WeaponChange(int WeaponNumber)
 		WeaponDamageC = CurrentWeapon->WeaponDamage;
 		////총알 바꾸기					//이제 사용할 무기의 총알 = 캐릭터가 저장해 놓은 총알
 
-
-
-
-
-		ATeamP_BasicPC* PC = GetController<ATeamP_BasicPC>();
-
-		if (IsValid(PC) && IsValid(PC->GetMainUI()) && IsValid(PC->GetMainUI()->WeaponInfo))
-		{
-			PC->GetMainUI()->WeaponInfo->SetIBulletNum(CurrentWeapon->CurrentBullet);
-			PC->GetMainUI()->WeaponInfo->SetIBulletMaxNum(CurrentWeapon->RemainedBullet);
-
-			FString newText = FString::Printf(TEXT("SpawnWeapon %d"), WeaponNumber);
-			PC->GetMainUI()->WeaponInfo->SetItemName(newText);
-		}
-
-		UE_LOG(LogClass, Warning, TEXT("WeaponNumber : %d  MaxBullet : %d  Bullet : %d / %d"), WeaponNumber, CurrentWeapon->MaxBullet, CurrentWeapon->CurrentBullet, CurrentWeapon->RemainedBullet);
+		//UE_LOG(LogClass, Warning, TEXT("WeaponNumber : %d  MaxBullet : %d  Bullet : %d / %d"), WeaponNumber, CurrentWeapon->MaxBullet, CurrentWeapon->CurrentBullet, CurrentWeapon->RemainedBullet);
 	}
 
 	//GetWorld()->GetTimeSeconds();

@@ -27,20 +27,29 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
 	int MaxBullet = 30;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, ReplicatedUsing = "OnRep_CurrentBullet", Category = "Status")
 	int CurrentBullet = 0;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Replicated, Category = "Status")
 	int RemainedBullet=60;
 
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status", Meta=(ClampMin = 0.0f, ClampMax = 1.5f))
 	float WeaponRecoil = 0.1f;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
+		int32 ShotgunCount = 10;
+
 	UFUNCTION(Server, Reliable)
 	void OnFire();
 	void OnFire_Implementation();
 
+	UFUNCTION(Client, Reliable)
+	void OnCurrentBulletCheck();
+	void OnCurrentBulletCheck_Implementation();
+
+	UFUNCTION()
+	void OnRep_CurrentBullet();
 
 	UFUNCTION(Server, Reliable)
 	void OnFireShotgun();
@@ -62,10 +71,6 @@ public:
 	float InterpPitch =0.0f;
 
 	void StartRecoil();
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
-	int ShotgunBullet = 15;
-
 
 	//TArray<int> WeaponBullet;
 
@@ -108,4 +113,5 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 };

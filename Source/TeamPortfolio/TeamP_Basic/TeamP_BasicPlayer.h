@@ -39,9 +39,9 @@ public:
 	//UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	//class UWeaponComponent* Weapon1;
 
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Replicated)
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Replicated)
 	TArray<int> CurrentWeaponBullet;
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Replicated)
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Replicated)
 	TArray<int> RemainedWeaponBullet;
 
 
@@ -146,6 +146,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Replicated, Category = "Status")
 	uint64 bIsDead : 1;
 
+	void StartFireTrigger();
+	void StopFireTrigger();
+
 	UFUNCTION(Server, Reliable)
 	void StartFire();
 	void StartFire_Implementation();
@@ -153,8 +156,16 @@ public:
 	UFUNCTION(Server, Reliable)
 	void StopFire();
 	void StopFire_Implementation();
-	void Reload();
 
+	void ReloadTrigger();
+
+	UFUNCTION(Server, Reliable) 
+	void Reload();
+	void Reload_Implementation();
+
+	UFUNCTION(Client, Reliable)
+	void UpdateReloadUI();
+	void UpdateReloadUI_Implementation();
 	//발사가능체크
 	
 	uint64 bCanFire : 1;
@@ -195,9 +206,9 @@ public:
 	//void StartFire_Implementation();
 
 
-	//무기 변경 
+	//무기 변경
 	void WeaponChange(int WeaponNumber);
-
+	//void WeaponChange_Implementation(int WeaponNumber);
 
 
 	UPROPERTY(BlueprintReadOnly)
