@@ -21,8 +21,8 @@ public:
 	// Sets default values for this actor's properties
 	AGranade();
 
-	UFUNCTION()
-	void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+	//UFUNCTION()
+	//void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
 	/** Returns CollisionComp subobject **/
 	FORCEINLINE class USphereComponent* GetCollisionComp() const { return CollisionComp; }
@@ -32,5 +32,17 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Data")
 	class UParticleSystem* HitEffect;
+
+
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
+	float Grenade_InitialSpeed = 1000.f;
+
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
+	float Grenade_MaxSpeed = 1000.f;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
+		float Grenade_ProjectileGravityScale = 1.0f;
 
 };

@@ -43,6 +43,9 @@ public:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	class UWeaponInfoBase* WeaponInfo;
 
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	class ULobby_ReadyWidget* ReadyWidget;
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Drag")
 	bool isDraging = false;
 	

@@ -37,8 +37,17 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status", Meta=(ClampMin = 0.0f, ClampMax = 1.5f))
 	float WeaponRecoil = 0.1f;
 
-	UFUNCTION()
+	UFUNCTION(Server, Reliable)
 	void OnFire();
+	void OnFire_Implementation();
+
+	UFUNCTION(NetMulticast, UnReliable)
+		void Effect1(FHitResult Hit);
+	void Effect1_Implementation(FHitResult Hit);
+
+	UFUNCTION(NetMulticast, UnReliable)
+	void Effect2();
+	void Effect2_Implementation();
 
 	void OnFireShotgun();
 

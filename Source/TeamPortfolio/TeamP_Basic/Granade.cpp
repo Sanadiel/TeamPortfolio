@@ -15,7 +15,7 @@ AGranade::AGranade()
 	CollisionComp = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComp"));
 	CollisionComp->InitSphereRadius(5.0f);
 	CollisionComp->BodyInstance.SetCollisionProfileName("Projectile");
-	CollisionComp->OnComponentHit.AddDynamic(this, &AGranade::OnHit);		// set up a notification for when this component hits something blocking
+	//CollisionComp->OnComponentHit.AddDynamic(this, &AGranade::OnHit);		// set up a notification for when this component hits something blocking
 
 	// Players can't walk on it
 	CollisionComp->SetWalkableSlopeOverride(FWalkableSlopeOverride(WalkableSlope_Unwalkable, 0.f));
@@ -27,11 +27,11 @@ AGranade::AGranade()
 	// Use a ProjectileMovementComponent to govern this projectile's movement
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileComp"));
 	ProjectileMovement->UpdatedComponent = CollisionComp;
-	ProjectileMovement->InitialSpeed = 1000.f;
-	ProjectileMovement->MaxSpeed = 1000.f;
+	ProjectileMovement->InitialSpeed = Grenade_InitialSpeed;
+	ProjectileMovement->MaxSpeed = Grenade_MaxSpeed;
 	ProjectileMovement->bRotationFollowsVelocity = true;
 	ProjectileMovement->bShouldBounce = true;
-	ProjectileMovement->ProjectileGravityScale = 1.0;
+	ProjectileMovement->ProjectileGravityScale = Grenade_ProjectileGravityScale;
 
 	// Die after 3 seconds by default
 	
@@ -39,12 +39,14 @@ AGranade::AGranade()
 
 }
 
-void AGranade::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
-{
-	// Only add impulse and destroy projectile if we hit a physics
-	if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && OtherComp->IsSimulatingPhysics())
-	{
-		OtherComp->AddImpulseAtLocation(GetVelocity() * 100.0f, GetActorLocation());
+//void AGranade::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+//{
+//	// Only add impulse and destroy projectile if we hit a physics
+//	if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && OtherComp->IsSimulatingPhysics())
+//	{
+//		OtherComp->AddImpulseAtLocation(GetVelocity() * 100.0f, GetActorLocation());
+//
+//	}
+//}
 
-	}
-}
+

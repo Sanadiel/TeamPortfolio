@@ -81,7 +81,10 @@ public:
 
 	void AddResultWidget();
 	void AddTimeWidget();
+
+	UFUNCTION(Client, Reliable)
 	void AddReadyWidget();
+	void AddReadyWidget_Implementation();
 
 	void Toggle_InvenWidget();
 	void UnToggle_InvenWidget();
@@ -100,6 +103,10 @@ public:
 	UFUNCTION(Server, Reliable)
 	void C2S_ReplaceWorld(FName Tag);
 	void C2S_ReplaceWorld_Implementation(FName Tag);
+
+	UFUNCTION(Server, Reliable)
+	void C2S_SetIsReady(bool bValue);
+	void C2S_SetIsReady_Implementation(bool bValue);
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 

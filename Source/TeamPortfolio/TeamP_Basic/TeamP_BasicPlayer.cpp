@@ -23,7 +23,7 @@
 #include "Weapon0.h"
 #include "../MainUI/WeaponInfoBase.h"
 #include "Granade.h"
-
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
 ATeamP_BasicPlayer::ATeamP_BasicPlayer()
@@ -245,6 +245,15 @@ FRotator ATeamP_BasicPlayer::GetAimOffset() const
 
 //데미지 처리
 
+void ATeamP_BasicPlayer::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ATeamP_BasicPlayer,CurrentHP);
+	DOREPLIFETIME(ATeamP_BasicPlayer, CurrentWeapon);
+	
+}
+
 float ATeamP_BasicPlayer::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
@@ -330,7 +339,7 @@ void ATeamP_BasicPlayer::OnSpawnFire()
 {
 }
 
-void ATeamP_BasicPlayer::StartFire() //발사키 입력시 
+void ATeamP_BasicPlayer::StartFire_Implementation() //발사키 입력시 
 {
 
 	CheckCanFire();
@@ -346,7 +355,7 @@ void ATeamP_BasicPlayer::StartFire() //발사키 입력시
 	}
 
 	bIsFire = true;
-	
+
 	if (bIsShotgun) {
 
 		CurrentWeapon->OnFireShotgun();
@@ -476,57 +485,62 @@ void ATeamP_BasicPlayer::WeaponChange(int WeaponNumber)
 		bIsShotgun = false; 
 	}
 	
+
 	FActorSpawnParameters params;
 	params.Owner = this;
-	//transform.SetLocation(GetActorLocation());
 
-	AWeapon0* SpawnWeapon = GetWorld()->SpawnActor<AWeapon0>(WeaponClasses[WeaponNumber], params);
-
-	if (SpawnWeapon)
+	
+	if (HasAuthority())
 	{
-		SpawnWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("WeaponSocket"));//소켓은 스켈레탈메시에 있음.따라서 parent는 GetMesh()해준것.
-		if (CurrentWeapon)
+
+		AWeapon0* SpawnWeapon = GetWorld()->SpawnActor<AWeapon0>(WeaponClasses[WeaponNumber], params);
+
+		if (SpawnWeapon)
 		{
+			SpawnWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("WeaponSocket"));//소켓은 스켈레탈메시에 있음.따라서 parent는 GetMesh()해준것.
+			if (CurrentWeapon)
+			{
 
-			CurrentWeaponBullet[UsingWeaponNumber] = CurrentWeapon->CurrentBullet;
+				CurrentWeaponBullet[UsingWeaponNumber] = CurrentWeapon->CurrentBullet;
 
-			RemainedWeaponBullet[UsingWeaponNumber] = CurrentWeapon->RemainedBullet;
+				RemainedWeaponBullet[UsingWeaponNumber] = CurrentWeapon->RemainedBullet;
 
-			UsingWeaponNumber = WeaponNumber;
+				UsingWeaponNumber = WeaponNumber;
 
-			CurrentWeapon->Destroy();
+				CurrentWeapon->Destroy();
+			}
+			CurrentWeapon = SpawnWeapon;
+
+			CurrentWeapon->CurrentBullet = CurrentWeaponBullet[UsingWeaponNumber];
+
+			CurrentWeapon->RemainedBullet = RemainedWeaponBullet[UsingWeaponNumber];
+
 		}
-		CurrentWeapon = SpawnWeapon;
-
-		CurrentWeapon->CurrentBullet = CurrentWeaponBullet[UsingWeaponNumber];
-
-		CurrentWeapon->RemainedBullet = RemainedWeaponBullet[UsingWeaponNumber];
-	}
 
 
 
 
-	WeaponAttackSpeed = CurrentWeapon->WeaponAttackSpeed;
-	WeaponDamageC = CurrentWeapon->WeaponDamage;
+		WeaponAttackSpeed = CurrentWeapon->WeaponAttackSpeed;
+		WeaponDamageC = CurrentWeapon->WeaponDamage;
 		////총알 바꾸기					//이제 사용할 무기의 총알 = 캐릭터가 저장해 놓은 총알
 
 
 
 
 
-	ATeamP_BasicPC* PC = GetController<ATeamP_BasicPC>();
+		ATeamP_BasicPC* PC = GetController<ATeamP_BasicPC>();
 
-	if (IsValid(PC) && IsValid(PC->GetMainUI()) && IsValid(PC->GetMainUI()->WeaponInfo))
-	{
-		PC->GetMainUI()->WeaponInfo->SetIBulletNum(CurrentWeapon->CurrentBullet);
-		PC->GetMainUI()->WeaponInfo->SetIBulletMaxNum(CurrentWeapon->RemainedBullet);
+		if (IsValid(PC) && IsValid(PC->GetMainUI()) && IsValid(PC->GetMainUI()->WeaponInfo))
+		{
+			PC->GetMainUI()->WeaponInfo->SetIBulletNum(CurrentWeapon->CurrentBullet);
+			PC->GetMainUI()->WeaponInfo->SetIBulletMaxNum(CurrentWeapon->RemainedBullet);
 
-		FString newText = FString::Printf(TEXT("SpawnWeapon %d"), WeaponNumber);
-		PC->GetMainUI()->WeaponInfo->SetItemName(newText);
-	}		
-	
-	UE_LOG(LogClass, Warning, TEXT("WeaponNumber : %d  MaxBullet : %d  Bullet : %d / %d"), WeaponNumber, CurrentWeapon->MaxBullet, CurrentWeapon->CurrentBullet, CurrentWeapon->RemainedBullet);
+			FString newText = FString::Printf(TEXT("SpawnWeapon %d"), WeaponNumber);
+			PC->GetMainUI()->WeaponInfo->SetItemName(newText);
+		}
 
+		UE_LOG(LogClass, Warning, TEXT("WeaponNumber : %d  MaxBullet : %d  Bullet : %d / %d"), WeaponNumber, CurrentWeapon->MaxBullet, CurrentWeapon->CurrentBullet, CurrentWeapon->RemainedBullet);
+	}
 
 	//GetWorld()->GetTimeSeconds();
 
@@ -687,11 +701,11 @@ void ATeamP_BasicPlayer::ThrowGranade()
 
 				const FRotator SpawnRotation = GetControlRotation();
 				// MuzzleOffset is in camera space, so transform it to world space before offsetting from the character location to find the final muzzle position
-				const FVector SpawnLocation = GetActorLocation();
+				const FVector SpawnLocation = GetMesh()->GetSocketLocation(TEXT("WeaponSocket"));
 
 				//Set Spawn Collision Handling Override
 				FActorSpawnParameters ActorSpawnParams;
-				ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
+				ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
 				// spawn the projectile at the muzzle
 				World->SpawnActor<AGranade>(GranadeClass, SpawnLocation, SpawnRotation, ActorSpawnParams);

@@ -72,7 +72,7 @@ public:
 	FRotator GetAimOffset() const;
 
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
+	UPROPERTY(BlueprintReadWrite,Replicated, EditAnywhere, Category = "Status")
 		float CurrentHP;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
@@ -80,6 +80,8 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
 		float AttackDamage;
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
@@ -141,8 +143,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
 	uint64 bIsWeaponChange : 1;
 
-
+	UFUNCTION(Server, Reliable)
 	void StartFire();
+	void StartFire_Implementation();
 
 	void StopFire();
 
@@ -184,15 +187,13 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 		float WeaponDamageC = 1.0f;
 	
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
-	float WeaponAttackSpeed = 0.05f;
+	float WeaponAttackSpeed = 0.5f;
 
 	UPROPERTY(EditDefaultsOnly, Category = Projectile)
 	TSubclassOf<class ASpawnTest> ProjectileClass;
 
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite,Replicated, Category = "Weapon")
 	class AWeapon0* CurrentWeapon;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")

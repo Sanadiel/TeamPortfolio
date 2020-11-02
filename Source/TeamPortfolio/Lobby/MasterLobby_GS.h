@@ -14,4 +14,19 @@ class TEAMPORTFOLIO_API AMasterLobby_GS : public AGameStateBase
 {
 	GENERATED_BODY()
 	
+#pragma region Public Member
+public:
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, ReplicatedUsing = "OnRep_LeftTime", Category = "Network")
+		int LeftTime = 3;
+#pragma endregion
+
+
+#pragma region Public Function
+public:
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+	UFUNCTION()
+	void OnRep_LeftTime();
+
+#pragma endregion
 };

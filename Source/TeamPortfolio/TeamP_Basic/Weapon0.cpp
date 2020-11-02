@@ -14,8 +14,18 @@
 #include "../MainUI/MainUIBase.h"
 #include "../MainUI/WeaponInfoBase.h"
 
-void AWeapon0::OnFire()
+void AWeapon0::OnFire_Implementation()
 {
+	if (HasAuthority())
+	{
+		UE_LOG(LogClass, Warning, TEXT("Server OnFire"));
+	}
+	else
+	{
+		UE_LOG(LogClass, Warning, TEXT("Client OnFire"));
+	}
+
+
 	ATeamP_BasicPlayer* Player = Cast<ATeamP_BasicPlayer>(GetOwner());//문제잇어?
 
 	UE_LOG(LogClass, Warning, TEXT("OnFire"))
@@ -64,7 +74,7 @@ void AWeapon0::OnFire()
 
 			if (PC)
 			{
-
+				//Effect1();
 				int32 ScreenSizeX;
 				int32 ScreenSizeY;
 
@@ -127,47 +137,24 @@ void AWeapon0::OnFire()
 
 				if (Result)
 				{
+					//effect
+					Effect1(OutHit);
 
 					//all client spawn Hiteffect and Decal
 
-					//S2A_SpawnHitEffectAndDecal(OutHit);
-					if (Cast<ACharacter>(OutHit.GetActor()))
+					if (HasAuthority())
 					{
-						//캐릭터
-						UGameplayStatics::SpawnEmitterAtLocation(GetWorld(),
-							BloodHitEffect,
-							OutHit.ImpactPoint + (OutHit.ImpactNormal * 10)
+						//Point Damage
+						UGameplayStatics::ApplyPointDamage(OutHit.GetActor(), //맞은놈
+							WeaponDamage,	//데미지
+							-OutHit.ImpactNormal,	//데미지 방향
+							OutHit,	//데미지 충돌 정보
+							Player->GetController(),	//때린 플레이어
+							this,	//때린놈
+							UBulletDamageType::StaticClass() //데미지 타입
 						);
 					}
-					else
-					{
-						//지형
-						UGameplayStatics::SpawnEmitterAtLocation(GetWorld(),
-							HitEffect,
-							OutHit.ImpactPoint + (OutHit.ImpactNormal * 10)
-						);
 
-						UDecalComponent* NewDecal = UGameplayStatics::SpawnDecalAtLocation(GetWorld(),
-							NormalDecal,
-							FVector(5, 5, 5),
-							OutHit.ImpactPoint,
-							OutHit.ImpactNormal.Rotation(),
-							10.0f
-						);
-
-						NewDecal->SetFadeScreenSize(0.005f);
-
-					}
-
-					//Point Damage
-					UGameplayStatics::ApplyPointDamage(OutHit.GetActor(), //맞은놈
-						WeaponDamage,	//데미지
-						-OutHit.ImpactNormal,	//데미지 방향
-						OutHit,	//데미지 충돌 정보
-						Player->GetController(),	//때린 플레이어
-						this,	//때린놈
-						UBulletDamageType::StaticClass() //데미지 타입
-					);
 
 					MakeNoise(1.0f, Player, OutHit.ImpactPoint); //AI가 센서로 받을 수 있는 Noise를 생성한다.
 
@@ -177,22 +164,9 @@ void AWeapon0::OnFire()
 				//All Client Spawn Muzzleflash and Sound
 				//S2A_SpawnMuzzleFlashAndSound();
 
+				Effect2();
 
-				if (WeaponSound)
-				{
-					UGameplayStatics::SpawnSoundAtLocation(GetWorld(),
-						WeaponSound,
-						WeaponMesh->GetComponentLocation()
-					);
-				}
 
-				if (MuzzleFlash)
-				{
-					UGameplayStatics::SpawnEmitterAtLocation(GetWorld(),
-						MuzzleFlash,
-						WeaponMesh->GetSocketTransform(TEXT("Muzzle"))
-					);
-				}
 			}
 
 
@@ -216,6 +190,58 @@ void AWeapon0::OnFire()
 				WeaponAttackSpeed / 4,
 				false);
 		}
+	}
+}
+
+void AWeapon0::Effect1_Implementation(FHitResult Hit)
+{
+
+	//S2A_SpawnHitEffectAndDecal(OutHit);
+	if (Cast<ACharacter>(Hit.GetActor()))
+	{
+		//캐릭터
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(),
+			BloodHitEffect,
+			Hit.ImpactPoint + (Hit.ImpactNormal * 10)
+		);
+	}
+	else
+	{
+		//지형
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(),
+			HitEffect,
+			Hit.ImpactPoint + (Hit.ImpactNormal * 10)
+		);
+
+		UDecalComponent* NewDecal = UGameplayStatics::SpawnDecalAtLocation(GetWorld(),
+			NormalDecal,
+			FVector(5, 5, 5),
+			Hit.ImpactPoint,
+			Hit.ImpactNormal.Rotation(),
+			10.0f
+		);
+
+		NewDecal->SetFadeScreenSize(0.005f);
+	}
+
+}
+
+void AWeapon0::Effect2_Implementation()
+{
+	if (WeaponSound)
+	{
+		UGameplayStatics::SpawnSoundAtLocation(GetWorld(),
+			WeaponSound,
+			WeaponMesh->GetComponentLocation()
+		);
+	}
+
+	if (MuzzleFlash)
+	{
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(),
+			MuzzleFlash,
+			WeaponMesh->GetSocketTransform(TEXT("Muzzle"))
+		);
 	}
 }
 
@@ -452,6 +478,7 @@ AWeapon0::AWeapon0()
 	WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponMesh"));
 	RootComponent = WeaponMesh;
 
+	SetReplicates(true);
 }
 
 

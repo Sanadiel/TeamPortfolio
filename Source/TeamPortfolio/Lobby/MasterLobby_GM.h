@@ -13,15 +13,29 @@ UCLASS()
 class TEAMPORTFOLIO_API AMasterLobby_GM : public ALobby_GM
 {
 	GENERATED_BODY()
+
+#pragma region Public Member
+public:
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TArray<class AUI_PC*> PC_Array;
+
+#pragma endregion
 	
 #pragma region Public Function
 public:
-	UFUNCTION()
-	void StartStage();
+	virtual void StartGame() override;
 
 	virtual void BeginPlay() override;
+	virtual void PostLogin(APlayerController* NewPlayer) override;
 
 	virtual void Setting() override;
+
+	UFUNCTION()
+	void StartCheck();
+	void Check();
+
+	virtual void StartCountDown() override;
+	virtual void DecreaseTime() override;
 
 #pragma endregion 
 
