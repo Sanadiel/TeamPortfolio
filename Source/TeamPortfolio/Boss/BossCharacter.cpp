@@ -121,19 +121,22 @@ void ABossCharacter::BeginPlay()
 	/*Boss UMG*/
 	CreateUI();
 
-	///*Show Mouse Cursor*/
-	//APlayerController* pc = Cast<APlayerController>(GetController());
-	//if (pc)
-	//{
-	//	pc->bShowMouseCursor = true;
-	//	pc->SetInputMode(FInputModeGameAndUI());
-	//}
-	
-	//Initialize Spawn Cooldown.
-	for (int i = 0; i < ProjectileClasses.Num(); i++)
+	/*Show Mouse Cursor*/
+	APlayerController* pc = Cast<APlayerController>(GetController());
+	if (pc)
 	{
-		SpawnCooldown.Add(0.0f);
-		MaxSpawnCooldown.Add(ProjectileClasses[i].GetDefaultObject()->ProjectileInfo.Cooldown);
+		pc->bShowMouseCursor = true;
+		pc->SetInputMode(FInputModeGameAndUI());
+	}
+	
+	if (HasAuthority())
+	{
+		//Initialize Spawn Cooldown.
+		for (int i = 0; i < ProjectileClasses.Num(); i++)
+		{
+			SpawnCooldown.Add(0.0f);
+			MaxSpawnCooldown.Add(ProjectileClasses[i].GetDefaultObject()->ProjectileInfo.Cooldown);
+		}
 	}
 
 }
@@ -241,6 +244,8 @@ void ABossCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 		DOREPLIFETIME(ABossCharacter, bIsGrabbed);
+		DOREPLIFETIME(ABossCharacter, SpawnCooldown);
+		DOREPLIFETIME(ABossCharacter, MaxSpawnCooldown);
 }
 
 void ABossCharacter::HoldSpawnProjectile_Implementation(ABossProjectileBase* ProjectileObject)
@@ -428,7 +433,7 @@ void ABossCharacter::SpawnProjectile_Implementation(int32 Index)
 	{
 		//UE_LOG(LogClass, Warning, TEXT("Spawn by UI is Success."));
 		HoldSpawnProjectile(projectile);
-		ResetCooldown(Index);
+		SpawnCooldown[Index] = 0.0f;
 	}
 	else
 	{
@@ -436,10 +441,6 @@ void ABossCharacter::SpawnProjectile_Implementation(int32 Index)
 	}
 }
 
-void ABossCharacter::ResetCooldown_Implementation(int32 Index)
-{
-	SpawnCooldown[Index] = 0.0f;
-}
 void ABossCharacter::DrawTrajectoryLine()
 {
 	if (!MeshForSpline)

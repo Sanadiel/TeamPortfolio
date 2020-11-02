@@ -100,11 +100,11 @@ public:
 		TArray<TSubclassOf<ABossProjectileBase>> ProjectileClasses;
 
 	//Current Cooldown.
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Monster")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Replicated, Category = "Monster")
 		TArray<float> SpawnCooldown;
 
 	//MaxCoolDown.
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Monster")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Replicated, Category = "Monster")
 		TArray<float> MaxSpawnCooldown;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UMG")
@@ -149,11 +149,6 @@ public:
 	UFUNCTION(Server, Reliable)
 		void SpawnProjectile(int32 Index);
 	void SpawnProjectile_Implementation(int32 Index);
-
-	UFUNCTION(NetMulticast, Reliable)
-		void ResetCooldown(int32 Index);
-	void ResetCooldown_Implementation(int32 Index);
-
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spline")
 		UStaticMesh* MeshForSpline;

@@ -10,7 +10,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(BlueprintType, Blueprintable, meta = (BlueprintSpawnableComponent))
 class TEAMPORTFOLIO_API UHandMeshComponent : public USkeletalMeshComponent
 {
 	GENERATED_BODY()

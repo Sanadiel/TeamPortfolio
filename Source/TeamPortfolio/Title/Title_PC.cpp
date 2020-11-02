@@ -6,11 +6,18 @@
 #include "Kismet/GameplayStatics.h"
 #include "Title_UserWidgetBase.h"
 
+#include "HeadMountedDisplayFunctionLibrary.h"
+
 void ATitle_PC::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (TitleWidgetClass && IsLocalController())
+	if (UHeadMountedDisplayFunctionLibrary::IsHeadMountedDisplayConnected())
+	{
+		//If VR is ON, Do Nothing... maybe?
+		SetInputMode(FInputModeGameAndUI());
+	}
+	else if (TitleWidgetClass && IsLocalController())
 	{
 		TitleWidgetObject = CreateWidget<UTitle_UserWidgetBase>(this, TitleWidgetClass);
 		TitleWidgetObject->AddToViewport();
