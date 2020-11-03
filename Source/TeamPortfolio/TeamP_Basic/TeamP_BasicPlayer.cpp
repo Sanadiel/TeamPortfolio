@@ -128,18 +128,18 @@ void ATeamP_BasicPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	PlayerInputComponent->BindAction(TEXT("Ironsight"), IE_Pressed, this, &ATeamP_BasicPlayer::StartIronsight);
 	PlayerInputComponent->BindAction(TEXT("Ironsight"), IE_Released, this, &ATeamP_BasicPlayer::StopIronsight);
 
-	PlayerInputComponent->BindAction(TEXT("Reload"), IE_Pressed, this, &ATeamP_BasicPlayer::ReloadTrigger);
+	PlayerInputComponent->BindAction(TEXT("Reload"), IE_Pressed, this, &ATeamP_BasicPlayer::Reload);
 
-	PlayerInputComponent->BindAction(TEXT("Fire"), IE_Pressed, this, &ATeamP_BasicPlayer::StartFireTrigger);
-	PlayerInputComponent->BindAction(TEXT("Fire"), IE_Released, this, &ATeamP_BasicPlayer::StopFireTrigger);
-
+	PlayerInputComponent->BindAction(TEXT("Fire"), IE_Pressed, this, &ATeamP_BasicPlayer::StartFire);
+	PlayerInputComponent->BindAction(TEXT("Fire"), IE_Released, this, &ATeamP_BasicPlayer::StopFire);
+	//??
 
 	//무기변경입력, 인벤토리 추가해서 인벤토리에서 무기바꿀시 삭제 or 변경
 
-	PlayerInputComponent->BindAction<FBindActionParamDelegate>(TEXT("Weaponchange1"), IE_Pressed, this, &ATeamP_BasicPlayer::WeaponChange,0);
-	PlayerInputComponent->BindAction<FBindActionParamDelegate>(TEXT("Weaponchange2"), IE_Pressed, this, &ATeamP_BasicPlayer::WeaponChange,1);
-	PlayerInputComponent->BindAction<FBindActionParamDelegate>(TEXT("Weaponchange3"), IE_Pressed, this, &ATeamP_BasicPlayer::WeaponChange,2);
-	PlayerInputComponent->BindAction<FBindActionParamDelegate>(TEXT("Weaponchange4"), IE_Pressed, this, &ATeamP_BasicPlayer::WeaponChange, 3);
+	PlayerInputComponent->BindAction<FBindActionParamDelegate>(TEXT("Weaponchange1"), IE_Pressed, this, &ATeamP_BasicPlayer::WeaponChangeTrigger,0);
+	PlayerInputComponent->BindAction<FBindActionParamDelegate>(TEXT("Weaponchange2"), IE_Pressed, this, &ATeamP_BasicPlayer::WeaponChangeTrigger,1);
+	PlayerInputComponent->BindAction<FBindActionParamDelegate>(TEXT("Weaponchange3"), IE_Pressed, this, &ATeamP_BasicPlayer::WeaponChangeTrigger,2);
+	PlayerInputComponent->BindAction<FBindActionParamDelegate>(TEXT("Weaponchange4"), IE_Pressed, this, &ATeamP_BasicPlayer::WeaponChangeTrigger, 3);
 
 	PlayerInputComponent->BindAction<FBindActionParamDelegate>(TEXT("ChangeGranade"), IE_Pressed, this, &ATeamP_BasicPlayer::ChangeGranade, 4);
 
@@ -250,6 +250,9 @@ void ATeamP_BasicPlayer::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 	DOREPLIFETIME(ATeamP_BasicPlayer, bIsWeaponChange); 
 	DOREPLIFETIME(ATeamP_BasicPlayer, bIsGranade); 
 	DOREPLIFETIME(ATeamP_BasicPlayer, bIsDead);
+	DOREPLIFETIME(ATeamP_BasicPlayer, bFireShotgun);
+	DOREPLIFETIME(ATeamP_BasicPlayer, bIsShotgun);
+	DOREPLIFETIME(ATeamP_BasicPlayer, bIsFireAnim);
 	
 }
 
@@ -283,15 +286,7 @@ float ATeamP_BasicPlayer::TakeDamage(float DamageAmount, FDamageEvent const& Dam
 			PlayAnimMontage(HitMontage, 1.0f, FName(SectionName));
 		}
 
-		if (CurrentHP <= 0)
-		{
 
-			//사망애니메이션
-			bIsDead = true;
-			
-
-			DisableInput(Cast<APlayerController>(GetController()));
-		}
 
 
 	}
@@ -302,20 +297,25 @@ float ATeamP_BasicPlayer::TakeDamage(float DamageAmount, FDamageEvent const& Dam
 		CurrentHP -= DamageAmount;
 
 		UE_LOG(LogClass, Warning, TEXT("Radial Damage %f HP : %f"), DamageAmount, CurrentHP);
-		if (CurrentHP <= 0)
-		{
-			//사망애니메이션
-			bIsDead = true;
-			
-			DisableInput(Cast<APlayerController>(GetController()));
-		}
+
 	}
 	else //모든 데미지 처리
 	{
 		UE_LOG(LogClass, Warning, TEXT("Damage %f, HP : %f"), DamageAmount, CurrentHP);
 
 		CurrentHP -= DamageAmount;
+
+
 	}
+
+	if (CurrentHP <= 0)
+	{
+		//사망애니메이션
+		bIsDead = true;
+
+		DisableInput(Cast<APlayerController>(GetController()));
+	}
+
 
 	UpdateHpUI();	
 
@@ -327,17 +327,7 @@ void ATeamP_BasicPlayer::OnSpawnFire()
 {
 }
 
-void ATeamP_BasicPlayer::StartFireTrigger()
-{
-	StartFire();
-}
-
-void ATeamP_BasicPlayer::StopFireTrigger()
-{
-	StopFire();
-}
-
-void ATeamP_BasicPlayer::StartFire_Implementation() //발사키 입력시 
+void ATeamP_BasicPlayer::StartFire() //발사키 입력시 
 {
 
 	CheckCanFire();
@@ -348,8 +338,14 @@ void ATeamP_BasicPlayer::StartFire_Implementation() //발사키 입력시
 	}
 
 	if (bIsGranade) {
-		ThrowGranade_Start();
-		return;
+		if (HasAuthority()) {
+			ThrowGranade_Start();//<<<
+			return;
+		}
+		else {
+			ThrowGranade_Start_Server();//<<<
+			return;
+		}
 	}
 
 	bIsFire = true;
@@ -362,17 +358,21 @@ void ATeamP_BasicPlayer::StartFire_Implementation() //발사키 입력시
 		CurrentWeapon->OnFire();
 	}
 
-	
-
-
 } 
 
-void ATeamP_BasicPlayer::StopFire_Implementation()
+void ATeamP_BasicPlayer::StopFire()
 {
 	if (bIsGranade)
 	{
-		ThrowGranade_End();
-		return;
+		if (HasAuthority()) {
+			ThrowGranade_End();
+			return;
+		}
+		else {
+			ThrowGranade_End_Server();
+			return;
+		}
+
 	}
 	bIsFire = false;
 	if (!bIsShotgun) {
@@ -380,16 +380,17 @@ void ATeamP_BasicPlayer::StopFire_Implementation()
 	}
 }
 
-void ATeamP_BasicPlayer::ReloadTrigger()
-{
-	Reload();
-}
 
 void ATeamP_BasicPlayer::Reload_Implementation()
 {
-	if ((CurrentWeapon->RemainedBullet == 0) ||CurrentWeapon->CurrentBullet == CurrentWeapon->MaxBullet|| bIsWeaponChange||bFireShotgun||bIsGranade) {
+	if ( (CurrentWeapon->RemainedBullet == 0) ||CurrentWeapon->CurrentBullet == CurrentWeapon->MaxBullet || bIsWeaponChange|| bFireShotgun || bIsGranade) {
+
+		UE_LOG(LogClass, Warning, TEXT("bIsWeaponChange = %d,bFireShotgun = %d, bIsGranade = %d"), bIsWeaponChange, bFireShotgun, bIsGranade);
+		UE_LOG(LogClass, Warning, TEXT("CurrentWeapon->RemainedBullet == 0 : %d"), (CurrentWeapon->RemainedBullet == 0));
+		UE_LOG(LogClass, Warning, TEXT("CurrentWeapon->CurrentBullet == CurrentWeapon->MaxBullet : %d"), (CurrentWeapon->CurrentBullet == CurrentWeapon->MaxBullet) );
 		return;
 	}
+
 	bIsReload = true;
 
 	if(!CurrentWeapon->RemainedBullet == 0){
@@ -447,7 +448,9 @@ void ATeamP_BasicPlayer::UpdateReloadUI_Implementation()
 	ATeamP_BasicPC* PC = GetController<ATeamP_BasicPC>();
 	if (IsValid(PC))
 	{
+
 		UE_LOG(LogClass, Warning, TEXT("UI.....CurrentBullet = %d,MaxBullet = %d, RemainedBullet = %d"), CurrentWeapon->CurrentBullet, CurrentWeapon->MaxBullet, CurrentWeapon->RemainedBullet);
+		PC->GetMainUI()->WeaponInfo->SetItemName(CurrentWeapon->WeaponName);
 		PC->GetMainUI()->WeaponInfo->SetIBulletNum(CurrentWeapon->CurrentBullet);
 		PC->GetMainUI()->WeaponInfo->SetIBulletMaxNum(CurrentWeapon->RemainedBullet);
 	}
@@ -463,7 +466,7 @@ void ATeamP_BasicPlayer::CheckCanFire()
 {
 	// 리로드중인것도 체크해줘야댐
 	
-	if (CurrentWeapon->GetWorldTimerManager().IsTimerActive(*FireTimerHandle) || bIsReload || CurrentWeapon->CurrentBullet <= 0||bFireShotgun||bIsWeaponChange) {
+	if (CurrentWeapon->GetWorldTimerManager().IsTimerActive(CurrentWeapon->FireTimerHandle) || bIsReload || CurrentWeapon->CurrentBullet <= 0||bFireShotgun||bIsWeaponChange) {
 		
 		bCanFire = false;
 		
@@ -471,6 +474,44 @@ void ATeamP_BasicPlayer::CheckCanFire()
 	else {
 		bCanFire = true;
 	}
+}
+
+void ATeamP_BasicPlayer::SpawnWeapon_Implementation(int WeaponNumber)
+{
+
+	
+	FActorSpawnParameters params;
+	params.Owner = this;
+
+	AWeapon0* spawnWeapon = GetWorld()->SpawnActor<AWeapon0>(WeaponClasses[WeaponNumber], params);
+
+	if (spawnWeapon)
+	{
+		spawnWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("WeaponSocket"));//소켓은 스켈레탈메시에 있음.따라서 parent는 GetMesh()해준것.
+		if (CurrentWeapon)
+		{
+
+			CurrentWeaponBullet[UsingWeaponNumber] = CurrentWeapon->CurrentBullet;
+
+			RemainedWeaponBullet[UsingWeaponNumber] = CurrentWeapon->RemainedBullet;
+
+			UsingWeaponNumber = WeaponNumber;
+
+			CurrentWeapon->Destroy();
+		}
+		CurrentWeapon = spawnWeapon;
+
+		CurrentWeapon->CurrentBullet = CurrentWeaponBullet[UsingWeaponNumber];
+
+		CurrentWeapon->RemainedBullet = RemainedWeaponBullet[UsingWeaponNumber];
+
+	}
+
+	WeaponAttackSpeed = CurrentWeapon->WeaponAttackSpeed;
+	WeaponDamageC = CurrentWeapon->WeaponDamage;
+	////총알 바꾸기					//이제 사용할 무기의 총알 = 캐릭터가 저장해 놓은 총알
+	//UE_LOG(LogClass, Warning, TEXT("WeaponNumber : %d  MaxBullet : %d  Bullet : %d / %d"), WeaponNumber, CurrentWeapon->MaxBullet, CurrentWeapon->CurrentBullet, CurrentWeapon->RemainedBullet);
+
 }
 
 void ATeamP_BasicPlayer::CheckCanAnimation()
@@ -492,7 +533,13 @@ void ATeamP_BasicPlayer::CheckCanAnimation()
 
 
 
-void ATeamP_BasicPlayer::WeaponChange(int WeaponNumber)
+void ATeamP_BasicPlayer::WeaponChangeTrigger(int WeaponNumber)
+{
+
+	WeaponChange(WeaponNumber);
+}
+
+void ATeamP_BasicPlayer::WeaponChange_Implementation(int WeaponNumber)
 {
 	if (bIsReload || bIsWeaponChange || bFireShotgun||bIsFire) {
 		return;
@@ -512,14 +559,12 @@ void ATeamP_BasicPlayer::WeaponChange(int WeaponNumber)
 	bIsFire = false;
 	bIsFireAnim = false;
 
-
-	if (ChangeWeaponMontage)
+	if (ChangeWeaponMontage) //문제있는 부분.
 	{
 		//FString SectionName = FString::Printf(TEXT("Hit%d"), FMath::RandRange(1, 4));
-		UE_LOG(LogClass,Warning,TEXT("bIsWeaponChange"))
+		UE_LOG(LogClass, Warning, TEXT("bIsWeaponChange"))
 		bIsWeaponChange = true;
 	}
-
 
 	if (WeaponNumber == 3) {
 		bIsShotgun = true;
@@ -529,46 +574,8 @@ void ATeamP_BasicPlayer::WeaponChange(int WeaponNumber)
 		bIsShotgun = false; 
 	}
 	
-
+	SpawnWeapon(WeaponNumber);
 	
-	if (HasAuthority())
-	{
-		FActorSpawnParameters params;
-		params.Owner = this;
-
-		AWeapon0* SpawnWeapon = GetWorld()->SpawnActor<AWeapon0>(WeaponClasses[WeaponNumber], params);
-
-		if (SpawnWeapon)
-		{
-			SpawnWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("WeaponSocket"));//소켓은 스켈레탈메시에 있음.따라서 parent는 GetMesh()해준것.
-			if (CurrentWeapon)
-			{
-
-				CurrentWeaponBullet[UsingWeaponNumber] = CurrentWeapon->CurrentBullet;
-
-				RemainedWeaponBullet[UsingWeaponNumber] = CurrentWeapon->RemainedBullet;
-
-				UsingWeaponNumber = WeaponNumber;
-
-				CurrentWeapon->Destroy();
-			}
-			CurrentWeapon = SpawnWeapon;
-
-			CurrentWeapon->CurrentBullet = CurrentWeaponBullet[UsingWeaponNumber];
-
-			CurrentWeapon->RemainedBullet = RemainedWeaponBullet[UsingWeaponNumber];
-
-		}
-
-
-
-
-		WeaponAttackSpeed = CurrentWeapon->WeaponAttackSpeed;
-		WeaponDamageC = CurrentWeapon->WeaponDamage;
-		////총알 바꾸기					//이제 사용할 무기의 총알 = 캐릭터가 저장해 놓은 총알
-
-		//UE_LOG(LogClass, Warning, TEXT("WeaponNumber : %d  MaxBullet : %d  Bullet : %d / %d"), WeaponNumber, CurrentWeapon->MaxBullet, CurrentWeapon->CurrentBullet, CurrentWeapon->RemainedBullet);
-	}
 
 	//GetWorld()->GetTimeSeconds();
 
@@ -580,9 +587,6 @@ void ATeamP_BasicPlayer::WeaponChange(int WeaponNumber)
 	//tick()
 	//	for ()
 	//		Cooldown[i] += deltasecond;
-
-	FireTimerHandle = &Weapon1_FireTimerHande;
-	FireTimerHandle2 = &Weapon1_FireTimerHande2;
 
 	/*switch (WeaponNumber)
 	{
@@ -648,7 +652,7 @@ void ATeamP_BasicPlayer::LoadWeapon(int Index)
 	//}
 }
 
-void ATeamP_BasicPlayer::ChangeGranade(int WeaponNumber)
+void ATeamP_BasicPlayer::ChangeGranade_Implementation(int WeaponNumber)
 {
 	
 	bIsGranade = true;
@@ -660,11 +664,11 @@ void ATeamP_BasicPlayer::ChangeGranade(int WeaponNumber)
 	params.Owner = this;
 	//transform.SetLocation(GetActorLocation());
 
-	AWeapon0* SpawnWeapon = GetWorld()->SpawnActor<AWeapon0>(WeaponClasses[WeaponNumber], params);
+	AWeapon0* spawnWeapon = GetWorld()->SpawnActor<AWeapon0>(WeaponClasses[WeaponNumber], params);
 
-	if (SpawnWeapon)
+	if (spawnWeapon)
 	{
-		SpawnWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("WeaponSocket"));//소켓은 스켈레탈메시에 있음.따라서 parent는 GetMesh()해준것.
+		spawnWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("WeaponSocket"));//소켓은 스켈레탈메시에 있음.따라서 parent는 GetMesh()해준것.
 		if (CurrentWeapon)
 		{
 
@@ -676,7 +680,7 @@ void ATeamP_BasicPlayer::ChangeGranade(int WeaponNumber)
 
 			CurrentWeapon->Destroy();
 		}
-		CurrentWeapon = SpawnWeapon;
+		CurrentWeapon = spawnWeapon;
 
 		CurrentWeapon->CurrentBullet = CurrentWeaponBullet[UsingWeaponNumber];
 
@@ -689,6 +693,16 @@ void ATeamP_BasicPlayer::ChangeGranade(int WeaponNumber)
 	WeaponAttackSpeed = CurrentWeapon->WeaponAttackSpeed;
 	WeaponDamageC = CurrentWeapon->WeaponDamage;
 	
+}
+
+void ATeamP_BasicPlayer::ThrowGranade_Start_Server_Implementation()
+{
+	ThrowGranade_Start();
+}
+
+void ATeamP_BasicPlayer::ThrowGranade_End_Server_Implementation()
+{
+	ThrowGranade_End();
 }
 
 void ATeamP_BasicPlayer::ThrowGranade_Start_Implementation()

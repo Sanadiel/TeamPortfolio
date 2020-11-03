@@ -16,7 +16,8 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, Category = "Mesh")
 	class USkeletalMeshComponent* WeaponMesh;
 
-
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
+		FString WeaponName;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
 	float WeaponDamage = 1.0f;
@@ -40,9 +41,17 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
 		int32 ShotgunCount = 10;
 
-	UFUNCTION(Server, Reliable)
+	//UFUNCTION(Server, Reliable)
 	void OnFire();
-	void OnFire_Implementation();
+	//void OnFire_Implementation();
+
+	UFUNCTION(Server, Reliable)
+		void CalculateFire(FVector TraceStart, FVector TraceEnd);
+	void CalculateFire_Implementation(FVector TraceStart, FVector TraceEnd);
+
+	UFUNCTION(Server, Reliable)
+		void DecreaseBullet();
+	void DecreaseBullet_Implementation();
 
 	UFUNCTION(Client, Reliable)
 	void OnCurrentBulletCheck();
@@ -51,12 +60,10 @@ public:
 	UFUNCTION()
 	void OnRep_CurrentBullet();
 
-	UFUNCTION(Server, Reliable)
 	void OnFireShotgun();
-	void OnFireShotgun_Implementation();
 
 
-	UFUNCTION(NetMulticast, UnReliable)
+	UFUNCTION(NetMulticast, Reliable)
 	void Effect1(FHitResult Hit);
 	void Effect1_Implementation(FHitResult Hit);
 
@@ -68,7 +75,8 @@ public:
 
 	void OnFireGranade();
 
-	float InterpPitch =0.0f;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Replicated, Category = "Recoil")
+	float InterpPitch = 0.0f;
 
 	void StartRecoil();
 
@@ -98,7 +106,6 @@ public:
 
 	FTimerHandle Weapon1_FireTimerHande;
 	FTimerHandle Weapon1_FireTimerHande2;
-
 
 
 public:	

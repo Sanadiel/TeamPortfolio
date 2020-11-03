@@ -91,14 +91,6 @@ public:
 	UFUNCTION()
 	void OnSpawnFire();
 
-	FTimerHandle *FireTimerHandle;
-
-	FTimerHandle *FireTimerHandle2;
-
-	FTimerHandle Weapon1_FireTimerHande;
-	FTimerHandle Weapon1_FireTimerHande2;
-	
-
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Data")
 		class UParticleSystem* HitEffect;
@@ -121,7 +113,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
 	uint64 bIsIronsight : 1;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Replicated, Category = "Status")
 	uint64 bIsShotgun : 1;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Replicated, Category = "Status")
@@ -134,10 +126,10 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
 	uint64 bIsFire : 1;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Replicated, Category = "Status")
 	uint64 bIsFireAnim : 1;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Replicated, Category = "Status")
 	uint64 bFireShotgun : 1;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Replicated, Category = "Status")
@@ -146,18 +138,13 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Replicated, Category = "Status")
 	uint64 bIsDead : 1;
 
-	void StartFireTrigger();
-	void StopFireTrigger();
-
-	UFUNCTION(Server, Reliable)
+	//UFUNCTION(Server, Reliable)
 	void StartFire();
-	void StartFire_Implementation();
+	//void StartFire_Implementation();
 
-	UFUNCTION(Server, Reliable)
+	//UFUNCTION(Server, Reliable)
 	void StopFire();
-	void StopFire_Implementation();
-
-	void ReloadTrigger();
+	//void StopFire_Implementation();
 
 	UFUNCTION(Server, Reliable) 
 	void Reload();
@@ -172,13 +159,17 @@ public:
 	void UpdateReloadUI_Implementation();
 	//발사가능체크
 	
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, category = "Status")
 	uint64 bCanFire : 1;
 
 	void CheckCanFire();
 
 	uint64 bCanAnimation : 1;
 
-	
+	UFUNCTION(Server, Reliable)
+	void SpawnWeapon(int WeaponNumber);
+	void SpawnWeapon_Implementation(int WeaponNumber);
 
 	void CheckCanAnimation();
 
@@ -211,8 +202,14 @@ public:
 
 
 	//무기 변경
-	void WeaponChange(int WeaponNumber);
+	void WeaponChangeTrigger(int WeaponNumber);
 	//void WeaponChange_Implementation(int WeaponNumber);
+
+	
+
+	UFUNCTION(Server, Reliable)
+	void WeaponChange(int WeaponNumber);
+	void WeaponChange_Implementation(int WeaponNumber);
 
 
 	UPROPERTY(BlueprintReadOnly)
@@ -244,14 +241,27 @@ public:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "SpringArm")
 	FVector CrouchedSpringArmPosition;
 
+	UFUNCTION(Server, Reliable)
 	void ChangeGranade(int WeaponNumber);
+	void ChangeGranade_Implementation(int WeaponNumber);
 	
+	UFUNCTION(Server, Reliable)
+	void ThrowGranade_Start_Server();
+	void ThrowGranade_Start_Server_Implementation();
+
+	UFUNCTION(Server, Reliable)
+	void ThrowGranade_End_Server();
+	void ThrowGranade_End_Server_Implementation();
+
+
 	UFUNCTION(NetMulticast, Reliable)
 	void ThrowGranade_Start();
 	void ThrowGranade_Start_Implementation();
+
 	UFUNCTION(NetMulticast, Reliable)
 	void ThrowGranade_End();
 	void ThrowGranade_End_Implementation();
+
 	UFUNCTION(Server, Reliable)
 	void ThrowGranade();
 	void ThrowGranade_Implementation();

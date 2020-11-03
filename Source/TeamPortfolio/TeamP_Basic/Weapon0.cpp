@@ -15,7 +15,7 @@
 #include "../MainUI/WeaponInfoBase.h"
 #include "Net/UnrealNetwork.h"
 
-void AWeapon0::OnFire_Implementation()
+void AWeapon0::OnFire()
 {
 
 	ATeamP_BasicPlayer* Player = Cast<ATeamP_BasicPlayer>(GetOwner());//문제잇어?
@@ -50,10 +50,7 @@ void AWeapon0::OnFire_Implementation()
 		{
 			Player->bIsFireAnim = false;
 
-			CurrentBullet -= 1;
-			OnRep_CurrentBullet();
-
-			UE_LOG(LogClass, Warning, TEXT("Bullet = %d / %d"), Player->CurrentWeapon->CurrentBullet, Player->CurrentWeapon->MaxBullet);
+			//UE_LOG(LogClass, Warning, TEXT("Bullet = %d / %d"), Player->CurrentWeapon->CurrentBullet, Player->CurrentWeapon->MaxBullet);
 
 			StartRecoil();
 
@@ -78,8 +75,8 @@ void AWeapon0::OnFire_Implementation()
 				int RandX = FMath::RandRange(1, 2);
 				int RandY = FMath::RandRange(1, 2);
 
-				PC->DeprojectScreenPositionToWorld(ScreenSizeX / 2 + RandX, ScreenSizeY / 2 + RandY, CrosshairWorldPosition, CrosshairWorldDirection);
 
+				PC->DeprojectScreenPositionToWorld(ScreenSizeX / 2 + RandX, ScreenSizeY / 2 + RandY, CrosshairWorldPosition, CrosshairWorldDirection);
 				PC->GetPlayerViewPoint(CameraLocation, CameraRotation);
 
 
@@ -89,65 +86,18 @@ void AWeapon0::OnFire_Implementation()
 				//Player->GetController()->SetControlRotation(PlayerRotation);
 
 
-
-
-
 				FVector TraceStart = CameraLocation;
 				FVector TraceEnd = TraceStart + (CrosshairWorldDirection * 99999.f);
 
+				UE_LOG(LogClass, Warning, TEXT("Trace Start : %s, Trace End %s"), *TraceStart.ToString(), *TraceEnd.ToString());
+
 				//C2S_ProcessFire(TraceStart, TraceEnd);
 
-				TArray<TEnumAsByte<EObjectTypeQuery>> Objects;
+				/*------*/
 
-				Objects.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_WorldDynamic));
-				Objects.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_WorldStatic));
-				Objects.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_PhysicsBody));
-
-				TArray<AActor*> ActorToIgnore;
-				ActorToIgnore.Add(GetOwner());
-
-				FHitResult OutHit;
-
-				bool Result = UKismetSystemLibrary::LineTraceSingleForObjects(
-					GetWorld(),
-					TraceStart,
-					TraceEnd,
-					Objects,
-					true,
-					ActorToIgnore,
-					EDrawDebugTrace::None,
-					OutHit,
-					true,
-					FLinearColor::Red,
-					FLinearColor::Green,
-					5.0f
-				);
-
-				if (Result)
-				{
-					//effect
-					Effect1(OutHit);
-
-					//all client spawn Hiteffect and Decal
-
-					if (HasAuthority())
-					{
-						//Point Damage
-						UGameplayStatics::ApplyPointDamage(OutHit.GetActor(), //맞은놈
-							WeaponDamage,	//데미지
-							-OutHit.ImpactNormal,	//데미지 방향
-							OutHit,	//데미지 충돌 정보
-							Player->GetController(),	//때린 플레이어
-							this,	//때린놈
-							UBulletDamageType::StaticClass() //데미지 타입
-						);
-					}
-
-
-					MakeNoise(1.0f, Player, OutHit.ImpactPoint); //AI가 센서로 받을 수 있는 Noise를 생성한다.
-
-
-				}
+				CalculateFire(TraceStart, TraceEnd);
+				DecreaseBullet();
+				/*-----*/
 
 				//All Client Spawn Muzzleflash and Sound
 				//S2A_SpawnMuzzleFlashAndSound();
@@ -181,6 +131,73 @@ void AWeapon0::OnFire_Implementation()
 	}
 }
 
+void AWeapon0::CalculateFire_Implementation(FVector TraceStart, FVector TraceEnd)
+{
+
+	ATeamP_BasicPlayer* Player = Cast<ATeamP_BasicPlayer>(GetOwner());
+	if (Player)
+	{
+		TArray<TEnumAsByte<EObjectTypeQuery>> Objects;
+
+		Objects.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_WorldDynamic));
+		Objects.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_WorldStatic));
+		Objects.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_PhysicsBody));
+
+		TArray<AActor*> ActorToIgnore;
+		ActorToIgnore.Add(GetOwner());
+
+		FHitResult OutHit;
+
+		bool Result = UKismetSystemLibrary::LineTraceSingleForObjects(
+			GetWorld(),
+			TraceStart,
+			TraceEnd,
+			Objects,
+			true,
+			ActorToIgnore,
+			EDrawDebugTrace::ForDuration,
+			//EDrawDebugTrace::None,
+			OutHit,
+			true,
+			FLinearColor::Red,
+			FLinearColor::Green,
+			5.0f
+		);
+		UE_LOG(LogClass, Warning, TEXT("Result : %d"), Result);
+		if (Result)
+		{
+
+			//effect
+			Effect1(OutHit);	
+
+			//all client spawn Hiteffect and Decal
+
+
+			//Point Damage
+			UGameplayStatics::ApplyPointDamage(OutHit.GetActor(), //맞은놈
+				WeaponDamage,	//데미지
+				-OutHit.ImpactNormal,	//데미지 방향
+				OutHit,	//데미지 충돌 정보
+				Player->GetController(),	//때린 플레이어
+				this,	//때린놈
+				UBulletDamageType::StaticClass() //데미지 타입
+			);
+
+			MakeNoise(1.0f, Player, OutHit.ImpactPoint); //AI가 센서로 받을 수 있는 Noise를 생성한다.
+
+
+		}
+	}
+
+
+}
+
+void AWeapon0::DecreaseBullet_Implementation()
+{
+	CurrentBullet -= 1;
+	OnRep_CurrentBullet();
+}
+
 void AWeapon0::OnCurrentBulletCheck_Implementation()
 {
 	ATeamP_BasicPlayer* Player = Cast<ATeamP_BasicPlayer>(GetOwner());
@@ -192,6 +209,7 @@ void AWeapon0::OnCurrentBulletCheck_Implementation()
 
 		if (IsValid(PC->MainWidgetObject))
 		{
+			PC->GetMainUI()->WeaponInfo->SetItemName(WeaponName);
 			PC->GetMainUI()->WeaponInfo->SetIBulletNum(CurrentBullet);
 			PC->GetMainUI()->WeaponInfo->SetIBulletMaxNum(RemainedBullet);
 		}
@@ -206,10 +224,17 @@ void AWeapon0::OnRep_CurrentBullet()
 
 void AWeapon0::Effect1_Implementation(FHitResult Hit)
 {
+	if(HasAuthority()){
+		UE_LOG(LogClass, Warning, TEXT("Effect1.Server"))
 
+	}
+	else {
+		UE_LOG(LogClass, Warning, TEXT("Effect1.Client"))
+	}
 	//S2A_SpawnHitEffectAndDecal(OutHit);
 	if (Cast<ACharacter>(Hit.GetActor()))
 	{
+
 		//캐릭터
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(),
 			BloodHitEffect,
@@ -256,7 +281,7 @@ void AWeapon0::Effect2_Implementation()
 	}
 }
 
-void AWeapon0::OnFireShotgun_Implementation()												//샷건
+void AWeapon0::OnFireShotgun()												//샷건
 {
 	ATeamP_BasicPlayer* Player = Cast<ATeamP_BasicPlayer>(GetOwner());
 
@@ -282,10 +307,9 @@ void AWeapon0::OnFireShotgun_Implementation()												//샷건
 
 			if (Player->bCanFire) //bCanFire로 변경
 			{
+
 				Player->bIsFireAnim = false;
 
-				CurrentBullet -= 1;
-				OnRep_CurrentBullet();
 
 				UE_LOG(LogClass, Warning, TEXT("Bullet = %d / %d"), Player->CurrentWeapon->CurrentBullet, Player->CurrentWeapon->MaxBullet);
 
@@ -326,57 +350,12 @@ void AWeapon0::OnFireShotgun_Implementation()												//샷건
 
 						//C2S_ProcessFire(TraceStart, TraceEnd);
 
-						TArray<TEnumAsByte<EObjectTypeQuery>> Objects;
+						CalculateFire(TraceStart, TraceEnd);
 
-						Objects.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_WorldDynamic));
-						Objects.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_WorldStatic));
-						Objects.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_PhysicsBody));
-
-						TArray<AActor*> ActorToIgnore;
-
-						//FHitResult OutHit;
-
-
-
-						bool Result = UKismetSystemLibrary::LineTraceSingleForObjects(
-							GetWorld(),
-							TraceStart,
-							TraceEnd,
-							Objects,
-							true,
-							ActorToIgnore,
-							EDrawDebugTrace::None,
-							OutHit,
-							true,
-							FLinearColor::Red,
-							FLinearColor::Green,
-							5.0f
-						);
-
-						if (Result)
-						{
-
-							//all client spawn Hiteffect and Decal
-							Effect1(OutHit);
-
-							if (HasAuthority())
-							{
-
-								//Point Damage
-								UGameplayStatics::ApplyPointDamage(OutHit.GetActor(), //맞은놈
-									WeaponDamage,	//데미지
-									-OutHit.ImpactNormal,	//데미지 방향
-									OutHit,	//데미지 충돌 정보
-									Player->GetController(),	//때린 플레이어
-									this,	//때린놈
-									UBulletDamageType::StaticClass() //데미지 타입
-								);
-
-							}
-
-						}
 						
 					}
+
+					DecreaseBullet();
 
 					MakeNoise(1.0f, Player, OutHit.ImpactPoint); //AI가 센서로 받을 수 있는 Noise를 생성한다.
 
@@ -439,8 +418,6 @@ void AWeapon0::StartRecoil()
 }
 
 
-
-
 // Sets default values
 AWeapon0::AWeapon0()
 {
@@ -451,6 +428,8 @@ AWeapon0::AWeapon0()
 	RootComponent = WeaponMesh;
 
 	SetReplicates(true);
+
+	WeaponName = "DefaultName";
 }
 
 
@@ -484,6 +463,7 @@ void AWeapon0::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetime
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(AWeapon0, CurrentBullet);
 	DOREPLIFETIME(AWeapon0, RemainedBullet);
+	DOREPLIFETIME(AWeapon0, InterpPitch);
 }
 
 void AWeapon0::OnRep_Owner()
