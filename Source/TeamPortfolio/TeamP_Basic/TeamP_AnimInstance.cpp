@@ -37,6 +37,21 @@ void UTeamP_AnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		else { //샷건쏨?
 				bIsFireAnim = Pawn->bFireShotgun;//쐇으면 애니메이션 동작
 		}
+
+		if (bIsGranade) {//수류탄 들었는가?
+
+			if (bIsFireAnim) {// 공격눌럿는가?
+				if (Pawn->ThrowGranadeMontage)
+				{
+					UE_LOG(LogClass, Warning, TEXT("ThrowStart_Montage"))
+
+						FString SectionName = FString::Printf(TEXT("Throw_1"));
+					Pawn->PlayAnimMontage(Pawn->ThrowGranadeMontage, 1.0f, FName(SectionName));
+
+				}
+			}
+
+		}
 		
 
 		FRotator AimRotation = Pawn->GetAimOffset();

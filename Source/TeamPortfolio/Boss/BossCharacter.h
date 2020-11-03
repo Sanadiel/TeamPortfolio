@@ -20,6 +20,7 @@ class USplineComponent;
 class USplineMeshComponent;
 class UNiagaraSystem;
 class UWidgetComponent;
+class ULobby_ReadyWidget;
 
 UCLASS()
 class TEAMPORTFOLIO_API ABossCharacter : public ACharacter
@@ -68,6 +69,8 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 		UWidgetComponent* Widget_3D;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+		UWidgetComponent* Ready_3D;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -109,6 +112,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UMG")
 		TSubclassOf<UBossWidgetBase> BossWidgetClass;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UMG")
+		TSubclassOf<ULobby_ReadyWidget> LobbyWidgetClass;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Replicated, Category = "Grab")
 		bool bIsGrabbed;

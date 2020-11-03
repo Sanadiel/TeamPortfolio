@@ -23,6 +23,7 @@
 #include "NiagaraFunctionLibrary.h"
 #include "TimerManager.h"
 #include "Components/WidgetComponent.h"
+#include "../Lobby/Lobby_ReadyWidget.h"
 
 // Sets default values
 ABossCharacter::ABossCharacter()
@@ -111,6 +112,13 @@ ABossCharacter::ABossCharacter()
 	Widget_3D->SetRelativeScale3D(FVector(0.25f));
 	Widget_3D->bOnlyOwnerSee = true;
 	
+	Ready_3D = CreateDefaultSubobject<UWidgetComponent>(TEXT("Ready_3D"));
+	Ready_3D->SetupAttachment(RootComponent);
+	Ready_3D->SetWidgetSpace(EWidgetSpace::World);
+	Ready_3D->bOnlyOwnerSee = true;
+	Ready_3D->SetRelativeLocation(FVector(200.0f, 100.0f, 100.0f));
+	Ready_3D->SetRelativeRotation(FRotator(0.0f, 180.0f, 0.0f));
+	Ready_3D->SetRelativeScale3D(FVector(0.25f));
 }
 
 // Called when the game starts or when spawned
