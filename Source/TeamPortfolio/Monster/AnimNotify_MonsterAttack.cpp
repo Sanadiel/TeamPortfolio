@@ -13,7 +13,6 @@ void UAnimNotify_MonsterAttack::Notify(USkeletalMeshComponent* MeshComp, UAnimSe
 {
 	Super::Notify(MeshComp, Animation);
 
-
 	//AActor* Monster = MeshComp->GetOwner();
 	AMonster* Monster = Cast<AMonster>(MeshComp->GetOwner());
 	
