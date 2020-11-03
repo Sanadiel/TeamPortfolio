@@ -10,6 +10,8 @@
 #include "Net/UnrealNetwork.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/GameplayStatics.h"
+#include "UI/MonsterHpWidgetBase.h"
+#include "Components/WidgetComponent.h"
 
 // Sets default values
 AMonster::AMonster()
@@ -23,7 +25,15 @@ AMonster::AMonster()
 	Tags.Add(TEXT("Monster"));
 
 	PawnSensing = CreateDefaultSubobject<UPawnSensingComponent>(TEXT("PawnSensing"));
+	Rotation = CreateDefaultSubobject<USceneComponent>(TEXT("Rotation"));
+	//HPBar = CreateDefaultSubobject<UMonsterHpWidgetBase>(TEXT("HPBar"));
+	HPBar3D = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPBar3D"));
+	HPBar3D->SetWidgetClass(HpWidgetClass);
 
+	Rotation->SetupAttachment(RootComponent);
+	HPBar3D->SetupAttachment(Rotation);
+
+	
 
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
@@ -35,6 +45,7 @@ void AMonster::BeginPlay()
 	Super::BeginPlay();
 
 	SetSpeed(WalkSpeed);
+	OnRep_HPChanged();
 
 	if (PawnSensing)
 	{
@@ -107,7 +118,9 @@ void AMonster::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetime
 float AMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	CurrentHP -= DamageAmount;
-	CurrentHP = FMath::Clamp(CurrentHP, 0.0f, 100.0f);
+	OnRep_HPChanged();
+	S2C_HpProcess_Implementation();
+	//CurrentHP = FMath::Clamp(CurrentHP, 0.0f, 100.0f);
 
 	if (CurrentHP <= 0)
 	{
@@ -174,5 +187,22 @@ void AMonster::C2S_DamageProcess_Implementation()
 			nullptr
 		);
 	}
+	
+}
+
+void AMonster::OnRep_HPChanged()
+{
+	//S2C_HpProcess_Implementation();
+	/*UMonsterHPWidgetBase* Hp = Cast<UMonsterHPWidgetBase>(HPBar3D->GetUserWidgetObject());
+
+	if (IsValid(Hp))
+	{
+		float Percent = CurrentHP / MaxHP;
+		Hp->HpBarUpdate(Percent);
+	}*/
+}
+
+void AMonster::S2C_HpProcess_Implementation()
+{
 	
 }

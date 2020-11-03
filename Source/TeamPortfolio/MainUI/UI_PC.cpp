@@ -16,6 +16,8 @@
 #include "../Lobby/Lobby_WidgetBase.h"
 #include "../Base/Base_GM.h"
 #include "../Lobby/Lobby_ReadyWidget.h"
+#include "ContactCaseBase.h"
+#include "../Item/MasterItem.h"
 
 AUI_PC::AUI_PC()
 {
@@ -302,4 +304,55 @@ void AUI_PC::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimePr
 
 	DOREPLIFETIME(AUI_PC, IsDefencePlayer);
 	DOREPLIFETIME(AUI_PC, IsReady);
+}
+
+void AUI_PC::AddPickItem(AMasterItem* AddItem)
+{
+	PickItemList.Add(AddItem);
+
+	MainWidgetObject->ContactCaseWidget->MakeChilren(PickItemList);//아이템 받게..만들어야함 Tarray1번이 case1번...F눌러서 먹으면 1. 리스트에서 삭제 2. case에서 삭제 3. 아이템 맵에서 삭제
+	MainWidgetObject->ContactCaseWidget->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+																   //PC->ShowItemTooltip(AddItem->ItemData.ItemName);
+	
+}
+
+void AUI_PC::RemovePickItem(AMasterItem* RemoveItem)
+{
+	PickItemList.Remove(RemoveItem);
+
+	
+	if (PickItemList.Num() > 0)
+	{
+		MainWidgetObject->ContactCaseWidget->MakeChilren(PickItemList);//다음 아이템 컨텍 되어있으면 출현...
+	}
+	else
+	{
+		MainWidgetObject->ContactCaseWidget->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	}
+
+}
+
+void AUI_PC::Pickup()
+{
+	if (PickItemList.Num() > 0)
+	{
+		C2S_CheckPickupItem(PickItemList[PickItemList.Num() - 1]);
+	}
+}
+
+void AUI_PC::C2S_CheckPickupItem_Implementation(AMasterItem* PickupItem)
+{
+	if (PickupItem && !PickupItem->IsPendingKill())
+	{
+		S2C_InsertItem(PickupItem);
+		PickupItem->Destroy();
+	}
+}
+
+void AUI_PC::S2C_InsertItem_Implementation(AMasterItem* PickupItem)
+{
+	if (IsValid(MainWidgetObject))
+	{
+		MainWidgetObject->Inventory->AddItem_Inventory(Inventory->Inven, PickupItem);
+	}
 }

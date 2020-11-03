@@ -46,6 +46,9 @@ public:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	class ULobby_ReadyWidget* ReadyWidget;
 
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	class UContactCaseBase* ContactCaseWidget;
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Drag")
 	bool isDraging = false;
 	

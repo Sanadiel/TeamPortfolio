@@ -52,6 +52,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Inven")
 	class UInventory* Inventory;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Inven")
+	TArray<class AMasterItem*> PickItemList;
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Replicated, Category = "Player")
 	bool IsDefencePlayer = false;
 
@@ -111,6 +114,20 @@ public:
 	UFUNCTION(Server, Reliable)
 	void C2S_SetIsReady(bool bValue);
 	void C2S_SetIsReady_Implementation(bool bValue);
+
+	void AddPickItem(class AMasterItem* AddItem);
+	void RemovePickItem(class AMasterItem* RemoveItem);
+
+	void Pickup();
+
+	UFUNCTION(Server, Reliable)
+	void C2S_CheckPickupItem(class AMasterItem* PickupItem);
+	void C2S_CheckPickupItem_Implementation(class AMasterItem* PickupItem);
+
+	UFUNCTION(Client, Reliable)
+	void S2C_InsertItem(class AMasterItem* PickupItem);
+	void S2C_InsertItem_Implementation(class AMasterItem* PickupItem);
+
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 

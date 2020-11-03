@@ -2,7 +2,24 @@
 
 
 #include "ContactCaseBase.h"
+#include "../Item/MasterItem.h"
+#include "ContactWidgetBase.h"
 
-void UContactCaseBase::MakeChilren_Implementation()
+void UContactCaseBase::NativeConstruct()
 {
+	Super::NativeConstruct();
+}
+
+void UContactCaseBase::MakeChilren(TArray<AMasterItem*> PickList)
+{
+	for (int Index = 0; Index != Contact.Num(); ++Index)
+	{
+		if (Contact[Index]->GetVisibility() == ESlateVisibility::Collapsed)
+		{
+			PlayAnimationAppear_BlueprintImplement(Contact[Index]);
+		}
+
+		Contact[Index]->SetText(PickList[Index]->ItemData.ItemName);
+		
+	}
 }

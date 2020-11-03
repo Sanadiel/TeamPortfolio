@@ -146,6 +146,33 @@ void UInventoryWidgetBase::SwapSlot(int32 FrontslotIndex, int32 OtherSlotIndex)
 	UpdateInventoryWithIndex(PC->Inventory->Inven, OtherSlotIndex);
 }
 
+void UInventoryWidgetBase::AddItem_Inventory(TArray<AMasterItem*> Inventory, AMasterItem* Item)
+{
+	if (Item->ItemData.ItemType == EItemType::Consume)
+	{
+		int Index = HaveThis(Item);
+		if (Index == -1)
+		{
+			int NotEqualIndex = GetEmptySlot();
+			Inventory[NotEqualIndex] = Item;
+			SetSlot(NotEqualIndex, Inventory[NotEqualIndex]);
+		}
+		else
+		{
+			Inventory[Index]->ItemData.ItemCount++;
+			UpdateInventoryWithIndex(Inventory, Index);
+		}
+	}
+	else
+	{
+		int NotEqualIndex = GetEmptySlot();
+		Inventory[NotEqualIndex] = Item;
+		SetSlot(NotEqualIndex, Inventory[NotEqualIndex]);		
+	}
+
+	//Item->Destroy();
+}
+
 void UInventoryWidgetBase::OnExitButton()
 {
 	AUI_PC* PC = GetOwningPlayer<AUI_PC>();

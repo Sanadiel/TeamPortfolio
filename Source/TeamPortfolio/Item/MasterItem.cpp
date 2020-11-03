@@ -9,6 +9,8 @@
 #include "Net/UnrealNetwork.h"
 #include "Kismet/GameplayStatics.h"
 #include "../Instance/TotalLog_GameInstance.h"
+#include "../TeamP_Basic/TeamP_BasicPlayer.h"
+#include "../MainUI/UI_PC.h"
 
 
 // Sets default values
@@ -96,24 +98,27 @@ void AMasterItem::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifet
 
 void AMasterItem::ProcessBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	/*if (OtherActor->ActorHasTag(TEXT("Player")))
+	if (OtherActor->ActorHasTag(TEXT("Player")))
 	{
-		ABasicPlayer* Pawn = Cast<ABasicPlayer>(OtherActor);
+		ATeamP_BasicPlayer* Pawn = Cast<ATeamP_BasicPlayer>(OtherActor);
 		if (Pawn && Pawn->IsLocallyControlled())
 		{
-			Pawn->AddPickItem(this);
+			//Pawn->AddPickItem(this);
+			AUI_PC* PC = Cast<AUI_PC>(Pawn->Controller);
+			//AUI_PC->
 		}
-	}*/
+	}
 }
 
 void AMasterItem::ProcessEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	/*if (OtherActor->ActorHasTag(TEXT("Player")))
+	if (OtherActor->ActorHasTag(TEXT("Player")))
 	{
-		ABasicPlayer* Pawn = Cast<ABasicPlayer>(OtherActor);
+		ATeamP_BasicPlayer* Pawn = Cast<ATeamP_BasicPlayer>(OtherActor);
 		if (Pawn && Pawn->IsLocallyControlled())
 		{
-			Pawn->RemovePickItem(this);
+			AUI_PC* PC = Cast<AUI_PC>(Pawn->Controller);
+			//Pawn->RemovePickItem(this);
 		}
-	}*/
+	}
 }

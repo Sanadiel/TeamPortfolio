@@ -23,10 +23,13 @@ public:
 
 #pragma region Public Member
 public:
+	virtual void NativeConstruct() override;
 
-	UFUNCTION(BlueprintNativeEvent)
-	void MakeChilren();
-	void MakeChilren_Implementation();
+	
+	void MakeChilren(TArray<class AMasterItem*> PickList);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void PlayAnimationAppear_BlueprintImplement(class UContactWidgetBase* UCTWidgetBase);
 
 
 #pragma endregion

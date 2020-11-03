@@ -12,6 +12,7 @@
 #include "ShopBase.h"
 #include "WeaponInfoBase.h"
 #include "../Lobby/Lobby_ReadyWidget.h"
+#include "ContactCaseBase.h"
 
 void UMainUIBase::NativeConstruct()
 {
@@ -27,6 +28,7 @@ void UMainUIBase::NativeConstruct()
 	ItemHover = Cast<UItemTooltipBase>(GetWidgetFromName(TEXT("ItemTooltip")));
 	WeaponInfo = Cast<UWeaponInfoBase>(GetWidgetFromName(TEXT("WeaponInfo")));
 	ReadyWidget = Cast<ULobby_ReadyWidget>(GetWidgetFromName(TEXT("Lobby_Ready")));
+	ContactCaseWidget = Cast<UContactCaseBase>(GetWidgetFromName(TEXT("ContactCase")));
 
 	ShopWindow->SetVisibility(ESlateVisibility::Collapsed);
 	Inventory->SetVisibility(ESlateVisibility::Collapsed);

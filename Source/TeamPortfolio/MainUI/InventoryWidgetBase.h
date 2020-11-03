@@ -46,7 +46,7 @@ public:
 	bool GetisDraging();
 	void SetisDraging(bool bValue);
 
-	int HaveThis(AMasterItem* FuncItem);
+	int HaveThis(class AMasterItem* FuncItem);
 
 	FItemDataTable GetItemData(int32 Index);
 	class UItemTooltipBase* GetTooltipWidget();
@@ -54,7 +54,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SwapSlot(int32 FrontslotIndex, int32 OtherSlotIndex);
 
-
+	void AddItem_Inventory(TArray<class AMasterItem*> Inventory, class AMasterItem* Item);
 
 	UFUNCTION()
 	void OnExitButton();

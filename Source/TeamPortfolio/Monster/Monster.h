@@ -66,15 +66,26 @@ public:
 	class UBehaviorTree* MonsterBT;
 
 	//S
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Replicated, Category = "State")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, ReplicatedUsing = "OnRep_HPChanged", Category = "State")
 	float CurrentHP = 100.0f;
-
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "State")
 	float MaxHP = 100.0f;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
 	EMonsterType MonType;
+
+	//UPROPERTY(BlueprintReadWrite, EditAnywhere, Replicated, Category = "UI")
+	//class UMonsterHPWidgetBase* HPBar;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "UI")
+	class USceneComponent* Rotation;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "UI")
+	class UWidgetComponent* HPBar3D;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UMG")
+	TSubclassOf<class UMonsterHPWidgetBase> HpWidgetClass;
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
@@ -87,4 +98,11 @@ public:
 	UFUNCTION(Server, Reliable)
 	void C2S_DamageProcess();
 	void C2S_DamageProcess_Implementation();
+
+	UFUNCTION()
+	void OnRep_HPChanged();
+
+	UFUNCTION(Client, Reliable)
+	void S2C_HpProcess();
+	void S2C_HpProcess_Implementation();
 };
