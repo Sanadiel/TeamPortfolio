@@ -87,11 +87,11 @@ void AWeapon0::OnFire()
 				//PlayerRotation.Pitch += FMath::FRandRange(0.2f, 0.5f);
 				//Player->GetController()->SetControlRotation(PlayerRotation);
 
-				FVector TraceStart = MuzzleLocation;
+				FVector TraceStart = CameraLocation;
 				//FVector TraceStart = CameraLocation;
 				FVector TraceEnd = TraceStart + (CrosshairWorldDirection * 99999.f);
 
-				UE_LOG(LogClass, Warning, TEXT("Trace Start : %s, Trace End %s"), *TraceStart.ToString(), *TraceEnd.ToString());
+				//UE_LOG(LogClass, Warning, TEXT("Trace Start : %s, Trace End %s"), *TraceStart.ToString(), *TraceEnd.ToString());
 
 				//C2S_ProcessFire(TraceStart, TraceEnd);
 
@@ -359,7 +359,7 @@ void AWeapon0::OnFireShotgun()												//¼¦°Ç
 
 						//C2S_ProcessFire(TraceStart, TraceEnd);
 
-						CalculateFire(MuzzleLocation, TraceEnd);
+						CalculateFire(TraceStart, TraceEnd);
 
 						
 					}
