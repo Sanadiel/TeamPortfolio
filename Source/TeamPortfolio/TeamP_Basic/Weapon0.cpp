@@ -17,7 +17,7 @@
 
 void AWeapon0::OnFire()
 {
-
+	
 	ATeamP_BasicPlayer* Player = Cast<ATeamP_BasicPlayer>(GetOwner());//¹®Á¦ÀÕ¾î?
 
 	UE_LOG(LogClass, Warning, TEXT("OnFire"))
@@ -68,6 +68,8 @@ void AWeapon0::OnFire()
 				FVector CameraLocation;
 				FRotator CameraRotation;
 
+				FVector MuzzleLocation = WeaponMesh->GetSocketLocation(TEXT("Muzzle"));
+
 				PC->GetViewportSize(ScreenSizeX, ScreenSizeY);
 
 
@@ -85,8 +87,8 @@ void AWeapon0::OnFire()
 				//PlayerRotation.Pitch += FMath::FRandRange(0.2f, 0.5f);
 				//Player->GetController()->SetControlRotation(PlayerRotation);
 
-
-				FVector TraceStart = CameraLocation;
+				FVector TraceStart = MuzzleLocation;
+				//FVector TraceStart = CameraLocation;
 				FVector TraceEnd = TraceStart + (CrosshairWorldDirection * 99999.f);
 
 				UE_LOG(LogClass, Warning, TEXT("Trace Start : %s, Trace End %s"), *TraceStart.ToString(), *TraceEnd.ToString());
@@ -139,12 +141,13 @@ void AWeapon0::CalculateFire_Implementation(FVector TraceStart, FVector TraceEnd
 	{
 		TArray<TEnumAsByte<EObjectTypeQuery>> Objects;
 
-		Objects.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_WorldDynamic));
+		//Objects.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_WorldDynamic));
 		Objects.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_WorldStatic));
 		Objects.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_PhysicsBody));
 
 		TArray<AActor*> ActorToIgnore;
 		ActorToIgnore.Add(GetOwner());
+		ActorToIgnore.Add(this);
 
 		FHitResult OutHit;
 
@@ -171,6 +174,9 @@ void AWeapon0::CalculateFire_Implementation(FVector TraceStart, FVector TraceEnd
 			Effect1(OutHit);	
 
 			//all client spawn Hiteffect and Decal
+			FString HitActor = OutHit.GetActor()->GetName();
+
+			UE_LOG(LogClass, Warning, TEXT("Result : %s"), *HitActor);
 
 
 			//Point Damage
@@ -329,6 +335,9 @@ void AWeapon0::OnFireShotgun()												//¼¦°Ç
 					FVector CameraLocation;
 					FRotator CameraRotation;
 
+
+					FVector MuzzleLocation = WeaponMesh->GetSocketLocation(TEXT("Muzzle"));
+
 					FHitResult OutHit;
 
 					for (int i = 0; i <= ShotgunCount;i++) {
@@ -350,7 +359,7 @@ void AWeapon0::OnFireShotgun()												//¼¦°Ç
 
 						//C2S_ProcessFire(TraceStart, TraceEnd);
 
-						CalculateFire(TraceStart, TraceEnd);
+						CalculateFire(MuzzleLocation, TraceEnd);
 
 						
 					}

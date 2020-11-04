@@ -39,7 +39,7 @@ ATeamP_BasicPlayer::ATeamP_BasicPlayer()
 	SpringArm->SetupAttachment(RootComponent);
 
 	SpringArm->SocketOffset = FVector(0, 40.0f, 88.f);
-	SpringArm->TargetArmLength = 240.0f;
+	SpringArm->TargetArmLength = 120.0f;
 	SpringArm->bUsePawnControlRotation = true;
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
