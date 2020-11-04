@@ -45,7 +45,7 @@ void AMonster::BeginPlay()
 	Super::BeginPlay();
 
 	SetSpeed(WalkSpeed);
-	OnRep_HPChanged();
+	//OnRep_HPChanged();
 
 	if (PawnSensing)
 	{
@@ -193,13 +193,16 @@ void AMonster::C2S_DamageProcess_Implementation()
 void AMonster::OnRep_HPChanged()
 {
 	//S2C_HpProcess_Implementation();
-	/*UMonsterHPWidgetBase* Hp = Cast<UMonsterHPWidgetBase>(HPBar3D->GetUserWidgetObject());
-
-	if (IsValid(Hp))
+	if (HPBar3D)
 	{
-		float Percent = CurrentHP / MaxHP;
-		Hp->HpBarUpdate(Percent);
-	}*/
+		UMonsterHPWidgetBase* Hp = Cast<UMonsterHPWidgetBase>(HPBar3D->GetUserWidgetObject());
+
+		if (IsValid(Hp))
+		{
+			float Percent = CurrentHP / MaxHP;
+			Hp->HpBarUpdate(Percent);
+		}
+	}
 }
 
 void AMonster::S2C_HpProcess_Implementation()

@@ -185,12 +185,12 @@ void AUI_PC::SettingReadyWidget()
 	{
 		if (IsDefencePlayer == false)
 		{
-			ReadyWidgetObject = CreateWidget<ULobby_ReadyWidget>(this, ReadyWidgetClass);
+			/*ReadyWidgetObject = CreateWidget<ULobby_ReadyWidget>(this, ReadyWidgetClass);
 
 			if (ReadyWidgetObject)
 			{
 				ReadyWidgetObject->AddToViewport();
-			}
+			}*/
 		}
 		else
 		{
@@ -276,10 +276,28 @@ void AUI_PC::S2C_SettingisDefence_Implementation()
 void AUI_PC::C2S_SpawnandPossess_Implementation()
 {
 	APawn* pawn = GetPawn();
-	UnPossess();
+	
+	ABossCharacter* BossCharacter;
 
-	ABossCharacter* BossCharacter = GetWorld()->SpawnActor<ABossCharacter>(Boss, pawn->GetTransform());	
-	pawn->Destroy();
+	if (pawn)
+	{
+		BossCharacter = GetWorld()->SpawnActor<ABossCharacter>(Boss, pawn->GetTransform());
+		pawn->SetActorHiddenInGame(true);
+		pawn->Destroy();
+	}
+	else if(StartSpot != nullptr)
+	{
+		BossCharacter = GetWorld()->SpawnActor<ABossCharacter>(Boss, StartSpot->GetTransform());
+	}
+	else
+	{
+		FTransform trans;
+		trans.SetTranslation(FVector::ZeroVector);
+		BossCharacter = GetWorld()->SpawnActor<ABossCharacter>(Boss, trans);
+	}
+		
+	UnPossess();
+	
 	Possess(BossCharacter);	
 }
 

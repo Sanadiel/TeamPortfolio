@@ -21,7 +21,8 @@ void ALobby_GM::StartGame()
 		PC->S2C_SetGIbool(PC->IsDefencePlayer);
 	}
 
-	GetWorld()->ServerTravel(TEXT("CrumblingRuins_Level"));
+	//GetWorld()->ServerTravel(TEXT("CrumblingRuins_Level"));
+	GetWorld()->ServerTravel(TEXT("Desert_Level"));
 }
 
 void ALobby_GM::BeginPlay()

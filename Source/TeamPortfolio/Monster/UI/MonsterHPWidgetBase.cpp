@@ -8,11 +8,15 @@ void UMonsterHPWidgetBase::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	HPbar = Cast<UProgressBar>(GetWidgetFromName(TEXT("MonsterHpBarUI")));
+	HPbar = Cast<UProgressBar>(GetWidgetFromName(TEXT("Hp")));	
 }
 
 void UMonsterHPWidgetBase::HpBarUpdate(float Percent)
 {
-	HPbar->SetPercent(Percent);
+	if (HPbar)
+	{
+		HPbar->SetPercent(Percent);
+	}
+
 	//MonsterHpBarUI
 }

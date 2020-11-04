@@ -62,5 +62,6 @@ void ABase_GM::Replace_Player_Implementation(AController* Player, FName Tag)
 	if (IsValid(Player->GetPawn()))
 	{
 		Player->GetPawn()->SetActorTransform(PS->GetTransform());
+		Player->GetPawn()->SetActorHiddenInGame(false);
 	}
 }
