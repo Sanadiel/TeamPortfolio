@@ -185,12 +185,12 @@ void AUI_PC::SettingReadyWidget()
 	{
 		if (IsDefencePlayer == false)
 		{
-			/*ReadyWidgetObject = CreateWidget<ULobby_ReadyWidget>(this, ReadyWidgetClass);
+			ABossCharacter* Bosspawn = Cast<ABossCharacter>(GetPawn());
 
-			if (ReadyWidgetObject)
+			if (Bosspawn)
 			{
-				ReadyWidgetObject->AddToViewport();
-			}*/
+				Bosspawn->CreateUI();
+			}			
 		}
 		else
 		{

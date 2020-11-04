@@ -100,6 +100,8 @@ void AMonster::SetCurrentState_Implementation(EMonsterState NewState)
 		CurrentState = NewState;
 		AIC->SetCurrnetState(NewState);
 	}
+
+	S2A_DisableUI(NewState);
 }
 
 void AMonster::SetSpeed(float NewSpeed)
@@ -208,4 +210,12 @@ void AMonster::OnRep_HPChanged()
 void AMonster::S2C_HpProcess_Implementation()
 {
 	
+}
+
+void AMonster::S2A_DisableUI_Implementation(EMonsterState NewState)
+{
+	if (NewState == EMonsterState::Death)
+	{
+		HPBar3D->SetVisibility(false);
+	}
 }

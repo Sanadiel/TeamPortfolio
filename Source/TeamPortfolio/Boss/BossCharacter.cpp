@@ -24,6 +24,7 @@
 #include "TimerManager.h"
 #include "Components/WidgetComponent.h"
 #include "../Lobby/Lobby_ReadyWidget.h"
+#include "../MainUI/UI_PC.h"
 
 // Sets default values
 ABossCharacter::ABossCharacter()
@@ -349,8 +350,17 @@ void ABossCharacter::RightHandRelease()
 
 void ABossCharacter::CreateUI()
 {
-	SetWidget3DVisibility(true);
-	SetReady3DVisibility(true);
+	AUI_PC* PC = Cast<AUI_PC>(GetController());
+	if (PC && PC->IsMasterLobby)
+	{
+		SetReady3DVisibility(true);
+		SetWidget3DVisibility(false);
+	}
+	else
+	{
+		SetReady3DVisibility(false);
+		SetWidget3DVisibility(true);
+	}
 }
 
 void ABossCharacter::SearchHold_Implementation(FVector TraceStart, FVector TraceEnd)
@@ -574,7 +584,7 @@ void ABossCharacter::TrajectoryLineTeleport_Implementation()
 	}
 }
 
-void ABossCharacter::SetWidget3DVisibility_Implementation(bool Value)
+void ABossCharacter::SetWidget3DVisibility(bool Value)
 {
 	if (Widget_3D)
 	{
@@ -583,7 +593,7 @@ void ABossCharacter::SetWidget3DVisibility_Implementation(bool Value)
 	}
 }
 
-void ABossCharacter::SetReady3DVisibility_Implementation(bool Value)
+void ABossCharacter::SetReady3DVisibility(bool Value)
 {
 	if (Ready_3D)
 	{

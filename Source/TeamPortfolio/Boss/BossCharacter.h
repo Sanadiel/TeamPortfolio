@@ -165,11 +165,9 @@ public:
 	void TrajectoryLineTeleport();
 	void TrajectoryLineTeleport_Implementation();
 
-	UFUNCTION(Server, Reliable)
 	void SetWidget3DVisibility(bool Value);
-	void SetWidget3DVisibility_Implementation(bool Value);
-	UFUNCTION(Server, Reliable)
+
 	void SetReady3DVisibility(bool Value);
-	void SetReady3DVisibility_Implementation(bool Value);
+
 
 };

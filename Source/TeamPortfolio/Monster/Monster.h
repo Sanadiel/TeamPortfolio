@@ -105,4 +105,8 @@ public:
 	UFUNCTION(Client, Reliable)
 	void S2C_HpProcess();
 	void S2C_HpProcess_Implementation();
+
+	UFUNCTION(NetMultiCast, Reliable)
+	void S2A_DisableUI(EMonsterState NewState);
+	void S2A_DisableUI_Implementation(EMonsterState NewState);
 };
