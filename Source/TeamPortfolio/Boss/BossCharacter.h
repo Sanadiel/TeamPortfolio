@@ -43,9 +43,6 @@ public:
 		UPhysicsHandleComponent* PhysicsHandle;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-		USceneComponent* HoldPosition;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 		USceneComponent* VR_Root;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
@@ -169,5 +166,8 @@ public:
 
 	void SetReady3DVisibility(bool Value);
 
+	UFUNCTION(Server, Reliable)
+		void SyncHandLocRot(FVector L_Loc, FRotator L_Rot, FVector R_Loc, FRotator R_Rot);
+	void SyncHandLocRot_Implementation(FVector L_Loc, FRotator L_Rot, FVector R_Loc, FRotator R_Rot);
 
 };

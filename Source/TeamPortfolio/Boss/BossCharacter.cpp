@@ -49,11 +49,6 @@ ABossCharacter::ABossCharacter()
 	PhysicsHandle  = CreateDefaultSubobject<UPhysicsHandleComponent>(TEXT("PhysicsHandle"));
 	PhysicsHandle->SetIsReplicated(true);
 
-	//HoldPosition.
-	HoldPosition = CreateDefaultSubobject<USceneComponent>(TEXT("HoldPosition"));
-	HoldPosition->SetupAttachment(Camera);
-	HoldPosition->SetRelativeLocation(FVector(200.0f,0.0f,-50.0f));
-
 	//Disable Use Controller Rotation on Character. Character Rotation will Followed by Character Movement.
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationPitch = false;
@@ -162,11 +157,18 @@ void ABossCharacter::Tick(float DeltaTime)
 		SpawnCooldown[i] = FMath::Clamp<float>(SpawnCooldown[i] + DeltaTime, 0.0f, MaxSpawnCooldown[i]);
 	}
 
+	//if Client
+	if (!HasAuthority())
+	{
+		SyncHandLocRot(VR_Left->GetRelativeLocation(), VR_Left->GetRelativeRotation(), VR_Right->GetRelativeLocation(), VR_Right->GetRelativeRotation());
+	}
+
 	//PhysicsHandle Needed Update Target Location Per Frame.
 	if (PhysicsHandle)
 	{
 		//Update Hold Location at Left.
 		PhysicsHandle->SetTargetLocation(VR_Left->GetComponentLocation());
+		
 	}
 
 	DrawTrajectoryLine();
@@ -600,4 +602,10 @@ void ABossCharacter::SetReady3DVisibility(bool Value)
 		Ready_3D->SetVisibility(Value);
 		Ready_3D->Activate(Value);
 	}
+}
+
+void ABossCharacter::SyncHandLocRot_Implementation(FVector L_Loc, FRotator L_Rot, FVector R_Loc, FRotator R_Rot)
+{
+		VR_Left->SetRelativeLocationAndRotation(L_Loc, L_Rot);
+		VR_Right->SetRelativeLocationAndRotation(R_Loc, R_Rot);
 }
