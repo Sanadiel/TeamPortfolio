@@ -166,7 +166,7 @@ void AWeapon0::CalculateFire_Implementation(FVector TraceStart, FVector TraceEnd
 			FLinearColor::Green,
 			5.0f
 		);
-		UE_LOG(LogClass, Warning, TEXT("Result : %d"), Result);
+		//UE_LOG(LogClass, Warning, TEXT("Result : %d"), Result);
 		if (Result)
 		{
 
@@ -176,7 +176,7 @@ void AWeapon0::CalculateFire_Implementation(FVector TraceStart, FVector TraceEnd
 			//all client spawn Hiteffect and Decal
 			FString HitActor = OutHit.GetActor()->GetName();
 
-			UE_LOG(LogClass, Warning, TEXT("Result : %s"), *HitActor);
+			//UE_LOG(LogClass, Warning, TEXT("Result : %s"), *HitActor);
 
 
 			//Point Damage
@@ -190,12 +190,8 @@ void AWeapon0::CalculateFire_Implementation(FVector TraceStart, FVector TraceEnd
 			);
 
 			MakeNoise(1.0f, Player, OutHit.ImpactPoint); //AI가 센서로 받을 수 있는 Noise를 생성한다.
-
-
 		}
 	}
-
-
 }
 
 void AWeapon0::DecreaseBullet_Implementation()

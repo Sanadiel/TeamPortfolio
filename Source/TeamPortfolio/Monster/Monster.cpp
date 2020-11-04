@@ -119,10 +119,13 @@ void AMonster::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetime
 
 float AMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
+	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	if (CurrentHP <= 0.0f)
+		return 0.0f;
+
 	CurrentHP -= DamageAmount;
 	OnRep_HPChanged();
-	S2C_HpProcess_Implementation();
-	//CurrentHP = FMath::Clamp(CurrentHP, 0.0f, 100.0f);
 
 	if (CurrentHP <= 0)
 	{
@@ -194,7 +197,6 @@ void AMonster::C2S_DamageProcess_Implementation()
 
 void AMonster::OnRep_HPChanged()
 {
-	//S2C_HpProcess_Implementation();
 	if (HPBar3D)
 	{
 		UMonsterHPWidgetBase* Hp = Cast<UMonsterHPWidgetBase>(HPBar3D->GetUserWidgetObject());
@@ -207,10 +209,6 @@ void AMonster::OnRep_HPChanged()
 	}
 }
 
-void AMonster::S2C_HpProcess_Implementation()
-{
-	
-}
 
 void AMonster::S2A_DisableUI_Implementation(EMonsterState NewState)
 {
