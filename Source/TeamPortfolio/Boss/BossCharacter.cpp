@@ -565,6 +565,7 @@ void ABossCharacter::TrajectoryLineTeleport_Implementation()
 
 	predict.StartLocation = VR_Right->GetComponentLocation() + VR_Right->GetForwardVector()* 20.0f;
 	predict.LaunchVelocity = VR_Right->GetForwardVector() * 750.0f + VR_Right->GetUpVector()*250.0f;
+
 	predict.bTraceWithCollision = true;
 	predict.ProjectileRadius = 5.0f;
 	predict.MaxSimTime = 2.0f;
@@ -574,7 +575,8 @@ void ABossCharacter::TrajectoryLineTeleport_Implementation()
 	predict.OverrideGravityZ = -500.0f;
 	//predict.DrawDebugType = EDrawDebugTrace::ForOneFrame;
 	//predict.DrawDebugTime = 2.0f;
-	bool bCanTeleport= UGameplayStatics::Blueprint_PredictProjectilePath_Advanced(GetWorld(), predict, result);
+	bool bCanTeleport = UGameplayStatics::Blueprint_PredictProjectilePath_Advanced(GetWorld(), predict, result);
+
 
 	if (bCanTeleport)
 	{
@@ -591,7 +593,7 @@ void ABossCharacter::SetWidget3DVisibility(bool Value)
 	if (Widget_3D)
 	{
 		Widget_3D->SetVisibility(Value);
-		Widget_3D->Activate(Value);
+		Widget_3D->SetHiddenInGame(!Value);
 	}
 }
 
@@ -600,7 +602,7 @@ void ABossCharacter::SetReady3DVisibility(bool Value)
 	if (Ready_3D)
 	{
 		Ready_3D->SetVisibility(Value);
-		Ready_3D->Activate(Value);
+		Ready_3D->SetHiddenInGame(!Value);
 	}
 }
 
