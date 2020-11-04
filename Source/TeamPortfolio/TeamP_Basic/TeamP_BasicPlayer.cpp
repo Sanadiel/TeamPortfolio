@@ -24,7 +24,8 @@
 #include "../MainUI/WeaponInfoBase.h"
 #include "Granade.h"
 #include "Net/UnrealNetwork.h"
-
+#include "NiagaraSystem.h"
+#include "NiagaraFunctionLibrary.h"
 // Sets default values
 ATeamP_BasicPlayer::ATeamP_BasicPlayer()
 {
@@ -39,7 +40,7 @@ ATeamP_BasicPlayer::ATeamP_BasicPlayer()
 	SpringArm->SetupAttachment(RootComponent);
 
 	SpringArm->SocketOffset = FVector(0, 40.0f, 88.f);
-	SpringArm->TargetArmLength = 240.0f;
+	SpringArm->TargetArmLength = 120.0f;
 	SpringArm->bUsePawnControlRotation = true;
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
@@ -142,6 +143,8 @@ void ATeamP_BasicPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	PlayerInputComponent->BindAction<FBindActionParamDelegate>(TEXT("Weaponchange4"), IE_Pressed, this, &ATeamP_BasicPlayer::WeaponChangeTrigger, 3);
 
 	PlayerInputComponent->BindAction<FBindActionParamDelegate>(TEXT("ChangeGranade"), IE_Pressed, this, &ATeamP_BasicPlayer::ChangeGranade, 4);
+
+	PlayerInputComponent->BindAction(TEXT("Heal"), IE_Pressed, this, &ATeamP_BasicPlayer::Heal);
 
 }
 
@@ -763,6 +766,20 @@ void ATeamP_BasicPlayer::Destroyed()
 	if (IsValid(CurrentWeapon))
 	{
 		CurrentWeapon->Destroy();
+	}
+}
+
+void ATeamP_BasicPlayer::Heal_Implementation()
+{
+	UGameplayStatics::ApplyDamage(this, -20.0f, nullptr, nullptr,nullptr);
+	HealEffect();
+}
+
+void ATeamP_BasicPlayer::HealEffect_Implementation()
+{
+	if (HealNiagara)
+	{
+		UNiagaraFunctionLibrary::SpawnSystemAttached(HealNiagara, RootComponent, FName("None"), FVector(0.0f, 0.0f, 0.0f), FRotator(0.0f, 0.0f, 0.0f), EAttachLocation::KeepRelativeOffset, true);
 	}
 }
 

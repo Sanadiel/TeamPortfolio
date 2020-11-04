@@ -47,7 +47,7 @@ ABossCharacter::ABossCharacter()
 	//PhysicsHandle Component.
 	PhysicsHandle  = CreateDefaultSubobject<UPhysicsHandleComponent>(TEXT("PhysicsHandle"));
 	PhysicsHandle->SetIsReplicated(true);
-	
+
 	//HoldPosition.
 	HoldPosition = CreateDefaultSubobject<USceneComponent>(TEXT("HoldPosition"));
 	HoldPosition->SetupAttachment(Camera);
@@ -131,7 +131,7 @@ void ABossCharacter::BeginPlay()
 
 	/*Show Mouse Cursor*/
 	APlayerController* pc = Cast<APlayerController>(GetController());
-	if (pc)
+	if (pc && pc->IsLocalPlayerController() )
 	{
 		pc->bShowMouseCursor = true;
 		pc->SetInputMode(FInputModeGameAndUI());
@@ -349,18 +349,8 @@ void ABossCharacter::RightHandRelease()
 
 void ABossCharacter::CreateUI()
 {
-	if (IsLocallyControlled())
-	{
-		if (BossWidgetClass)
-		{
-			//UBossWidgetBase* bossWidget = CreateWidget<UBossWidgetBase>(Cast<APlayerController>(GetController()), BossWidgetClass);
-			//if (bossWidget)
-			//{
-			//	bossWidget->AddToViewport();
-			//}
-			Widget_3D->SetWidgetClass(BossWidgetClass);
-		}
-	}
+	SetWidget3DVisibility(true);
+	SetReady3DVisibility(true);
 }
 
 void ABossCharacter::SearchHold_Implementation(FVector TraceStart, FVector TraceEnd)
@@ -581,5 +571,23 @@ void ABossCharacter::TrajectoryLineTeleport_Implementation()
 	else
 	{
 		UE_LOG(LogClass, Warning, TEXT(" You Can't Teleport."));
+	}
+}
+
+void ABossCharacter::SetWidget3DVisibility_Implementation(bool Value)
+{
+	if (Widget_3D)
+	{
+		Widget_3D->SetVisibility(Value);
+		Widget_3D->Activate(Value);
+	}
+}
+
+void ABossCharacter::SetReady3DVisibility_Implementation(bool Value)
+{
+	if (Ready_3D)
+	{
+		Ready_3D->SetVisibility(Value);
+		Ready_3D->Activate(Value);
 	}
 }

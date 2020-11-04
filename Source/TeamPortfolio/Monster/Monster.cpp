@@ -181,7 +181,7 @@ void AMonster::C2S_DamageProcess_Implementation()
 		UE_LOG(LogClass, Warning, TEXT("Monster Attack : %s"), OutActors[0]);
 
 		UGameplayStatics::ApplyDamage(OutActors[0],
-			30.0f,
+			10.0f,
 			nullptr,
 			this,
 			nullptr
