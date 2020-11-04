@@ -63,7 +63,7 @@ public:
 	void OnFireShotgun();
 
 
-	UFUNCTION(NetMulticast, Reliable)
+	UFUNCTION(NetMulticast, UnReliable)
 	void Effect1(FHitResult Hit);
 	void Effect1_Implementation(FHitResult Hit);
 

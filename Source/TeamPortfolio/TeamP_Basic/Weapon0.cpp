@@ -143,6 +143,7 @@ void AWeapon0::CalculateFire_Implementation(FVector TraceStart, FVector TraceEnd
 
 		//Objects.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_WorldDynamic));
 		Objects.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_WorldStatic));
+		//Objects.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_Pawn));
 		Objects.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_PhysicsBody));
 
 		TArray<AActor*> ActorToIgnore;
