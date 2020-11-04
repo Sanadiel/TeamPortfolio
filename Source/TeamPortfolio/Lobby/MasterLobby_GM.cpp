@@ -28,6 +28,13 @@ void AMasterLobby_GM::PostLogin(APlayerController * NewPlayer)
 	PC->AddReadyWidget();
 }
 
+void AMasterLobby_GM::GenericPlayerInitialization(AController* C)
+{
+	Super::GenericPlayerInitialization(C);
+	AUI_PC* PC = Cast<AUI_PC>(C);
+	PC->AddReadyWidget();
+}
+
 void AMasterLobby_GM::Setting()
 {
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AUI_PC::StaticClass(), Buttons);

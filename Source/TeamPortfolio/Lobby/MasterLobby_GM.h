@@ -27,6 +27,7 @@ public:
 
 	virtual void BeginPlay() override;
 	virtual void PostLogin(APlayerController* NewPlayer) override;
+	virtual void GenericPlayerInitialization(AController* C) override;
 
 	virtual void Setting() override;
 
