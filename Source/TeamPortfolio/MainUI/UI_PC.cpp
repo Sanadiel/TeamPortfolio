@@ -324,20 +324,46 @@ void AUI_PC::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimePr
 	DOREPLIFETIME(AUI_PC, IsReady);
 }
 
+bool AUI_PC::HealItemUse()
+{	
+	AMasterItem* HealItem = NewObject<AMasterItem>();
+	HealItem->SettingByIndex(2, GetWorld());
+
+	int Index = MainWidgetObject->Inventory->HaveThis(HealItem);
+	HealItem->ConditionalBeginDestroy();
+
+	if (Index == -1)
+	{
+		return false;
+	}
+	else
+	{
+		if (Inventory->Inven[Index]->ItemData.ItemCount == 1)
+		{
+			Inventory->SetNullItem(Index);
+			MainWidgetObject->Inventory->SetSlot(Index, Inventory->Inven[Index]);
+		}
+		else
+		{
+			Inventory->Inven[Index]->ItemData.ItemCount--;
+			MainWidgetObject->Inventory->SetSlot(Index, Inventory->Inven[Index]);
+		}
+		return true;
+	}
+}
+
 void AUI_PC::AddPickItem(AMasterItem* AddItem)
 {
 	PickItemList.Add(AddItem);
-
-	MainWidgetObject->ContactCaseWidget->MakeChilren(PickItemList);//아이템 받게..만들어야함 Tarray1번이 case1번...F눌러서 먹으면 1. 리스트에서 삭제 2. case에서 삭제 3. 아이템 맵에서 삭제
 	MainWidgetObject->ContactCaseWidget->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-																   //PC->ShowItemTooltip(AddItem->ItemData.ItemName);
+	MainWidgetObject->ContactCaseWidget->MakeChilren(PickItemList);//아이템 받게..만들어야함 Tarray1번이 case1번...F눌러서 먹으면 1. 리스트에서 삭제 2. case에서 삭제 3. 아이템 맵에서 삭제
 	
+																   //PC->ShowItemTooltip(AddItem->ItemData.ItemName);	
 }
 
 void AUI_PC::RemovePickItem(AMasterItem* RemoveItem)
 {
 	PickItemList.Remove(RemoveItem);
-
 	
 	if (PickItemList.Num() > 0)
 	{
@@ -345,7 +371,7 @@ void AUI_PC::RemovePickItem(AMasterItem* RemoveItem)
 	}
 	else
 	{
-		MainWidgetObject->ContactCaseWidget->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+		MainWidgetObject->ContactCaseWidget->SetVisibility(ESlateVisibility::Collapsed);
 	}
 
 }
@@ -354,7 +380,7 @@ void AUI_PC::Pickup()
 {
 	if (PickItemList.Num() > 0)
 	{
-		C2S_CheckPickupItem(PickItemList[PickItemList.Num() - 1]);
+		C2S_CheckPickupItem(PickItemList[0]);
 	}
 }
 

@@ -145,6 +145,7 @@ void ATeamP_BasicPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	PlayerInputComponent->BindAction<FBindActionParamDelegate>(TEXT("ChangeGranade"), IE_Pressed, this, &ATeamP_BasicPlayer::ChangeGranade, 4);
 
 	PlayerInputComponent->BindAction(TEXT("Heal"), IE_Pressed, this, &ATeamP_BasicPlayer::Heal);
+	PlayerInputComponent->BindAction(TEXT("Root"), IE_Pressed, this, &ATeamP_BasicPlayer::Root);
 
 }
 
@@ -769,7 +770,29 @@ void ATeamP_BasicPlayer::Destroyed()
 	}
 }
 
-void ATeamP_BasicPlayer::Heal_Implementation()
+void ATeamP_BasicPlayer::Root()
+{
+	AUI_PC* PC = Cast<AUI_PC>(GetController());
+
+	if (PC)
+	{
+		PC->Pickup();
+	}
+}
+
+void ATeamP_BasicPlayer::Heal()
+{
+	AUI_PC* PC = Cast<AUI_PC>(GetController());
+
+	if (PC)
+	{
+		if(PC->HealItemUse() == true)
+
+		C2S_Heal();
+	}
+}
+
+void ATeamP_BasicPlayer::C2S_Heal_Implementation()
 {
 	UGameplayStatics::ApplyDamage(this, -20.0f, nullptr, nullptr,nullptr);
 	HealEffect();

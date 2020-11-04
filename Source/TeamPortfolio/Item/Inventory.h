@@ -41,6 +41,7 @@ public:
 	void DataLoading();
 	void PassData(TArray<class AMasterItem*> BeforeInven, TArray<class AMasterItem*> BeforeEquipment);
 	bool isNull(int32 Index);
+	void SetNullItem(int32 Index);
 
 #pragma endregion
 

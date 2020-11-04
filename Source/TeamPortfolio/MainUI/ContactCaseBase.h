@@ -19,6 +19,11 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TArray<class UContactWidgetBase*> Contact;
 
+	class UContactWidgetBase* ContactF;
+	class UContactWidgetBase* Contact1;
+	class UContactWidgetBase* Contact2;
+	class UContactWidgetBase* Contact3;
+
 #pragma endregion
 
 #pragma region Public Member

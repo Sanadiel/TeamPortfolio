@@ -105,6 +105,10 @@ void AMasterItem::ProcessBeginOverlap(UPrimitiveComponent* OverlappedComponent, 
 		{
 			//Pawn->AddPickItem(this);
 			AUI_PC* PC = Cast<AUI_PC>(Pawn->Controller);
+			if (PC)
+			{
+				PC->AddPickItem(this);
+			}
 			//AUI_PC->
 		}
 	}
@@ -118,7 +122,7 @@ void AMasterItem::ProcessEndOverlap(UPrimitiveComponent* OverlappedComponent, AA
 		if (Pawn && Pawn->IsLocallyControlled())
 		{
 			AUI_PC* PC = Cast<AUI_PC>(Pawn->Controller);
-			//Pawn->RemovePickItem(this);
+			PC->RemovePickItem(this);
 		}
 	}
 }

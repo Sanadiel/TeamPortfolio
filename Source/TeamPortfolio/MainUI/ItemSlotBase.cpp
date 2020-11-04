@@ -58,7 +58,7 @@ void UItemSlotBase::TooltipVisible(bool bValue)
 	
 	if (bValue == true)
 	{
-		pTooltip->SetTooltipsInfo(GetThisItemData().ItemName, GetThisItemData().ItemName, GetThisItemData().ItemThumnail);
+		pTooltip->SetTooltipsInfo(GetThisItemData().ItemName, GetThisItemData().ItemContent, GetThisItemData().ItemThumnail);
 		pTooltip->SetVisibility(ESlateVisibility::HitTestInvisible);
 		pTooltip->AddToViewport(1);
 	}

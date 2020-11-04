@@ -88,3 +88,12 @@ bool UInventory::isNull(int32 Index)
 	}
 }
 
+void UInventory::SetNullItem(int32 Index)
+{
+	AMasterItem* MasterItem = NewObject<AMasterItem>();
+	MasterItem->SettingByIndex(0, GetWorld());
+	Inven[Index] = MasterItem;
+	MasterItem->ConditionalBeginDestroy();
+
+}
+

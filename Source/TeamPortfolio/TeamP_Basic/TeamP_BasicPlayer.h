@@ -275,12 +275,17 @@ public:
 
 	virtual void Destroyed() override;
 
+	void Root();
+	void Heal();
+
+
 	UFUNCTION(Server, Reliable)
-		void Heal();
-		void Heal_Implementation();
+	void C2S_Heal();
+	void C2S_Heal_Implementation();
+
 	UFUNCTION(NetMulticast, UnReliable)
-		void HealEffect();
-		void HealEffect_Implementation();
+	void HealEffect();
+	void HealEffect_Implementation();
 
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Heal")

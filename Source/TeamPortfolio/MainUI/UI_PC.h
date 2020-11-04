@@ -128,10 +128,10 @@ public:
 	void S2C_InsertItem(class AMasterItem* PickupItem);
 	void S2C_InsertItem_Implementation(class AMasterItem* PickupItem);
 
-
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	
+	bool HealItemUse();
 
 #pragma endregion
 };

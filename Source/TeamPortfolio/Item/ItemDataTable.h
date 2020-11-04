@@ -58,5 +58,8 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TAssetPtr<class UStaticMesh> ItemMesh;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FString ItemContent;
+
 	void SetItemData(FItemDataTable Data);
 };
