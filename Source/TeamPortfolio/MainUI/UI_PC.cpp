@@ -18,6 +18,7 @@
 #include "../Lobby/Lobby_ReadyWidget.h"
 #include "ContactCaseBase.h"
 #include "../Item/MasterItem.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 AUI_PC::AUI_PC()
 {
@@ -284,21 +285,25 @@ void AUI_PC::C2S_SpawnandPossess_Implementation()
 		BossCharacter = GetWorld()->SpawnActor<ABossCharacter>(Boss, pawn->GetTransform());
 		pawn->SetActorHiddenInGame(true);
 		pawn->Destroy();
+		UnPossess();
+		Possess(BossCharacter);
+		//UKismetSystemLibrary::PrintString(GetWorld(), TEXT("1¹ø"));
 	}
 	else if(StartSpot != nullptr)
 	{
 		BossCharacter = GetWorld()->SpawnActor<ABossCharacter>(Boss, StartSpot->GetTransform());
+		UnPossess();
+		Possess(BossCharacter);
+		//UKismetSystemLibrary::PrintString(GetWorld(), TEXT("2¹ø"));
 	}
 	else
 	{
 		FTransform trans;
+		
 		trans.SetTranslation(FVector::ZeroVector);
 		BossCharacter = GetWorld()->SpawnActor<ABossCharacter>(Boss, trans);
+		//UKismetSystemLibrary::PrintString(GetWorld(), TEXT("3¹ø"));
 	}
-		
-	UnPossess();
-	
-	Possess(BossCharacter);	
 }
 
 void AUI_PC::C2S_ReplaceWorld_Implementation(FName Tag)

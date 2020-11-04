@@ -25,14 +25,18 @@ void AMasterLobby_GM::PostLogin(APlayerController * NewPlayer)
 	Super::PostLogin(NewPlayer);
 
 	AUI_PC* PC = Cast<AUI_PC>(NewPlayer);
-	PC->AddReadyWidget();
+
+	if (PC)
+		PC->AddReadyWidget();
 }
 
 void AMasterLobby_GM::GenericPlayerInitialization(AController* C)
 {
 	Super::GenericPlayerInitialization(C);
 	AUI_PC* PC = Cast<AUI_PC>(C);
-	PC->AddReadyWidget();
+
+	if(PC)
+		PC->AddReadyWidget();
 }
 
 void AMasterLobby_GM::Setting()
