@@ -581,6 +581,21 @@ void ATeamP_BasicPlayer::WeaponChange_Implementation(int WeaponNumber)
 	SpawnWeapon(WeaponNumber);
 	
 
+	ATeamP_BasicPC* PC = GetController<ATeamP_BasicPC>();
+	if (IsValid(PC))
+	{
+
+		UE_LOG(LogClass, Warning, TEXT("UI.....CurrentBullet = %d,MaxBullet = %d, RemainedBullet = %d"), CurrentWeapon->CurrentBullet, CurrentWeapon->MaxBullet, CurrentWeapon->RemainedBullet);
+		PC->GetMainUI()->WeaponInfo->SetItemName(CurrentWeapon->WeaponName);
+		PC->GetMainUI()->WeaponInfo->SetIBulletNum(CurrentWeapon->CurrentBullet);
+		PC->GetMainUI()->WeaponInfo->SetIBulletMaxNum(CurrentWeapon->RemainedBullet);
+	}
+	else
+	{
+		UE_LOG(LogClass, Warning, TEXT("PC is Null"));
+
+	}
+
 	//GetWorld()->GetTimeSeconds();
 
 	////header
