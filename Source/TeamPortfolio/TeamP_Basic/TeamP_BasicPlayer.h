@@ -8,6 +8,9 @@
 
 DECLARE_DELEGATE_OneParam(FBindActionParamDelegate, int32);
 
+class UNiagaraSystem;
+class UNiagaraComponent;
+
 UCLASS()
 class TEAMPORTFOLIO_API ATeamP_BasicPlayer : public ACharacter
 {
@@ -272,4 +275,15 @@ public:
 
 	virtual void Destroyed() override;
 
+	UFUNCTION(Server, Reliable)
+		void Heal();
+		void Heal_Implementation();
+	UFUNCTION(NetMulticast, UnReliable)
+		void HealEffect();
+		void HealEffect_Implementation();
+
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Heal")
+		UNiagaraSystem* HealNiagara;
+		
 };
