@@ -194,15 +194,15 @@ void ABossCharacter::Tick(float DeltaTime)
 	}
 
 
-	//PhysicsHandle Needed Update Target Location Per Frame.
-	if (PhysicsHandle)
-	{
-		//Update Hold Location at Left.
-		PhysicsHandle->SetTargetLocation(VR_Left->GetComponentLocation());
-		
-	}
+	////PhysicsHandle Needed Update Target Location Per Frame.
+	//if (PhysicsHandle)
+	//{
+	//	//Update Hold Location at Left.
+	//	PhysicsHandle->SetTargetLocation(VR_Left->GetComponentLocation());
+	//	
+	//}
 
-	DrawTrajectoryLine();
+	//DrawTrajectoryLine();
 
 }
 

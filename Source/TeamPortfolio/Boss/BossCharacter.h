@@ -139,7 +139,7 @@ public:
 	void RightHandPress();
 	void RightHandRelease();
 
-	void CreateUI();
+	virtual void CreateUI();
 
 	//Search that Want to Hold, And Hold that.
 	UFUNCTION(Server, Reliable)
@@ -169,15 +169,15 @@ public:
 
 	void SetReady3DVisibility(bool Value);
 
-	UFUNCTION(Server, Reliable)
+	UFUNCTION(Server, UnReliable)
 		void SyncHandLocRot(FVector L_Loc, FRotator L_Rot, FVector R_Loc, FRotator R_Rot);
 	void SyncHandLocRot_Implementation(FVector L_Loc, FRotator L_Rot, FVector R_Loc, FRotator R_Rot);
 
-	UFUNCTION(Server, Reliable)
+	UFUNCTION(Server, UnReliable)
 		void SyncMeshRot(FRotator MeshRot);
 	void SyncMeshRot_Implementation(FRotator MeshRot);
 
-	UFUNCTION(Server, Reliable)
+	UFUNCTION(Server, UnReliable)
 		void SyncUMGRot(FRotator Rot);
 	void SyncUMGRot_Implementation(FRotator Rot);
 };
