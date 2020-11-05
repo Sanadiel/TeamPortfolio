@@ -25,6 +25,7 @@
 #include "Components/WidgetComponent.h"
 #include "../Lobby/Lobby_ReadyWidget.h"
 #include "../MainUI/UI_PC.h"
+#include "HeadMountedDisplayFunctionLibrary.h"
 
 // Sets default values
 ABossCharacter::ABossCharacter()
@@ -41,6 +42,7 @@ ABossCharacter::ABossCharacter()
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(SpringArm);
+
 
 	GetMesh()->SetRelativeLocation(FVector(0.0f, 0.0f, -GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight()));
 	GetMesh()->SetRelativeRotation(FRotator(0.0f, 270.0f, 0.0f));
@@ -65,6 +67,9 @@ ABossCharacter::ABossCharacter()
 	TrajectoryParams.MaxSimTime = 2.0f;
 	TrajectoryParams.ProjectileRadius = 10.0f;
 	*/
+
+
+
 	VR_Root = CreateDefaultSubobject<USceneComponent>(TEXT("VR_Root"));
 	VR_Root->SetupAttachment(RootComponent);
 
@@ -99,8 +104,11 @@ ABossCharacter::ABossCharacter()
 
 	bCanSeeTrajectory = false;
 
+	WidgetRoot = CreateDefaultSubobject<USceneComponent>(TEXT("WidgetRoot"));
+	WidgetRoot->SetupAttachment(RootComponent);
+
 	Widget_3D = CreateDefaultSubobject<UWidgetComponent>(TEXT("Widget_3D"));
-	Widget_3D->SetupAttachment(RootComponent);
+	Widget_3D->SetupAttachment(WidgetRoot);
 	Widget_3D->SetWidgetSpace(EWidgetSpace::World);
 	Widget_3D->SetDrawSize(FVector2D(1000.0f, 200.0f));
 	Widget_3D->SetRelativeLocation(FVector(200.0f, 0.0f, -50.0f));
@@ -109,7 +117,7 @@ ABossCharacter::ABossCharacter()
 	Widget_3D->bOnlyOwnerSee = true;
 	
 	Ready_3D = CreateDefaultSubobject<UWidgetComponent>(TEXT("Ready_3D"));
-	Ready_3D->SetupAttachment(RootComponent);
+	Ready_3D->SetupAttachment(WidgetRoot);
 	Ready_3D->SetWidgetSpace(EWidgetSpace::World);
 	Ready_3D->bOnlyOwnerSee = true;
 	Ready_3D->SetRelativeLocation(FVector(200.0f, 100.0f, 100.0f));
@@ -126,13 +134,24 @@ void ABossCharacter::BeginPlay()
 	CreateUI();
 
 	/*Show Mouse Cursor*/
+	
+	//if (UHeadMountedDisplayFunctionLibrary::IsHeadMountedDisplayConnected()) // when VR Play
+	//{
+	//	bUseControllerRotationYaw = true;
+	//}
+	//else // When PC Play
+	//{
+	//	
+	//}
+
 	APlayerController* pc = Cast<APlayerController>(GetController());
-	if (pc && pc->IsLocalPlayerController() )
+	if (pc && pc->IsLocalPlayerController())
 	{
 		pc->bShowMouseCursor = true;
 		pc->SetInputMode(FInputModeGameAndUI());
 	}
-	
+
+
 	if (HasAuthority())
 	{
 		//Initialize Spawn Cooldown.
@@ -157,11 +176,15 @@ void ABossCharacter::Tick(float DeltaTime)
 		SpawnCooldown[i] = FMath::Clamp<float>(SpawnCooldown[i] + DeltaTime, 0.0f, MaxSpawnCooldown[i]);
 	}
 
-	//if Client
+	//if Client Needed Sync to Server.
 	if (!HasAuthority())
 	{
 		SyncHandLocRot(VR_Left->GetRelativeLocation(), VR_Left->GetRelativeRotation(), VR_Right->GetRelativeLocation(), VR_Right->GetRelativeRotation());
+		SyncMeshRot(FRotator(0.0f, Camera->GetRelativeRotation().Yaw, 0.0f));
 	}
+
+	//Widget Root Needed Rotate with Camera
+	WidgetRoot->SetRelativeRotation(FRotator(0.0f, Camera->GetRelativeRotation().Yaw, 0.0f));
 
 	//PhysicsHandle Needed Update Target Location Per Frame.
 	if (PhysicsHandle)
@@ -610,4 +633,9 @@ void ABossCharacter::SyncHandLocRot_Implementation(FVector L_Loc, FRotator L_Rot
 {
 		VR_Left->SetRelativeLocationAndRotation(L_Loc, L_Rot);
 		VR_Right->SetRelativeLocationAndRotation(R_Loc, R_Rot);
+}
+
+void ABossCharacter::SyncMeshRot_Implementation(FRotator MeshRot)
+{
+	GetMesh()->SetRelativeRotation(MeshRot);
 }

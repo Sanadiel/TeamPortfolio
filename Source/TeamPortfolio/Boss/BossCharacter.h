@@ -64,6 +64,9 @@ public:
 		TArray<USplineMeshComponent*> SplineMeshArray;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+		USceneComponent* WidgetRoot;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 		UWidgetComponent* Widget_3D;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
@@ -170,4 +173,7 @@ public:
 		void SyncHandLocRot(FVector L_Loc, FRotator L_Rot, FVector R_Loc, FRotator R_Rot);
 	void SyncHandLocRot_Implementation(FVector L_Loc, FRotator L_Rot, FVector R_Loc, FRotator R_Rot);
 
+	UFUNCTION(Server, Reliable)
+		void SyncMeshRot(FRotator MeshRot);
+	void SyncMeshRot_Implementation(FRotator MeshRot);
 };
