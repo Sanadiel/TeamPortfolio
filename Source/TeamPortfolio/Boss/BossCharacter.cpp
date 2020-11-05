@@ -177,14 +177,22 @@ void ABossCharacter::Tick(float DeltaTime)
 	}
 
 	//if Client Needed Sync to Server.
-	if (!HasAuthority())
+	if (!HasAuthority() && IsLocallyControlled())
 	{
 		SyncHandLocRot(VR_Left->GetRelativeLocation(), VR_Left->GetRelativeRotation(), VR_Right->GetRelativeLocation(), VR_Right->GetRelativeRotation());
+		
+		/*
 		SyncMeshRot(FRotator(0.0f, Camera->GetRelativeRotation().Yaw, 0.0f));
+
+		*/
+		//Widget Root Needed Rotate with Camera
+		SyncUMGRot(FRotator(0.0f, Camera->GetRelativeRotation().Yaw, 0.0f));
+	}
+	else if (HasAuthority() && IsLocallyControlled())
+	{
+		WidgetRoot->SetRelativeRotation(FRotator(0.0f, Camera->GetRelativeRotation().Yaw, 0.0f));
 	}
 
-	//Widget Root Needed Rotate with Camera
-	WidgetRoot->SetRelativeRotation(FRotator(0.0f, Camera->GetRelativeRotation().Yaw, 0.0f));
 
 	//PhysicsHandle Needed Update Target Location Per Frame.
 	if (PhysicsHandle)
@@ -638,4 +646,9 @@ void ABossCharacter::SyncHandLocRot_Implementation(FVector L_Loc, FRotator L_Rot
 void ABossCharacter::SyncMeshRot_Implementation(FRotator MeshRot)
 {
 	GetMesh()->SetRelativeRotation(MeshRot);
+}
+
+void ABossCharacter::SyncUMGRot_Implementation(FRotator Rot)
+{
+	WidgetRoot->SetRelativeRotation(Rot);
 }

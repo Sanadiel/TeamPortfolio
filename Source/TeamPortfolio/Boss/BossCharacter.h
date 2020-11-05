@@ -176,4 +176,8 @@ public:
 	UFUNCTION(Server, Reliable)
 		void SyncMeshRot(FRotator MeshRot);
 	void SyncMeshRot_Implementation(FRotator MeshRot);
+
+	UFUNCTION(Server, Reliable)
+		void SyncUMGRot(FRotator Rot);
+	void SyncUMGRot_Implementation(FRotator Rot);
 };
